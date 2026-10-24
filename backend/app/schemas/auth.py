@@ -2,6 +2,7 @@ from typing import Annotated
 
 from pydantic import AfterValidator, Field, StringConstraints
 
+from app.schemas.calculators import CalculatorConfig
 from app.schemas.financials import (
     AccountResponse,
     InvestmentResponse,
@@ -109,6 +110,12 @@ class ExportPolicy(ApiModel):
     details: PolicyResponse
 
 
+class ExportCalculatorScenario(ApiModel):
+    id: str
+    name: str
+    config: CalculatorConfig
+
+
 class ExportResponse(ApiModel):
     user: ExportUser
     plans: list[ExportPlan]
@@ -118,3 +125,4 @@ class ExportResponse(ApiModel):
     liabilities: list[LiabilityResponse]
     transactions: list[TransactionResponse]
     household_profile: HouseholdProfileResponse
+    calculator_scenarios: list[ExportCalculatorScenario] = []

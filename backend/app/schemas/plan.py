@@ -19,11 +19,87 @@ from app.timeline import MAX_HORIZON_MONTHS, deadline_index, month_to_index
 GoalType = Literal["home", "education", "loan_payoff", "emergency_fund", "retirement", "custom"]
 
 
+IncomeFrequency = Literal["monthly", "quarterly", "yearly"]
+FREQUENCY_MONTHS: dict[str, int] = {"monthly": 1, "quarterly": 3, "yearly": 12}
+
+# Technical safeguards only (request size and validation cost), not product limits.
+MAX_INCOME_STREAMS = 200
+MAX_STEP_UPS_PER_STREAM = 60
+YEAR_MIN, YEAR_MAX = 1990, 2200
+
+
+class IncomeStepUp(ApiModel):
+    """From `year` (January) the stream's base amount is replaced by `amount`, in the stream's frequency."""
+
+    id: Id
+    year: int = Field(ge=YEAR_MIN, le=YEAR_MAX)
+    amount: PositiveMoney
+
+
 class IncomeStream(ApiModel):
+    """Planned (expected, take-home) income.
+
+    Two forms. A legacy stream has only `monthly_net` and the optional month `ends_after`; the plan-wide
+    `income_growth_annual` applies to it exactly as before. A scheduled stream has `start_year` and
+    `amount` + `frequency`, an optional inclusive `end_year`, its own optional `annual_growth`, and
+    optional `step_ups`; the plan-wide growth is never applied to it. For scheduled streams `monthly_net`
+    is derived (the initial amount's monthly equivalent) and any value sent is replaced.
+    """
+
     id: Id
     label: Label
     monthly_net: Money
     ends_after: Month | None = None
+    amount: PositiveMoney | None = None
+    frequency: IncomeFrequency = "monthly"
+    start_year: int | None = Field(default=None, ge=YEAR_MIN, le=YEAR_MAX)
+    end_year: int | None = Field(default=None, ge=YEAR_MIN, le=YEAR_MAX)
+    annual_growth: Rate | None = None
+    step_ups: list[IncomeStepUp] = Field(default_factory=list, max_length=MAX_STEP_UPS_PER_STREAM)
+
+    @property
+    def scheduled(self) -> bool:
+        return self.start_year is not None
+
+    @model_validator(mode="after")
+    def _check_schedule(self) -> "IncomeStream":
+        if self.start_year is None:
+            extras = (self.amount, self.end_year, self.annual_growth)
+            if any(x is not None for x in extras) or self.step_ups or self.frequency != "monthly":
+                raise ValueError(
+                    f"income stream {self.id}: amount, frequency, end_year, annual_growth and step_ups "
+                    "need a start_year"
+                )
+            return self
+        if self.amount is None:
+            raise ValueError(f"income stream {self.id}: a scheduled stream needs an amount")
+        if self.ends_after is not None:
+            raise ValueError(f"income stream {self.id}: use end_year, not ends_after, with start_year")
+        if self.end_year is not None and self.end_year < self.start_year:
+            raise ValueError(f"income stream {self.id}: end_year is before start_year")
+        years = [step.year for step in self.step_ups]
+        if len(set(years)) != len(years):
+            raise ValueError(f"income stream {self.id}: only one step-up is allowed per year")
+        if len({step.id for step in self.step_ups}) != len(self.step_ups):
+            raise ValueError(f"income stream {self.id}: step-up ids must be unique")
+        for step in self.step_ups:
+            if step.year <= self.start_year:
+                raise ValueError(
+                    f"income stream {self.id}: a step-up must be after the start year "
+                    f"(the initial amount defines the start)"
+                )
+            if self.end_year is not None and step.year > self.end_year:
+                raise ValueError(f"income stream {self.id}: a step-up falls after the end year")
+        self.monthly_net = monthly_equivalent(self.amount, self.frequency)
+        return self
+
+
+def monthly_equivalent(amount: Decimal, frequency: str) -> Decimal:
+    """The initial amount per month, rounded half-up to the paisa (display and legacy consumers only).
+
+    The engine itself divides without rounding and rounds each projected month once.
+    """
+    return (amount / FREQUENCY_MONTHS[frequency]).quantize(Decimal("0.01"), rounding="ROUND_HALF_UP")
 
 
 class Expense(ApiModel):
@@ -78,7 +154,7 @@ class Plan(ApiModel):
     name: Label
     as_of: Month
     currency: Literal["INR"]
-    income_streams: list[IncomeStream] = Field(min_length=1, max_length=4)
+    income_streams: list[IncomeStream] = Field(min_length=1, max_length=MAX_INCOME_STREAMS)
     expenses: list[Expense] = Field(default_factory=list, max_length=12)
     commitments: list[Commitment] = Field(default_factory=list, max_length=6)
     unassigned_savings: Money = Decimal("0.00")
@@ -109,6 +185,10 @@ class Plan(ApiModel):
         for stream in self.income_streams:
             if stream.ends_after is not None and month_to_index(stream.ends_after) < as_of_index:
                 raise ValueError(f"income stream {stream.id}: ends_after is before as_of")
+            if stream.start_year is not None and stream.start_year < int(self.as_of[:4]):
+                raise ValueError(f"income stream {stream.id}: start_year is in the past")
+            if stream.end_year is not None and stream.end_year < int(self.as_of[:4]):
+                raise ValueError(f"income stream {stream.id}: end_year is in the past")
         return self
 
 

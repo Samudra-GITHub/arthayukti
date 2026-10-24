@@ -3,6 +3,7 @@
 from dataclasses import dataclass, field
 from decimal import Decimal
 
+from app.engine.income import stream_tables
 from app.schemas.plan import Commitment, Expense, IncomeStream, Plan
 from app.schemas.results import PlanWarning
 from app.schemas.scenario import (
@@ -63,6 +64,8 @@ class Resolved:
     expense_shifts: list[ExpenseShift]
     one_offs: dict[int, Decimal]  # net amount by month index t
     warnings: list[PlanWarning] = field(default_factory=list)
+    # Scheduled income streams: unrounded monthly-equivalent base by calendar year (see engine/income.py)
+    stream_bases: dict[str, dict[int, Decimal]] = field(default_factory=dict)
 
     def month_label(self, t: int) -> str:
         return index_to_month(self.as_of_index + t - 1)
@@ -187,4 +190,5 @@ def resolve(plan: Plan, scenario: Scenario | None) -> Resolved:
         expense_shifts=expense_shifts,
         one_offs=one_offs,
         warnings=warnings,
+        stream_bases=stream_tables(plan.income_streams, as_of_index),
     )

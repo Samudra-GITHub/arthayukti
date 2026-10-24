@@ -26,13 +26,21 @@ def month_flows(resolved: Resolved, t: int) -> Flows:
     income_factor = _step_up(resolved.income_growth, t)
     expense_factor = _step_up(resolved.expense_growth, t)
 
+    year = (resolved.as_of_index + t - 1) // 12
     income = Decimal(0)
     for stream in resolved.streams:
-        if stream.ends_after is not None:
-            last_t = month_to_index(stream.ends_after) - resolved.as_of_index + 1
-            if t > last_t:
+        if stream.start_year is not None:
+            # Scheduled stream: calendar years, its own growth and step-ups; plan-wide growth never applies.
+            base = resolved.stream_bases.get(stream.id, {}).get(year)
+            if base is None:
                 continue
-        amount = stream.monthly_net * income_factor
+            amount = base
+        else:
+            if stream.ends_after is not None:
+                last_t = month_to_index(stream.ends_after) - resolved.as_of_index + 1
+                if t > last_t:
+                    continue
+            amount = stream.monthly_net * income_factor
         for cut in resolved.income_cuts:
             if cut.from_t <= t <= cut.to_t and cut.stream_id in (None, stream.id):
                 amount *= cut.multiplier

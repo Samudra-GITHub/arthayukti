@@ -32,6 +32,7 @@ class User(Base):
     email = Column(String(255), unique=True, index=True, nullable=False)
     hashed_password = Column(String(255), nullable=False)
     full_name = Column(String(255), nullable=False, default="")
+    phone_number = Column(String(50), nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
     is_verified = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
@@ -48,6 +49,12 @@ class User(Base):
     liabilities = relationship("Liability", back_populates="user", cascade="all, delete-orphan")
     household_profile = relationship(
         "HouseholdProfile", uselist=False, back_populates="user", cascade="all, delete-orphan"
+    )
+    calculator_scenarios = relationship(
+        "CalculatorScenario", back_populates="user", cascade="all, delete-orphan"
+    )
+    risk_assessments = relationship(
+        "RiskAssessment", back_populates="user", cascade="all, delete-orphan", order_by="desc(RiskAssessment.completed_at)"
     )
 
 
@@ -401,6 +408,21 @@ class HouseholdProfile(Base):
     primary_earner_age = Column(Integer, nullable=True)
     # Every detail is NULL until the person provides it: nothing here is a default presented as a fact.
     household_type = Column(String(50), nullable=True)  # single_earner, dual_earner, retiree
+    marital_status = Column(String(50), nullable=True)  # married, not_married
+    has_children = Column(Boolean, nullable=True)
+    children_ages_json = Column(Text, nullable=True)
+    supports_mother = Column(String(20), nullable=True)  # yes, no, unsure
+    supports_father = Column(String(20), nullable=True)  # yes, no, unsure
+    housing_status = Column(String(50), nullable=True)  # own_house, rented_house
+    employment_status = Column(String(50), nullable=True)  # salaried, self_employed, business_owner, student, unemployed, retired, other
+    expected_retirement_age = Column(Integer, nullable=True)
+    financial_dependants = Column(String(50), nullable=True)  # none, one, two, three, four_or_more
+    debt_types_json = Column(Text, nullable=True)
+    emergency_fund_coverage = Column(String(50), nullable=True)  # none, less_than_3, 3_to_6, more_than_6, not_sure
+    income_predictability = Column(String(50), nullable=True)  # very_predictable, mostly_predictable, varies_significantly, seasonal_project, no_income, not_sure
+    health_insurance_status = Column(String(20), nullable=True)  # yes, no, not_sure
+    life_insurance_status = Column(String(20), nullable=True)  # yes, no, not_sure
+
     dependants_count = Column(Integer, nullable=True)
     children_count = Column(Integer, nullable=True)
     elderly_dependants_count = Column(Integer, nullable=True)
@@ -415,3 +437,48 @@ class HouseholdProfile(Base):
     )
 
     user = relationship("User", back_populates="household_profile")
+
+
+class RiskAssessment(Base):
+    __tablename__ = "risk_assessments"
+
+    id = Column(String(36), primary_key=True, default=_gen_uuid)
+    user_id = Column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    scoring_version = Column(String(20), default="v1.0", nullable=False)
+    loss_reaction = Column(String(50), nullable=False)
+    safety_growth = Column(String(50), nullable=False)
+    time_horizon = Column(String(50), nullable=False)
+    answers_json = Column(Text, nullable=False)
+    tolerance_score = Column(Integer, nullable=False)
+    risk_tolerance = Column(String(50), nullable=False)
+    risk_capacity = Column(String(50), nullable=False)
+    composite_stance = Column(String(50), nullable=False)
+    explanations_json = Column(Text, nullable=False)
+    conflict_note = Column(Text, nullable=True)
+    completed_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
+
+    user = relationship("User", back_populates="risk_assessments")
+
+
+
+class CalculatorScenario(Base):
+    """A named, saved investment-calculator state (its investments and valuation mode), owned by one user."""
+
+    __tablename__ = "calculator_scenarios"
+    __table_args__ = (UniqueConstraint("user_id", "name", name="uq_calculator_scenario_user_name"),)
+
+    id = Column(String(36), primary_key=True, default=_gen_uuid)
+    user_id = Column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    name = Column(String(80), nullable=False)
+    config_json = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
+    updated_at = Column(
+        DateTime(timezone=True), default=_now_utc, onupdate=_now_utc, nullable=False
+    )
+
+    user = relationship("User", back_populates="calculator_scenarios")

@@ -23,6 +23,7 @@ from app.config import settings
 from app.db.models import (
     AssetInvestment,
     AuditLog,
+    CalculatorScenario,
     FinancialAccount,
     FinancialTransaction,
     HouseholdProfile,
@@ -35,6 +36,7 @@ from app.db.models import (
 from app.schemas.auth import (
     AuthResponse,
     ExportAccount,
+    ExportCalculatorScenario,
     ExportPlan,
     ExportPolicy,
     ExportResponse,
@@ -46,6 +48,7 @@ from app.schemas.auth import (
     SignupRequest,
     UserProfile,
 )
+from app.schemas.calculators import CalculatorConfig
 from app.schemas.plan import Plan
 from app.security import (
     create_access_token,
@@ -258,6 +261,12 @@ def export_user_data(
         .all()
     )
     household = db.query(HouseholdProfile).filter(HouseholdProfile.user_id == uid).first()
+    scenarios = (
+        db.query(CalculatorScenario)
+        .filter(CalculatorScenario.user_id == uid)
+        .order_by(CalculatorScenario.name)
+        .all()
+    )
     return ExportResponse(
         user=ExportUser(
             id=current_user.id,
@@ -287,6 +296,12 @@ def export_user_data(
         liabilities=[_to_liab_response(liab) for liab in liabilities],
         transactions=[_to_tx_response(t) for t in transactions],
         household_profile=_to_profile_response(household),
+        calculator_scenarios=[
+            ExportCalculatorScenario(
+                id=c.id, name=c.name, config=CalculatorConfig.model_validate_json(c.config_json)
+            )
+            for c in scenarios
+        ],
     )
 
 

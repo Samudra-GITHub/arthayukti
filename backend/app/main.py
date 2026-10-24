@@ -11,14 +11,18 @@ from app.api import (
     ai,
     analysis,
     auth,
+    calculators,
     debt,
     financials,
     health,
     household,
+    income,
     insurance,
     market,
     plans,
+    recommendations,
     rescue,
+    risk,
     samples,
 )
 from app.api.deps import OPTIONAL_AUTH_PATHS
@@ -98,6 +102,10 @@ def create_app() -> FastAPI:
         ai,
         household,
         debt,
+        risk,
+        recommendations,
+        income,
+        calculators,
     ):
         app.include_router(module.router, prefix="/api/v1")
 

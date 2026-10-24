@@ -737,6 +737,899 @@
         "title": "CSVImportResponse",
         "type": "object"
       },
+      "CalcAfterMaturity": {
+        "additionalProperties": false,
+        "description": "What happens to a balance whose growth period ends before the common valuation date.",
+        "properties": {
+          "action": {
+            "enum": [
+              "hold",
+              "continue",
+              "reinvest"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "rate": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "title": "CalcAfterMaturity",
+        "type": "object"
+      },
+      "CalcAggregate": {
+        "additionalProperties": false,
+        "properties": {
+          "gain": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Gain",
+            "type": "string"
+          },
+          "included": {
+            "title": "Included",
+            "type": "integer"
+          },
+          "inflation_adjusted_value": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inflation Adjusted Value"
+          },
+          "mixed_valuation_dates": {
+            "title": "Mixed Valuation Dates",
+            "type": "boolean"
+          },
+          "post_tax_value": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Post Tax Value",
+            "type": "string"
+          },
+          "principal": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Principal",
+            "type": "string"
+          },
+          "tax": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Tax",
+            "type": "string"
+          },
+          "total_gains": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Gains",
+            "type": "string"
+          },
+          "total_losses": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Losses",
+            "type": "string"
+          },
+          "value": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "included",
+          "principal",
+          "value",
+          "gain",
+          "total_gains",
+          "total_losses",
+          "tax",
+          "post_tax_value",
+          "inflation_adjusted_value",
+          "mixed_valuation_dates"
+        ],
+        "title": "CalcAggregate",
+        "type": "object"
+      },
+      "CalcAnnualRow": {
+        "additionalProperties": false,
+        "properties": {
+          "closing": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Closing",
+            "type": "string"
+          },
+          "contributions": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Contributions",
+            "type": "string"
+          },
+          "cumulative_gain": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cumulative Gain",
+            "type": "string"
+          },
+          "cumulative_invested": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cumulative Invested",
+            "type": "string"
+          },
+          "from_month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "From Month",
+            "type": "string"
+          },
+          "growth": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Growth",
+            "type": "string"
+          },
+          "inflation_adjusted_closing": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Inflation Adjusted Closing",
+            "type": "string"
+          },
+          "instalment": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Instalment",
+            "type": "string"
+          },
+          "instalments": {
+            "title": "Instalments",
+            "type": "integer"
+          },
+          "months": {
+            "title": "Months",
+            "type": "integer"
+          },
+          "opening": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Opening",
+            "type": "string"
+          },
+          "phase": {
+            "enum": [
+              "contributing",
+              "growth_only",
+              "after_maturity"
+            ],
+            "title": "Phase",
+            "type": "string"
+          },
+          "to_month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "To Month",
+            "type": "string"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "from_month",
+          "to_month",
+          "months",
+          "phase",
+          "instalment",
+          "instalments",
+          "opening",
+          "contributions",
+          "growth",
+          "closing",
+          "cumulative_invested",
+          "cumulative_gain",
+          "inflation_adjusted_closing"
+        ],
+        "title": "CalcAnnualRow",
+        "type": "object"
+      },
+      "CalcCompareEntry": {
+        "additionalProperties": false,
+        "description": "A saved scenario (`scenario_id`) or an unsaved calculator (`config`), with a label.",
+        "properties": {
+          "config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CalculatorConfig"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "label": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "scenario_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scenario Id"
+          }
+        },
+        "title": "CalcCompareEntry",
+        "type": "object"
+      },
+      "CalcCompareRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "common_date": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Common Date"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/CalcCompareEntry"
+            },
+            "maxItems": 4,
+            "minItems": 2,
+            "title": "Entries",
+            "type": "array"
+          }
+        },
+        "required": [
+          "entries"
+        ],
+        "title": "CalcCompareRequest",
+        "type": "object"
+      },
+      "CalcCompareResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/CalcCompareRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": [
+          "rows"
+        ],
+        "title": "CalcCompareResponse",
+        "type": "object"
+      },
+      "CalcCompareRow": {
+        "additionalProperties": false,
+        "properties": {
+          "aggregate": {
+            "$ref": "#/components/schemas/CalcAggregate"
+          },
+          "common_date": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Common Date"
+          },
+          "delta_post_tax_vs_first": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Delta Post Tax Vs First",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "individual",
+              "common_date"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "scenario_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scenario Id"
+          }
+        },
+        "required": [
+          "label",
+          "scenario_id",
+          "mode",
+          "common_date",
+          "aggregate",
+          "delta_post_tax_vs_first"
+        ],
+        "title": "CalcCompareRow",
+        "type": "object"
+      },
+      "CalcCompilation": {
+        "additionalProperties": false,
+        "properties": {
+          "aggregate": {
+            "$ref": "#/components/schemas/CalcAggregate"
+          },
+          "investment_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Investment Ids",
+            "type": "array"
+          },
+          "years": {
+            "items": {
+              "$ref": "#/components/schemas/CalcCompiledYear"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "investment_ids",
+          "aggregate",
+          "years"
+        ],
+        "title": "CalcCompilation",
+        "type": "object"
+      },
+      "CalcCompiledYear": {
+        "additionalProperties": false,
+        "properties": {
+          "closing_active": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Closing Active",
+            "type": "string"
+          },
+          "closing_total": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Closing Total",
+            "type": "string"
+          },
+          "contributions": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Contributions",
+            "type": "string"
+          },
+          "cumulative_gain": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cumulative Gain",
+            "type": "string"
+          },
+          "cumulative_invested": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cumulative Invested",
+            "type": "string"
+          },
+          "matured_held": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Matured Held",
+            "type": "string"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "contributions",
+          "closing_active",
+          "matured_held",
+          "closing_total",
+          "cumulative_invested",
+          "cumulative_gain"
+        ],
+        "title": "CalcCompiledYear",
+        "type": "object"
+      },
+      "CalcInvestment": {
+        "additionalProperties": false,
+        "properties": {
+          "after_maturity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CalcAfterMaturity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "annual_growth": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Annual Growth",
+            "type": "string"
+          },
+          "growth_years": {
+            "maximum": 60.0,
+            "minimum": 1.0,
+            "title": "Growth Years",
+            "type": "integer"
+          },
+          "id": {
+            "pattern": "^[A-Za-z0-9_-]{1,40}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "inflation_rate": {
+            "default": "0",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Inflation Rate",
+            "type": "string"
+          },
+          "lump_sum": {
+            "default": "0.00",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Lump Sum",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "sip": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CalcSip"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "start_month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "Start Month",
+            "type": "string"
+          },
+          "tax_rate": {
+            "default": "0",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Tax Rate",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "start_month",
+          "growth_years",
+          "annual_growth"
+        ],
+        "title": "CalcInvestment",
+        "type": "object"
+      },
+      "CalcInvestmentResult": {
+        "additionalProperties": false,
+        "properties": {
+          "annual": {
+            "items": {
+              "$ref": "#/components/schemas/CalcAnnualRow"
+            },
+            "title": "Annual",
+            "type": "array"
+          },
+          "contributions_made": {
+            "title": "Contributions Made",
+            "type": "integer"
+          },
+          "gain": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Gain",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "inflation_adjusted_value": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Inflation Adjusted Value",
+            "type": "string"
+          },
+          "months_valued": {
+            "title": "Months Valued",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "post_tax_value": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Post Tax Value",
+            "type": "string"
+          },
+          "principal": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Principal",
+            "type": "string"
+          },
+          "start_month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "Start Month",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "not_started",
+              "before_maturity",
+              "at_maturity",
+              "after_maturity"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "tax": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Tax",
+            "type": "string"
+          },
+          "valuation_month": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valuation Month"
+          },
+          "value": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "start_month",
+          "valuation_month",
+          "months_valued",
+          "principal",
+          "value",
+          "gain",
+          "tax",
+          "post_tax_value",
+          "inflation_adjusted_value",
+          "contributions_made",
+          "annual"
+        ],
+        "title": "CalcInvestmentResult",
+        "type": "object"
+      },
+      "CalcScenarioIn": {
+        "additionalProperties": false,
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/CalculatorConfig"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "config"
+        ],
+        "title": "CalcScenarioIn",
+        "type": "object"
+      },
+      "CalcScenarioOut": {
+        "additionalProperties": false,
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/CalculatorConfig"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "config",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "CalcScenarioOut",
+        "type": "object"
+      },
+      "CalcScenarioSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "investments": {
+            "title": "Investments",
+            "type": "integer"
+          },
+          "mode": {
+            "enum": [
+              "individual",
+              "common_date"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "investments",
+          "mode",
+          "updated_at"
+        ],
+        "title": "CalcScenarioSummary",
+        "type": "object"
+      },
+      "CalcSip": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Amount",
+            "type": "string"
+          },
+          "contribution_years": {
+            "maximum": 60.0,
+            "minimum": 1.0,
+            "title": "Contribution Years",
+            "type": "integer"
+          },
+          "frequency": {
+            "default": "monthly",
+            "enum": [
+              "monthly",
+              "quarterly",
+              "annual"
+            ],
+            "title": "Frequency",
+            "type": "string"
+          },
+          "step_ups": {
+            "items": {
+              "$ref": "#/components/schemas/CalcStepUp"
+            },
+            "maxItems": 10,
+            "title": "Step Ups",
+            "type": "array"
+          }
+        },
+        "required": [
+          "amount",
+          "contribution_years"
+        ],
+        "title": "CalcSip",
+        "type": "object"
+      },
+      "CalcStepUp": {
+        "additionalProperties": false,
+        "description": "From investment year `from_year` (year 1 = the first 12 months), the instalment changes.\n\n`amount` sets the new instalment; `percent` raises the previous instalment by that fraction (0.10 = +10%).",
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount"
+          },
+          "from_year": {
+            "maximum": 60.0,
+            "minimum": 2.0,
+            "title": "From Year",
+            "type": "integer"
+          },
+          "mode": {
+            "default": "amount",
+            "enum": [
+              "amount",
+              "percent"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "percent": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Percent"
+          }
+        },
+        "required": [
+          "from_year"
+        ],
+        "title": "CalcStepUp",
+        "type": "object"
+      },
+      "CalculatorConfig": {
+        "additionalProperties": false,
+        "description": "One calculator state. `mode` picks how every investment is valued.",
+        "properties": {
+          "common_date": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Common Date"
+          },
+          "compile_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "pattern": "^[A-Za-z0-9_-]{1,40}$",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Compile Ids"
+          },
+          "investments": {
+            "items": {
+              "$ref": "#/components/schemas/CalcInvestment"
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Investments",
+            "type": "array"
+          },
+          "mode": {
+            "default": "individual",
+            "enum": [
+              "individual",
+              "common_date"
+            ],
+            "title": "Mode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "investments"
+        ],
+        "title": "CalculatorConfig",
+        "type": "object"
+      },
+      "CalculatorResult": {
+        "additionalProperties": false,
+        "properties": {
+          "aggregate": {
+            "$ref": "#/components/schemas/CalcAggregate"
+          },
+          "common_date": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Common Date"
+          },
+          "compilation": {
+            "$ref": "#/components/schemas/CalcCompilation"
+          },
+          "investments": {
+            "items": {
+              "$ref": "#/components/schemas/CalcInvestmentResult"
+            },
+            "title": "Investments",
+            "type": "array"
+          },
+          "mode": {
+            "enum": [
+              "individual",
+              "common_date"
+            ],
+            "title": "Mode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mode",
+          "common_date",
+          "investments",
+          "aggregate",
+          "compilation"
+        ],
+        "title": "CalculatorResult",
+        "type": "object"
+      },
       "Commitment": {
         "additionalProperties": false,
         "description": "An existing fixed payment (for example an EMI) that stops after remaining_months.",
@@ -884,6 +1777,40 @@
           "diffs"
         ],
         "title": "CompareResult",
+        "type": "object"
+      },
+      "ConservativeComparisonResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "conservative": {
+            "$ref": "#/components/schemas/RecommendationVariant"
+          },
+          "differences": {
+            "$ref": "#/components/schemas/RecommendationDifferences"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "original": {
+            "$ref": "#/components/schemas/RecommendationVariant"
+          },
+          "plan_source": {
+            "title": "Plan Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plan_source",
+          "notes",
+          "original",
+          "conservative",
+          "differences"
+        ],
+        "title": "ConservativeComparisonResponse",
         "type": "object"
       },
       "CrowdedOut": {
@@ -1647,6 +2574,29 @@
         "title": "ExportAccount",
         "type": "object"
       },
+      "ExportCalculatorScenario": {
+        "additionalProperties": false,
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/CalculatorConfig"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "config"
+        ],
+        "title": "ExportCalculatorScenario",
+        "type": "object"
+      },
       "ExportPlan": {
         "additionalProperties": false,
         "properties": {
@@ -1711,6 +2661,14 @@
               "$ref": "#/components/schemas/ExportAccount"
             },
             "title": "Accounts",
+            "type": "array"
+          },
+          "calculator_scenarios": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ExportCalculatorScenario"
+            },
+            "title": "Calculator Scenarios",
             "type": "array"
           },
           "household_profile": {
@@ -2251,6 +3209,63 @@
         "title": "GoalOverride",
         "type": "object"
       },
+      "GoalRecommendationItem": {
+        "additionalProperties": false,
+        "properties": {
+          "delay_months": {
+            "default": 0,
+            "title": "Delay Months",
+            "type": "integer"
+          },
+          "goal_id": {
+            "title": "Goal Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "projected_completion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Projected Completion"
+          },
+          "required_monthly_savings": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Required Monthly Savings",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "target_amount_today": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Target Amount Today",
+            "type": "string"
+          },
+          "target_date": {
+            "title": "Target Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "goal_id",
+          "label",
+          "target_amount_today",
+          "target_date",
+          "status",
+          "required_monthly_savings"
+        ],
+        "title": "GoalRecommendationItem",
+        "type": "object"
+      },
       "HealthResponse": {
         "additionalProperties": false,
         "properties": {
@@ -2269,6 +3284,13 @@
         "additionalProperties": false,
         "description": "The details the person has provided. A field that was never provided is null, never a default.",
         "properties": {
+          "children_ages": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Children Ages",
+            "type": "array"
+          },
           "children_count": {
             "anyOf": [
               {
@@ -2279,6 +3301,13 @@
               }
             ],
             "title": "Children Count"
+          },
+          "debt_types": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Debt Types",
+            "type": "array"
           },
           "dependants_count": {
             "anyOf": [
@@ -2309,6 +3338,17 @@
             ],
             "title": "Elderly Dependants Count"
           },
+          "emergency_fund_coverage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emergency Fund Coverage"
+          },
           "emergency_fund_months_target": {
             "anyOf": [
               {
@@ -2319,6 +3359,72 @@
               }
             ],
             "title": "Emergency Fund Months Target"
+          },
+          "employment_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Employment Status"
+          },
+          "expected_retirement_age": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Retirement Age"
+          },
+          "financial_dependants": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Financial Dependants"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "has_children": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Has Children"
+          },
+          "health_insurance_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Health Insurance Status"
           },
           "household_type": {
             "anyOf": [
@@ -2331,6 +3437,17 @@
             ],
             "title": "Household Type"
           },
+          "housing_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Housing Status"
+          },
           "id": {
             "anyOf": [
               {
@@ -2341,6 +3458,17 @@
               }
             ],
             "title": "Id"
+          },
+          "income_predictability": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Income Predictability"
           },
           "is_saved": {
             "title": "Is Saved",
@@ -2357,6 +3485,28 @@
             ],
             "title": "Job Stability"
           },
+          "life_insurance_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Life Insurance Status"
+          },
+          "marital_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Marital Status"
+          },
           "monthly_family_support": {
             "anyOf": [
               {
@@ -2368,6 +3518,17 @@
               }
             ],
             "title": "Monthly Family Support"
+          },
+          "phone_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone Number"
           },
           "planned_events": {
             "items": {
@@ -2387,6 +3548,28 @@
             ],
             "title": "Primary Earner Age"
           },
+          "supports_father": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supports Father"
+          },
+          "supports_mother": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supports Mother"
+          },
           "updated_at": {
             "anyOf": [
               {
@@ -2397,6 +3580,17 @@
               }
             ],
             "title": "Updated At"
+          },
+          "user_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Email"
           }
         },
         "required": [
@@ -2420,6 +3614,21 @@
       "HouseholdProfileUpdateRequest": {
         "additionalProperties": false,
         "properties": {
+          "children_ages": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 15,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Children Ages"
+          },
           "children_count": {
             "anyOf": [
               {
@@ -2432,6 +3641,29 @@
               }
             ],
             "title": "Children Count"
+          },
+          "debt_types": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "no_debt",
+                    "home_loan",
+                    "education_loan",
+                    "personal_loan",
+                    "vehicle_loan",
+                    "other",
+                    "multiple"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Debt Types"
           },
           "dependants_count": {
             "anyOf": [
@@ -2473,6 +3705,24 @@
             ],
             "title": "Elderly Dependants Count"
           },
+          "emergency_fund_coverage": {
+            "anyOf": [
+              {
+                "enum": [
+                  "none",
+                  "less_than_3",
+                  "3_to_6",
+                  "more_than_6",
+                  "not_sure"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emergency Fund Coverage"
+          },
           "emergency_fund_months_target": {
             "anyOf": [
               {
@@ -2485,6 +3735,96 @@
               }
             ],
             "title": "Emergency Fund Months Target"
+          },
+          "employment_status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "salaried",
+                  "self_employed",
+                  "business_owner",
+                  "student",
+                  "unemployed",
+                  "retired",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Employment Status"
+          },
+          "expected_retirement_age": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 30.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Retirement Age"
+          },
+          "financial_dependants": {
+            "anyOf": [
+              {
+                "enum": [
+                  "none",
+                  "one",
+                  "two",
+                  "three",
+                  "four_or_more"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Financial Dependants"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "has_children": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Has Children"
+          },
+          "health_insurance_status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "yes",
+                  "no",
+                  "not_sure"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Health Insurance Status"
           },
           "household_type": {
             "anyOf": [
@@ -2501,6 +3841,40 @@
               }
             ],
             "title": "Household Type"
+          },
+          "housing_status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "own_house",
+                  "rented_house"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Housing Status"
+          },
+          "income_predictability": {
+            "anyOf": [
+              {
+                "enum": [
+                  "very_predictable",
+                  "mostly_predictable",
+                  "varies_significantly",
+                  "seasonal_project",
+                  "no_income",
+                  "not_sure"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Income Predictability"
           },
           "job_stability": {
             "anyOf": [
@@ -2519,6 +3893,37 @@
             ],
             "title": "Job Stability"
           },
+          "life_insurance_status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "yes",
+                  "no",
+                  "not_sure"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Life Insurance Status"
+          },
+          "marital_status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "married",
+                  "not_married"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Marital Status"
+          },
           "monthly_family_support": {
             "anyOf": [
               {
@@ -2530,6 +3935,18 @@
               }
             ],
             "title": "Monthly Family Support"
+          },
+          "phone_number": {
+            "anyOf": [
+              {
+                "maxLength": 30,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone Number"
           },
           "planned_events": {
             "anyOf": [
@@ -2557,6 +3974,38 @@
               }
             ],
             "title": "Primary Earner Age"
+          },
+          "supports_father": {
+            "anyOf": [
+              {
+                "enum": [
+                  "yes",
+                  "no",
+                  "unsure"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supports Father"
+          },
+          "supports_mother": {
+            "anyOf": [
+              {
+                "enum": [
+                  "yes",
+                  "no",
+                  "unsure"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supports Mother"
           }
         },
         "title": "HouseholdProfileUpdateRequest",
@@ -2608,9 +4057,149 @@
         "title": "IncomeChange",
         "type": "object"
       },
-      "IncomeStream": {
+      "IncomeProjectionRequest": {
+        "description": "`plan_id` uses the signed-in user's saved plan; `plan` projects an explicit hypothetical plan.",
+        "properties": {
+          "horizon_months": {
+            "default": 60,
+            "maximum": 600.0,
+            "minimum": 1.0,
+            "title": "Horizon Months",
+            "type": "integer"
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Plan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "plan_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Id"
+          }
+        },
+        "title": "IncomeProjectionRequest",
+        "type": "object"
+      },
+      "IncomeProjectionResponse": {
         "additionalProperties": false,
         "properties": {
+          "first_month": {
+            "title": "First Month",
+            "type": "string"
+          },
+          "horizon_months": {
+            "title": "Horizon Months",
+            "type": "integer"
+          },
+          "plan_source": {
+            "title": "Plan Source",
+            "type": "string"
+          },
+          "total_projected_income": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Projected Income",
+            "type": "string"
+          },
+          "years": {
+            "items": {
+              "$ref": "#/components/schemas/IncomeYear"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "plan_source",
+          "horizon_months",
+          "first_month",
+          "total_projected_income",
+          "years"
+        ],
+        "title": "IncomeProjectionResponse",
+        "type": "object"
+      },
+      "IncomeStepUp": {
+        "additionalProperties": false,
+        "description": "From `year` (January) the stream's base amount is replaced by `amount`, in the stream's frequency.",
+        "properties": {
+          "amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Amount",
+            "type": "string"
+          },
+          "id": {
+            "pattern": "^[A-Za-z0-9_-]{1,40}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "year": {
+            "maximum": 2200.0,
+            "minimum": 1990.0,
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "year",
+          "amount"
+        ],
+        "title": "IncomeStepUp",
+        "type": "object"
+      },
+      "IncomeStream": {
+        "additionalProperties": false,
+        "description": "Planned (expected, take-home) income.\n\nTwo forms. A legacy stream has only `monthly_net` and the optional month `ends_after`; the plan-wide\n`income_growth_annual` applies to it exactly as before. A scheduled stream has `start_year` and\n`amount` + `frequency`, an optional inclusive `end_year`, its own optional `annual_growth`, and\noptional `step_ups`; the plan-wide growth is never applied to it. For scheduled streams `monthly_net`\nis derived (the initial amount's monthly equivalent) and any value sent is replaced.",
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount"
+          },
+          "annual_growth": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Growth"
+          },
+          "end_year": {
+            "anyOf": [
+              {
+                "maximum": 2200.0,
+                "minimum": 1990.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Year"
+          },
           "ends_after": {
             "anyOf": [
               {
@@ -2622,6 +4211,16 @@
               }
             ],
             "title": "Ends After"
+          },
+          "frequency": {
+            "default": "monthly",
+            "enum": [
+              "monthly",
+              "quarterly",
+              "yearly"
+            ],
+            "title": "Frequency",
+            "type": "string"
           },
           "id": {
             "pattern": "^[A-Za-z0-9_-]{1,40}$",
@@ -2638,6 +4237,27 @@
             "pattern": "^-?\\d+(\\.\\d+)?$",
             "title": "Monthly Net",
             "type": "string"
+          },
+          "start_year": {
+            "anyOf": [
+              {
+                "maximum": 2200.0,
+                "minimum": 1990.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Year"
+          },
+          "step_ups": {
+            "items": {
+              "$ref": "#/components/schemas/IncomeStepUp"
+            },
+            "maxItems": 60,
+            "title": "Step Ups",
+            "type": "array"
           }
         },
         "required": [
@@ -2646,6 +4266,37 @@
           "monthly_net"
         ],
         "title": "IncomeStream",
+        "type": "object"
+      },
+      "IncomeYear": {
+        "additionalProperties": false,
+        "properties": {
+          "annual_income": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Annual Income",
+            "type": "string"
+          },
+          "cumulative_income": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cumulative Income",
+            "type": "string"
+          },
+          "months_included": {
+            "title": "Months Included",
+            "type": "integer"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "months_included",
+          "annual_income",
+          "cumulative_income"
+        ],
+        "title": "IncomeYear",
         "type": "object"
       },
       "InsuranceDashboardSummary": {
@@ -3483,6 +5134,31 @@
         "title": "MarketQuoteResponse",
         "type": "object"
       },
+      "MaturityDecisionNeeded": {
+        "additionalProperties": false,
+        "properties": {
+          "investment_id": {
+            "title": "Investment Id",
+            "type": "string"
+          },
+          "matures": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "Matures",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "investment_id",
+          "name",
+          "matures"
+        ],
+        "title": "MaturityDecisionNeeded",
+        "type": "object"
+      },
       "MessageResponse": {
         "additionalProperties": false,
         "properties": {
@@ -3828,7 +5504,7 @@
             "items": {
               "$ref": "#/components/schemas/IncomeStream"
             },
-            "maxItems": 4,
+            "maxItems": 200,
             "minItems": 1,
             "title": "Income Streams",
             "type": "array"
@@ -4412,6 +6088,152 @@
         "title": "ProjectionSummary",
         "type": "object"
       },
+      "RecommendationComparisonRequest": {
+        "description": "Give `plan_id` to use the signed-in user's saved plan, or `plan` for an explicit hypothetical.",
+        "properties": {
+          "conservative_return_drop": {
+            "anyOf": [
+              {
+                "maximum": 0.2,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "default": "0.025",
+            "title": "Conservative Return Drop"
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Plan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "plan_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Id"
+          },
+          "scenario": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Scenario"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "RecommendationComparisonRequest",
+        "type": "object"
+      },
+      "RecommendationDifferences": {
+        "additionalProperties": false,
+        "properties": {
+          "additional_reserve_needed": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Additional Reserve Needed",
+            "type": "string"
+          },
+          "annual_return_drop": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Annual Return Drop",
+            "type": "string"
+          },
+          "delay_impacts": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Delay Impacts",
+            "type": "array"
+          },
+          "monthly_savings_increase": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Monthly Savings Increase",
+            "type": "string"
+          },
+          "summary_explanation": {
+            "title": "Summary Explanation",
+            "type": "string"
+          }
+        },
+        "required": [
+          "annual_return_drop",
+          "monthly_savings_increase",
+          "additional_reserve_needed",
+          "delay_impacts",
+          "summary_explanation"
+        ],
+        "title": "RecommendationDifferences",
+        "type": "object"
+      },
+      "RecommendationVariant": {
+        "additionalProperties": false,
+        "properties": {
+          "assumed_annual_return": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Assumed Annual Return",
+            "type": "string"
+          },
+          "delayed_count": {
+            "title": "Delayed Count",
+            "type": "integer"
+          },
+          "goals": {
+            "items": {
+              "$ref": "#/components/schemas/GoalRecommendationItem"
+            },
+            "title": "Goals",
+            "type": "array"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "on_track_count": {
+            "title": "On Track Count",
+            "type": "integer"
+          },
+          "recommended_reserve_months": {
+            "title": "Recommended Reserve Months",
+            "type": "integer"
+          },
+          "total_monthly_required": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Monthly Required",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "label",
+          "assumed_annual_return",
+          "recommended_reserve_months",
+          "total_monthly_required",
+          "on_track_count",
+          "delayed_count",
+          "goals"
+        ],
+        "title": "RecommendationVariant",
+        "type": "object"
+      },
       "RescueAlternativeItem": {
         "additionalProperties": false,
         "properties": {
@@ -4697,6 +6519,193 @@
           "assumptions"
         ],
         "title": "RescueResponse",
+        "type": "object"
+      },
+      "RiskAssessmentHistoryItem": {
+        "additionalProperties": false,
+        "properties": {
+          "completed_at": {
+            "title": "Completed At",
+            "type": "string"
+          },
+          "composite_stance": {
+            "title": "Composite Stance",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "risk_capacity": {
+            "title": "Risk Capacity",
+            "type": "string"
+          },
+          "risk_tolerance": {
+            "title": "Risk Tolerance",
+            "type": "string"
+          },
+          "scoring_version": {
+            "title": "Scoring Version",
+            "type": "string"
+          },
+          "tolerance_score": {
+            "title": "Tolerance Score",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "scoring_version",
+          "tolerance_score",
+          "risk_tolerance",
+          "risk_capacity",
+          "composite_stance",
+          "completed_at"
+        ],
+        "title": "RiskAssessmentHistoryItem",
+        "type": "object"
+      },
+      "RiskAssessmentResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "completed_at": {
+            "title": "Completed At",
+            "type": "string"
+          },
+          "composite_stance": {
+            "enum": [
+              "Conservative",
+              "Moderate",
+              "Aggressive"
+            ],
+            "title": "Composite Stance",
+            "type": "string"
+          },
+          "conflict_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conflict Note"
+          },
+          "explanations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Explanations",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "loss_reaction": {
+            "title": "Loss Reaction",
+            "type": "string"
+          },
+          "risk_capacity": {
+            "enum": [
+              "Low",
+              "Moderate",
+              "High",
+              "Not assessed"
+            ],
+            "title": "Risk Capacity",
+            "type": "string"
+          },
+          "risk_tolerance": {
+            "enum": [
+              "Conservative",
+              "Moderate",
+              "Aggressive"
+            ],
+            "title": "Risk Tolerance",
+            "type": "string"
+          },
+          "safety_growth": {
+            "title": "Safety Growth",
+            "type": "string"
+          },
+          "scoring_version": {
+            "title": "Scoring Version",
+            "type": "string"
+          },
+          "time_horizon": {
+            "title": "Time Horizon",
+            "type": "string"
+          },
+          "tolerance_score": {
+            "title": "Tolerance Score",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "scoring_version",
+          "loss_reaction",
+          "safety_growth",
+          "time_horizon",
+          "tolerance_score",
+          "risk_tolerance",
+          "risk_capacity",
+          "composite_stance",
+          "explanations",
+          "limitations",
+          "completed_at"
+        ],
+        "title": "RiskAssessmentResponse",
+        "type": "object"
+      },
+      "RiskAssessmentSubmitRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "loss_reaction": {
+            "enum": [
+              "sell_all",
+              "reduce_some",
+              "hold",
+              "invest_more"
+            ],
+            "title": "Loss Reaction",
+            "type": "string"
+          },
+          "safety_growth": {
+            "enum": [
+              "protect",
+              "balance",
+              "grow"
+            ],
+            "title": "Safety Growth",
+            "type": "string"
+          },
+          "time_horizon": {
+            "enum": [
+              "short",
+              "medium_short",
+              "medium",
+              "long"
+            ],
+            "title": "Time Horizon",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loss_reaction",
+          "safety_growth",
+          "time_horizon"
+        ],
+        "title": "RiskAssessmentSubmitRequest",
         "type": "object"
       },
       "RiskCapacityIndicatorResponse": {
@@ -6261,6 +8270,685 @@
         "summary": "Signup",
         "tags": [
           "auth"
+        ]
+      }
+    },
+    "/api/v1/calculators/compare": {
+      "post": {
+        "description": "Side-by-side totals. Each entry is valued alone: alternatives are never added to one another.",
+        "operationId": "compare_api_v1_calculators_compare_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalcCompareRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalcCompareResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Compare",
+        "tags": [
+          "calculators"
+        ]
+      }
+    },
+    "/api/v1/calculators/export": {
+      "post": {
+        "description": "The same result as /run, as CSV (UTF-8 with a byte-order mark so Excel reads the columns).",
+        "operationId": "export_csv_api_v1_calculators_export_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalculatorConfig"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Export Csv",
+        "tags": [
+          "calculators"
+        ]
+      }
+    },
+    "/api/v1/calculators/maturity-check": {
+      "post": {
+        "description": "Investments that mature before the common date and still need an explicit after-maturity decision.",
+        "operationId": "maturity_check_api_v1_calculators_maturity_check_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalculatorConfig"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MaturityDecisionNeeded"
+                  },
+                  "title": "Response Maturity Check Api V1 Calculators Maturity Check Post",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Maturity Check",
+        "tags": [
+          "calculators"
+        ]
+      }
+    },
+    "/api/v1/calculators/run": {
+      "post": {
+        "description": "Value every investment (and the compiled selection) in one pass.",
+        "operationId": "run_calculator_api_v1_calculators_run_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalculatorConfig"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalculatorResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Run Calculator",
+        "tags": [
+          "calculators"
+        ]
+      }
+    },
+    "/api/v1/calculators/scenarios": {
+      "get": {
+        "operationId": "list_scenarios_api_v1_calculators_scenarios_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CalcScenarioSummary"
+                  },
+                  "title": "Response List Scenarios Api V1 Calculators Scenarios Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Scenarios",
+        "tags": [
+          "calculators"
+        ]
+      },
+      "post": {
+        "operationId": "create_scenario_api_v1_calculators_scenarios_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalcScenarioIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalcScenarioOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Scenario",
+        "tags": [
+          "calculators"
+        ]
+      }
+    },
+    "/api/v1/calculators/scenarios/{scenario_id}": {
+      "delete": {
+        "operationId": "delete_scenario_api_v1_calculators_scenarios__scenario_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scenario_id",
+            "required": true,
+            "schema": {
+              "title": "Scenario Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Scenario",
+        "tags": [
+          "calculators"
+        ]
+      },
+      "get": {
+        "operationId": "get_scenario_api_v1_calculators_scenarios__scenario_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scenario_id",
+            "required": true,
+            "schema": {
+              "title": "Scenario Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalcScenarioOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Scenario",
+        "tags": [
+          "calculators"
+        ]
+      },
+      "put": {
+        "operationId": "update_scenario_api_v1_calculators_scenarios__scenario_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scenario_id",
+            "required": true,
+            "schema": {
+              "title": "Scenario Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalcScenarioIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalcScenarioOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Scenario",
+        "tags": [
+          "calculators"
         ]
       }
     },
@@ -8319,7 +11007,7 @@
         ]
       },
       "put": {
-        "description": "Save household composition, dependants and family support. Only the fields sent are stored.",
+        "description": "Save household composition, personal details, dependants and financial resilience.",
         "operationId": "update_household_profile_api_v1_household_profile_put",
         "requestBody": {
           "content": {
@@ -8396,7 +11084,7 @@
     },
     "/api/v1/household/risk-capacity": {
       "get": {
-        "description": "Risk capacity from the details the person provided, plus their recorded balances and loans.\n\nA detail that was not provided is left out of the assessment and said so. With no saved profile\nthe level is \"Not assessed\".",
+        "description": "Risk capacity from the details the person provided, plus their recorded balances and loans.\n\nA detail that was not provided is left out of the assessment and explicitly noted. With no saved profile\nthe level is 'Not assessed'.",
         "operationId": "get_risk_capacity_api_v1_household_risk_capacity_get",
         "responses": {
           "200": {
@@ -8458,6 +11146,153 @@
         "summary": "Get Risk Capacity",
         "tags": [
           "household"
+        ]
+      }
+    },
+    "/api/v1/income/projection": {
+      "post": {
+        "description": "Annual and cumulative planned income by calendar year for the first `horizon_months` months.",
+        "operationId": "income_projection_api_v1_income_projection_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncomeProjectionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncomeProjectionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Income Projection",
+        "tags": [
+          "income"
+        ]
+      }
+    },
+    "/api/v1/income/projection/csv": {
+      "post": {
+        "description": "The same projection as CSV: UTF-8 with a byte-order mark so Excel opens it with the right columns.",
+        "operationId": "income_projection_csv_api_v1_income_projection_csv_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncomeProjectionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Income Projection Csv",
+        "tags": [
+          "income"
         ]
       }
     },
@@ -9772,6 +12607,83 @@
         ]
       }
     },
+    "/api/v1/recommendations/conservative-comparison": {
+      "post": {
+        "description": "Compare baseline recommendations with a deterministic, more conservative variant.\n\nThe conservative variant applies a lower investment growth rate and an expanded defensive\nreserve buffer without modifying or overwriting the original plan or assessment records.",
+        "operationId": "compare_conservative_recommendations_api_v1_recommendations_conservative_comparison_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecommendationComparisonRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConservativeComparisonResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Compare Conservative Recommendations",
+        "tags": [
+          "recommendations"
+        ]
+      }
+    },
     "/api/v1/rescue/analyze": {
       "post": {
         "description": "Run constraint-aware rescue analysis to solve competing multi-goal conflicts.",
@@ -9847,6 +12759,221 @@
         "summary": "Analyze And Rescue",
         "tags": [
           "rescue"
+        ]
+      }
+    },
+    "/api/v1/risk/assessment": {
+      "post": {
+        "description": "Submit responses to the guided risk questionnaire, calculate scores, and persist a historical assessment record.",
+        "operationId": "submit_risk_assessment_api_v1_risk_assessment_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskAssessmentSubmitRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskAssessmentResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Submit Risk Assessment",
+        "tags": [
+          "risk-assessment"
+        ]
+      }
+    },
+    "/api/v1/risk/assessment/history": {
+      "get": {
+        "description": "Retrieve prior risk assessment results without overwriting previous history.",
+        "operationId": "get_risk_assessment_history_api_v1_risk_assessment_history_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RiskAssessmentHistoryItem"
+                  },
+                  "title": "Response Get Risk Assessment History Api V1 Risk Assessment History Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Risk Assessment History",
+        "tags": [
+          "risk-assessment"
+        ]
+      }
+    },
+    "/api/v1/risk/assessment/latest": {
+      "get": {
+        "description": "Retrieve the most recent completed risk assessment for the signed-in user.",
+        "operationId": "get_latest_risk_assessment_api_v1_risk_assessment_latest_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskAssessmentResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Latest Risk Assessment",
+        "tags": [
+          "risk-assessment"
         ]
       }
     },
