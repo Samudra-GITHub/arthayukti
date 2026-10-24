@@ -13,7 +13,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Compare Scenarios */
+        /**
+         * Compare Scenarios
+         * @description Two or three scenarios side by side, measured against the first.
+         */
         post: operations["compare_scenarios_api_v1_compare_post"];
         delete?: never;
         options?: never;
@@ -30,7 +33,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Create Fixes */
+        /**
+         * Create Fixes
+         * @description Verified minimal changes that bring the failing goals back on time.
+         */
         post: operations["create_fixes_api_v1_fixes_post"];
         delete?: never;
         options?: never;
@@ -764,15 +770,6 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Not available yet in this milestone. */
-            501: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
         };
     };
     create_fixes_api_v1_fixes_post: {
@@ -799,15 +796,6 @@ export interface operations {
             };
             /** @description The request is invalid. */
             422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Not available yet in this milestone. */
-            501: {
                 headers: {
                     [name: string]: unknown;
                 };

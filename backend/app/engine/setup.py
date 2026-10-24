@@ -103,8 +103,8 @@ def resolve(plan: Plan, scenario: Scenario | None) -> Resolved:
             if override.target_amount_today is not None:
                 target_today = override.target_amount_today
         deadline = deadline_index(plan.as_of, target_date)
-        if deadline < 2:
-            raise ValueError(f"goal {goal.id}: target_date must be after as_of")
+        if deadline < 1:
+            raise ValueError(f"goal {goal.id}: target_date must not be before as_of")
         if deadline > MAX_HORIZON_MONTHS:
             raise ValueError(f"goal {goal.id}: target_date is too far away")
         if goal.inflation_linked:

@@ -31,13 +31,21 @@ def mutate_and_expect_error(mutator, fragment: str) -> None:
     assert fragment in str(excinfo.value)
 
 
-def test_target_date_must_be_after_as_of():
+def test_target_date_must_not_be_before_as_of():
     mutate_and_expect_error(
-        lambda d: d["goals"][0].update(target_date="2026-11"), "target_date must be after as_of"
+        lambda d: d["goals"][0].update(target_date="2026-10"),
+        "target_date must not be before as_of",
     )
     mutate_and_expect_error(
-        lambda d: d["goals"][0].update(target_date="2025-01"), "target_date must be after as_of"
+        lambda d: d["goals"][0].update(target_date="2025-01"),
+        "target_date must not be before as_of",
     )
+
+
+def test_a_goal_may_be_due_in_the_first_plan_month():
+    data = base()
+    data["goals"][0]["target_date"] = data["as_of"]
+    Plan.model_validate(data)
 
 
 def test_target_date_must_be_within_the_horizon():

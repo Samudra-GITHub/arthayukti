@@ -320,7 +320,7 @@ def test_goal_override_moves_the_deadline():
         {"priority_order": ["g", "ghost"]},
         {"priority_order": []},
         {"goal_overrides": [{"goal_id": "ghost", "target_date": "2028-01"}]},
-        {"goal_overrides": [{"goal_id": "g", "target_date": "2026-11"}]},
+        {"goal_overrides": [{"goal_id": "g", "target_date": "2026-10"}]},
         {
             "events": [
                 {

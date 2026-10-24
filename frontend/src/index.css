@@ -1,1 +1,55 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/baloo-2';
+@import '@fontsource-variable/noto-sans-devanagari';
+
+@theme {
+  --color-cream: #fff8ec;
+  --color-paper: #fffdfa;
+  --color-sand: #f4e8d5;
+  --color-line: #ded4c3;
+  --color-ink: #1f2a5a;
+  --color-muted: #62677a;
+  --color-turmeric: #f2a32b;
+  --color-ontime: #1e9e6a;
+  --color-late: #d9573b;
+  --color-sage: #eaf4e9;
+  --color-blush: #fcede4;
+  --color-bar: #9cced5;
+
+  --font-display: 'Baloo 2 Variable', 'Noto Sans Devanagari Variable', system-ui, sans-serif;
+  --font-body: 'Noto Sans Devanagari Variable', system-ui, sans-serif;
+
+  --shadow-card: 0 4px 16px 0 rgba(98, 75, 41, 0.06);
+}
+
+@layer base {
+  html {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  button,
+  select,
+  input {
+    font: inherit;
+    color: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-turmeric);
+    outline-offset: 2px;
+  }
+}

@@ -58,7 +58,7 @@ S_t = sum(income_t) - sum(expenses_t) - sum(commitments_t)
    - Pass 2 (accelerate): leftover surplus goes to unfunded goals in priority order, capped at remaining need.
    - Anything left over becomes free cash.
 3. If `S_t < 0`, cover the deficit in this order: free cash, then emergency-fund goals (by priority), then other unrealised goals from lowest priority up. Any remainder is an `uncovered_deficit` and is reported, never hidden.
-4. Realisation: a goal is realised when `balance >= N_t`. Its funds are committed, any excess is released to free cash, and it is locked (excluded from deficit draws). Emergency-fund goals are revolving: topped up to `N_t`, usable in deficits, refilled by priority afterwards.
+4. Realisation: a goal is realised when `balance >= N_t`. Its funds are committed, any excess is released to free cash, and it is locked (excluded from deficit draws). Emergency-fund goals are revolving: topped up to `N_t`, usable in deficits, refilled by priority afterwards. A revolving goal counts as on time only if it is still funded at its deadline; if a shock has drawn it down by then, it completes when it is next refilled.
 
 Rounding: all amounts are quantized to 0.01 (half-up). Only `required` rounds up.
 
@@ -70,6 +70,8 @@ Rounding: all amounts are quantized to 0.01 (half-up). Only `required` rounds up
 - `crowded_out_by` adds, for each month in which a goal received less than its required amount, what each higher-ranked goal was paid in pass 1.
 - `average_monthly_contribution` is total contributed divided by the months to completion, or by the months to the deadline if the goal never completes.
 - Interest is rounded to the paisa each month, so a balance can differ by a paisa or two from unrounded compounding. The test suite checks the engine against an independent month-by-month ledger.
+- Fix options (`/fixes`): one extra-savings option, plus one delay option and one reduce-target option for each failing goal, each verified by a re-run. They are ranked by `normalised_cost`, then by lever order and goal priority. If none resolves everything, options are ranked by how many goals stay late.
+- Comparison (`/compare`) measures each scenario against the first: months of shift in completion date, and the change in today's-money shortfall.
 - Pass 2 (accelerate) means a household with spare surplus completes goals well before their deadlines. A shock only bites once that slack is used up.
 
 ## 7. Definitions
@@ -105,7 +107,7 @@ For each goal G, move G to priority 1 (others keep relative order), re-run the e
 
 ## 11. Edge cases
 
-Target date on or before `as_of` is rejected. A goal already funded at month 1 completes in month 1. Equal deadlines are resolved by priority, then id. Negative surplus every month means no contributions and `null` completion. `r = 0` uses the linear branch. Total savings is derived (`unassigned_savings` plus the sum of each goal's `current_savings`), never an input, so it cannot be inconsistent. All outputs are deterministic: no randomness, no floats, stable sorting.
+A target date before `as_of` is rejected; a goal may be due in the plan's first month. A goal already funded at month 1 completes in month 1. Equal deadlines are resolved by priority, then id. Negative surplus every month means no contributions and `null` completion. `r = 0` uses the linear branch. Total savings is derived (`unassigned_savings` plus the sum of each goal's `current_savings`), never an input, so it cannot be inconsistent. All outputs are deterministic: no randomness, no floats, stable sorting.
 
 ## 12. Hand-checked reference cases
 

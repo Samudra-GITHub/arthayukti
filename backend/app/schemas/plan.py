@@ -98,8 +98,8 @@ class Plan(ApiModel):
         as_of_index = month_to_index(self.as_of)
         for goal in self.goals:
             deadline = deadline_index(self.as_of, goal.target_date)
-            if deadline < 2:
-                raise ValueError(f"goal {goal.id}: target_date must be after as_of")
+            if deadline < 1:
+                raise ValueError(f"goal {goal.id}: target_date must not be before as_of")
             if deadline > MAX_HORIZON_MONTHS:
                 raise ValueError(
                     f"goal {goal.id}: target_date is more than {MAX_HORIZON_MONTHS} months away"

@@ -24,11 +24,11 @@ Codes in use: `validation_error` (422), `scenario_invalid` (422), `not_found` (4
 |---|---|---|
 | `GET /health` | Liveness | Implemented (M0) |
 | `GET /samples`, `GET /samples/{id}` | Bundled plans and preset scenarios | Implemented (M0) |
-| `POST /projections` | Baseline, shock and reprioritisation: a plan plus an optional scenario | Implemented (M1). An inconsistent scenario returns 422 `scenario_invalid` |
-| `POST /tradeoffs` | Trade-off matrix | Contract only, M3 |
-| `POST /fixes` | Verified minimal-fix options | Contract only, M3-M4 |
-| `POST /compare` | 2-3 scenarios side by side | Contract only, M3 |
-| `POST /plans`, `GET /plans`, `GET /plans/{id}`, `PUT /plans/{id}` | Save, list, load, edit plans | Contract only, M3 |
+| `POST /projections` | Baseline, shock and reprioritisation: a plan plus an optional scenario | Implemented. An inconsistent scenario returns 422 `scenario_invalid` |
+| `POST /tradeoffs` | Trade-off matrix | Contract only |
+| `POST /fixes` | Verified minimal-fix options | Implemented |
+| `POST /compare` | 2-3 scenarios side by side | Implemented |
+| `POST /plans`, `GET /plans`, `GET /plans/{id}`, `PUT /plans/{id}` | Save, list, load, edit plans | Contract only |
 
 "Contract only" endpoints validate their input, then answer `501 not_implemented`. They never return invented results.
 
@@ -70,7 +70,7 @@ Expected `POST /fixes` options for the same plan, using the default limits (extr
 ## Validation rules
 
 - 1-8 goals. Priorities unique and running 1..n with no gaps. Ids unique within each list.
-- `target_date` after `as_of` and at most 600 months away.
+- `target_date` not before `as_of` and at most 600 months away.
 - Amounts from 0 to Rs 100 crore with at most 2 decimals. Targets must be above 0.
 - Inflation and return rates between 0 and 0.30. Income and expense growth between -0.10 and 0.30.
 - Event month ranges ordered and within 600 months. A scenario carries at most 20 events.

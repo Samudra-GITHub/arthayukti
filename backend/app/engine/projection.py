@@ -49,7 +49,8 @@ class _Goal:
     targets: list[Decimal]  # nominal target N_t for t = 0..horizon
     balance: Decimal
     realised: bool = False
-    completion_t: int | None = None
+    first_reached_t: int | None = None
+    reached_after_deadline_t: int | None = None
     contributed: Decimal = ZERO
     withdrawn: Decimal = ZERO
     balance_at_deadline: Decimal = ZERO
@@ -194,8 +195,10 @@ def _project(resolved: Resolved, include_monthly: bool) -> ProjectionResult:
         for goal in goals:
             if goal.realised or goal.balance < goal.targets[t]:
                 continue
-            if goal.completion_t is None:
-                goal.completion_t = t
+            if goal.first_reached_t is None:
+                goal.first_reached_t = t
+            if t > goal.spec.deadline and goal.reached_after_deadline_t is None:
+                goal.reached_after_deadline_t = t
             if not goal.spec.revolving:
                 goal.realised = True
                 free_cash += goal.balance - goal.targets[t]
@@ -272,12 +275,28 @@ def _project(resolved: Resolved, include_monthly: bool) -> ProjectionResult:
     )
 
 
+def _completion_t(goal: _Goal) -> int | None:
+    """Month the goal is funded.
+
+    A locked goal completes in the month it is realised. A revolving goal (an emergency fund)
+    can be drawn down, so it only counts as on time if it is still funded at its deadline;
+    otherwise it completes when it is next refilled.
+    """
+    if not goal.spec.revolving:
+        return goal.first_reached_t
+    target_at_deadline = goal.targets[goal.spec.deadline]
+    if goal.balance_at_deadline >= target_at_deadline:
+        return goal.first_reached_t
+    return goal.reached_after_deadline_t
+
+
 def _outcome(goal: _Goal, resolved: Resolved, monthly_return: Decimal) -> GoalOutcome:
     spec = goal.spec
     deadline = spec.deadline
     target_at_deadline = goal.targets[deadline]
-    completed = goal.completion_t is not None
-    on_time = completed and goal.completion_t <= deadline
+    completion_t = _completion_t(goal)
+    completed = completion_t is not None
+    on_time = completed and completion_t <= deadline
 
     if on_time:
         status = "on_track"
@@ -288,7 +307,7 @@ def _outcome(goal: _Goal, resolved: Resolved, monthly_return: Decimal) -> GoalOu
 
     shortfall = ZERO if on_time else max(ZERO, target_at_deadline - goal.balance_at_deadline)
     inflation_index = (1 + spec.annual_inflation / 12) ** deadline
-    months_counted = goal.completion_t if completed else deadline
+    months_counted = completion_t if completed else deadline
 
     return GoalOutcome(
         goal_id=spec.id,
@@ -301,8 +320,8 @@ def _outcome(goal: _Goal, resolved: Resolved, monthly_return: Decimal) -> GoalOu
         shortfall_at_deadline_nominal=shortfall,
         shortfall_at_deadline_today=quantize(shortfall / inflation_index),
         required_monthly_level_standalone=_standalone_required(goal, monthly_return),
-        projected_completion=resolved.month_label(goal.completion_t) if completed else None,
-        delay_months=max(0, goal.completion_t - deadline) if completed else None,
+        projected_completion=resolved.month_label(completion_t) if completed else None,
+        delay_months=max(0, completion_t - deadline) if completed else None,
         average_monthly_contribution=quantize(goal.contributed / months_counted),
         total_contributed=goal.contributed,
         total_withdrawn=goal.withdrawn,

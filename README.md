@@ -8,21 +8,20 @@ Built for Srujana Hackathon 2026 (Finance track, problem F-02: Multi-Goal Financ
 
 ## Status
 
-Milestone M1 (the calculation engine) is done. Next: the frontend screens.
+The engine, the API and the screens from the design are built. Deployment is not done yet.
 
 | Part | State |
 |---|---|
-| Financial model | Frozen: [docs/FINANCIAL_MODEL.md](docs/FINANCIAL_MODEL.md) |
-| API contract | Frozen: [docs/API.md](docs/API.md), [contracts/openapi.json](contracts/openapi.json) |
-| Backend | Projection engine and `POST /api/v1/projections` are live. Trade-offs, fixes, compare and saved plans are contract-only (501) |
-| Frontend | Vite, React, TypeScript and Tailwind shell with generated API types. Screens not built yet |
+| Financial model | [docs/FINANCIAL_MODEL.md](docs/FINANCIAL_MODEL.md) |
+| API | Projections, fixes and compare are live: [docs/API.md](docs/API.md). Trade-offs and saved plans are contract-only (501) |
+| Frontend | All screens from the design, in English and Hindi, at phone, tablet and desktop widths |
 | Deployment | Not done yet |
 
 ## Layout
 
 ```
 backend/     FastAPI app, Pydantic schemas, engine (app/engine), tests
-frontend/    React app
+frontend/    React app (screens, English and Hindi copy, API client)
 contracts/   openapi.json (generated) and sample plans
 docs/        financial model, API notes, plans
 ```

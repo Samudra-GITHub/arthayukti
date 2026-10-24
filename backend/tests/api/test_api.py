@@ -32,7 +32,7 @@ def test_sample_detail_returns_a_valid_plan_with_string_amounts():
     assert response.status_code == 200
     body = response.json()
     assert len(body["plan"]["goals"]) == 4
-    assert body["plan"]["income_streams"][0]["monthly_net"] == "110000.00"
+    assert body["plan"]["income_streams"][0]["monthly_net"] == "120000.00"
     assert len(body["scenarios"]) == 2
 
 
@@ -70,13 +70,57 @@ def test_invalid_bodies_get_the_validation_error_shape(method, path, body):
     ("method", "path"),
     [
         ("post", "/api/v1/tradeoffs"),
-        ("post", "/api/v1/fixes"),
     ],
 )
 def test_later_calculation_endpoints_are_not_implemented_yet(method, path):
     response = getattr(client, method)(path, json={"plan": sample_plan()})
     assert response.status_code == 501
     assert response.json()["error"]["code"] == "not_implemented"
+
+
+def test_fixes_returns_verified_options_for_the_delayed_goal():
+    response = client.post("/api/v1/fixes", json={"plan": sample_plan()})
+    assert response.status_code == 200
+    body = response.json()
+    assert body["needs_fix"] is True
+    assert body["recommended_option_id"] == "delay_goal:home_deposit"
+    levers = {option["lever"]: option for option in body["options"]}
+    assert levers["extra_savings"]["magnitude"] == "10000.00"
+    assert levers["extra_savings"]["scenario_delta"]["extra_monthly_savings"] == "10000.00"
+
+
+def test_fixes_says_so_when_nothing_needs_fixing():
+    scenario = {"name": "Save more", "extra_monthly_savings": "10000.00"}
+    response = client.post("/api/v1/fixes", json={"plan": sample_plan(), "scenario": scenario})
+    assert response.status_code == 200
+    assert response.json()["needs_fix"] is False
+
+
+def test_fixes_reports_an_inconsistent_scenario_as_422():
+    scenario = {"name": "Bad", "priority_order": ["ghost"]}
+    response = client.post("/api/v1/fixes", json={"plan": sample_plan(), "scenario": scenario})
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "scenario_invalid"
+
+
+def test_compare_shows_the_difference_between_scenarios():
+    scenarios = [
+        {"name": "As is"},
+        {"name": "Save more", "extra_monthly_savings": "10000.00"},
+    ]
+    response = client.post("/api/v1/compare", json={"plan": sample_plan(), "scenarios": scenarios})
+    assert response.status_code == 200
+    body = response.json()
+    assert [entry["scenario_name"] for entry in body["results"]] == ["As is", "Save more"]
+    assert body["diffs"][0]["completion_shift_months"] == -4
+    assert body["diffs"][0]["shortfall_change_today"] == "-120000.00"
+
+
+def test_compare_needs_two_to_three_scenarios():
+    response = client.post(
+        "/api/v1/compare", json={"plan": sample_plan(), "scenarios": [{"name": "Only one"}]}
+    )
+    assert response.status_code == 422
 
 
 def test_projection_returns_the_hand_checked_result():

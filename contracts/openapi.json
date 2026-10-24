@@ -1718,6 +1718,7 @@
   "paths": {
     "/api/v1/compare": {
       "post": {
+        "description": "Two or three scenarios side by side, measured against the first.",
         "operationId": "compare_scenarios_api_v1_compare_post",
         "requestBody": {
           "content": {
@@ -1749,16 +1750,6 @@
               }
             },
             "description": "The request is invalid."
-          },
-          "501": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Not available yet in this milestone."
           }
         },
         "summary": "Compare Scenarios",
@@ -1769,6 +1760,7 @@
     },
     "/api/v1/fixes": {
       "post": {
+        "description": "Verified minimal changes that bring the failing goals back on time.",
         "operationId": "create_fixes_api_v1_fixes_post",
         "requestBody": {
           "content": {
@@ -1800,16 +1792,6 @@
               }
             },
             "description": "The request is invalid."
-          },
-          "501": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Not available yet in this milestone."
           }
         },
         "summary": "Create Fixes",

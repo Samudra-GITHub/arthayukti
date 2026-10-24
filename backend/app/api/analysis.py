@@ -1,8 +1,10 @@
-"""Calculation endpoints. Projections are live; the rest follow in M3-M4."""
+"""Calculation endpoints. The trade-off matrix follows in a later milestone."""
 
 from fastapi import APIRouter
 
 from app.api.common import ERROR_RESPONSES, VALIDATION_RESPONSES, not_implemented
+from app.engine.compare import compare
+from app.engine.fixes import find_fixes
 from app.engine.projection import project
 from app.errors import ApiError
 from app.schemas.requests import (
@@ -30,11 +32,19 @@ def create_tradeoffs(request: TradeoffRequest) -> TradeoffResult:
     raise not_implemented("The trade-off matrix")
 
 
-@router.post("/fixes", response_model=FixResult, responses=ERROR_RESPONSES)
+@router.post("/fixes", response_model=FixResult, responses=VALIDATION_RESPONSES)
 def create_fixes(request: FixRequest) -> FixResult:
-    raise not_implemented("Minimal fixes")
+    """Verified minimal changes that bring the failing goals back on time."""
+    try:
+        return find_fixes(request.plan, request.scenario)
+    except ValueError as error:
+        raise ApiError(422, "scenario_invalid", str(error)) from error
 
 
-@router.post("/compare", response_model=CompareResult, responses=ERROR_RESPONSES)
+@router.post("/compare", response_model=CompareResult, responses=VALIDATION_RESPONSES)
 def compare_scenarios(request: CompareRequest) -> CompareResult:
-    raise not_implemented("Scenario comparison")
+    """Two or three scenarios side by side, measured against the first."""
+    try:
+        return compare(request.plan, request.scenarios)
+    except ValueError as error:
+        raise ApiError(422, "scenario_invalid", str(error)) from error
