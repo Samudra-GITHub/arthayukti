@@ -61,4 +61,4 @@ No account exists by default. To create one for local work only, set `SEED_DEMO_
 
 ## Password reset link
 
-The e-mail contains `FRONTEND_BASE_URL/#/reset-password?token=...`. The frontend's reset screen reads the token once and removes it from the address bar. There is no screen yet for *asking* for a reset (no sign-in screens exist), so the request step is API-only for now.
+The e-mail contains `FRONTEND_BASE_URL/#/reset-password?token=...`. The frontend's reset screen reads the token once and removes it from the address bar. The "Forgot your password?" link on the sign-in screen asks for the reset; the e-mail link then opens the reset screen.

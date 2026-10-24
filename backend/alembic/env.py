@@ -22,7 +22,8 @@ from app.config import settings
 from app.db.models import Base
 
 target_metadata = Base.metadata
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+# configparser treats "%" as interpolation, so a percent-encoded password must be doubled.
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL.replace("%", "%%"))
 
 
 def run_migrations_offline() -> None:
