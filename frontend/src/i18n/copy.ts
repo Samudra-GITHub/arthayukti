@@ -4,7 +4,7 @@
 export interface Copy {
   htmlLang: string
   speechLang: string
-  nav: { myPlan: string; whatIf: string; compare: string }
+  nav: { myPlan: string; whatIf: string; compare: string; tradeoffs: string }
   listen: string
   family: string
   footer: { example: string; scope: string; legal: string }
@@ -193,12 +193,27 @@ export interface Copy {
     onTime: string
     lateBy: (months: number) => string
   }
+  tradeoffs: {
+    title: string
+    subtitle: (after: string) => string
+    note: string
+    rowTitle: (goal: string) => string
+    current: string
+    leastDelay: string
+    allOnTime: string
+    waits: (goal: string, months: number | null) => string
+    was: (status: string) => string
+    orderLine: (goals: string) => string
+    useOrder: string
+    backToPlan: string
+    unavailable: string
+  }
 }
 
 const en: Copy = {
   htmlLang: 'en',
   speechLang: 'en-IN',
-  nav: { myPlan: 'My plan', whatIf: 'What if', compare: 'Compare' },
+  nav: { myPlan: 'My plan', whatIf: 'What if', compare: 'Compare', tradeoffs: 'Who goes first' },
   listen: 'Listen',
   family: 'Arjun & Meera',
   footer: {
@@ -409,12 +424,32 @@ const en: Copy = {
     onTime: 'On time',
     lateBy: (months) => (months === 1 ? '1 month late' : `${months} months late`),
   },
+  tradeoffs: {
+    title: 'What if a different dream goes first?',
+    subtitle: (after) => `${after} • every order, side by side`,
+    note: 'Each card runs your plan again with that dream first. Nothing changes until you choose an order.',
+    rowTitle: (goal) => `Put ${goal} first`,
+    current: 'Your current order',
+    leastDelay: 'Least total delay',
+    allOnTime: 'Every dream stays on time.',
+    waits: (goal, months) =>
+      months === null
+        ? `${goal} is out of reach.`
+        : months === 1
+          ? `${goal} waits 1 month.`
+          : `${goal} waits ${months} months.`,
+    was: (status) => `Now: ${status}`,
+    orderLine: (goals) => `Order: ${goals}`,
+    useOrder: 'Use this order',
+    backToPlan: 'Back to my plan',
+    unavailable: 'The order calculator is not available yet. Please try again later.',
+  },
 }
 
 const hi: Copy = {
   htmlLang: 'hi',
   speechLang: 'hi-IN',
-  nav: { myPlan: 'मेरी योजना', whatIf: 'अगर ऐसा हो', compare: 'तुलना करें' },
+  nav: { myPlan: 'मेरी योजना', whatIf: 'अगर ऐसा हो', compare: 'तुलना करें', tradeoffs: 'किसे पहले?' },
   listen: 'सुनें',
   family: 'अर्जुन और मीरा',
   footer: {
@@ -624,6 +659,22 @@ const hi: Copy = {
     backToFixes: 'उपायों पर वापस',
     onTime: 'समय पर',
     lateBy: (months) => `${months} महीने देर`,
+  },
+  tradeoffs: {
+    title: 'अगर कोई दूसरा सपना पहले आए?',
+    subtitle: (after) => `${after} • हर क्रम साथ-साथ`,
+    note: 'हर कार्ड आपकी योजना को उस सपने को पहले रखकर फिर से चलाता है। आप क्रम चुनें, तब तक कुछ नहीं बदलता।',
+    rowTitle: (goal) => `${goal} को पहले रखें`,
+    current: 'आपका मौजूदा क्रम',
+    leastDelay: 'कुल देरी सबसे कम',
+    allOnTime: 'हर सपना समय पर रहता है।',
+    waits: (goal, months) =>
+      months === null ? `${goal} पहुँच से बाहर है।` : `${goal} ${months} महीने रुकता है।`,
+    was: (status) => `अभी: ${status}`,
+    orderLine: (goals) => `क्रम: ${goals}`,
+    useOrder: 'यह क्रम चुनें',
+    backToPlan: 'मेरी योजना पर वापस',
+    unavailable: 'क्रम वाला कैलकुलेटर अभी उपलब्ध नहीं है। कृपया बाद में फिर कोशिश करें।',
   },
 }
 

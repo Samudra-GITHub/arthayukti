@@ -5,6 +5,7 @@ import type {
   ProjectionResult,
   SampleDetail,
   Scenario,
+  TradeoffResult,
 } from './types'
 
 const BASE = import.meta.env.VITE_API_BASE_URL ?? ''
@@ -61,4 +62,6 @@ export const api = {
     post<FixResult>('/fixes', { plan, scenario }, signal),
   compare: (plan: Plan, scenarios: Scenario[], signal?: AbortSignal) =>
     post<CompareResult>('/compare', { plan, scenarios }, signal),
+  tradeoffs: (plan: Plan, scenario: Scenario | undefined, signal?: AbortSignal) =>
+    post<TradeoffResult>('/tradeoffs', { plan, scenario }, signal),
 }

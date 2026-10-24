@@ -11,10 +11,11 @@ interface LayoutProps {
   children: ReactNode
 }
 
-const NAV: { route: Route; key: 'myPlan' | 'whatIf' | 'compare'; covers: Route[] }[] = [
+const NAV: { route: Route; key: 'myPlan' | 'whatIf' | 'compare' | 'tradeoffs'; covers: Route[] }[] = [
   { route: 'plan', key: 'myPlan', covers: ['plan'] },
   { route: 'what-if', key: 'whatIf', covers: ['what-if', 'fixes'] },
   { route: 'compare', key: 'compare', covers: ['compare'] },
+  { route: 'tradeoffs', key: 'tradeoffs', covers: ['tradeoffs'] },
 ]
 
 export function Layout({ route, navigate, speak, children }: LayoutProps) {
@@ -39,7 +40,7 @@ export function Layout({ route, navigate, speak, children }: LayoutProps) {
             <ListenButton speak={speak} />
             <nav
               aria-label="Main"
-              className="flex min-h-14 flex-1 items-center justify-end gap-6 sm:gap-8"
+              className="flex min-h-14 flex-1 flex-wrap items-center justify-end gap-x-6 gap-y-1 sm:gap-x-8"
             >
               {NAV.map((item) => (
                 <button

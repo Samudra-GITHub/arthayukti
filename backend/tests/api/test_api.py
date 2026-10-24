@@ -24,7 +24,7 @@ def test_samples_are_listed():
     response = client.get("/api/v1/samples")
     assert response.status_code == 200
     ids = {item["id"] for item in response.json()}
-    assert {"household", "tiny_delayed_goal"} <= ids
+    assert {"household", "tiny_delayed_goal", "family_stretched"} <= ids
 
 
 def test_sample_detail_returns_a_valid_plan_with_string_amounts():
@@ -34,6 +34,15 @@ def test_sample_detail_returns_a_valid_plan_with_string_amounts():
     assert len(body["plan"]["goals"]) == 4
     assert body["plan"]["income_streams"][0]["monthly_net"] == "120000.00"
     assert len(body["scenarios"]) == 2
+
+
+def test_stretched_family_sample_has_more_dreams_than_money():
+    body = client.get("/api/v1/samples/family_stretched").json()
+    assert [goal["id"] for goal in body["plan"]["goals"]] == ["emergency", "education", "home"]
+    result = client.post("/api/v1/projections", json={"plan": body["plan"]}).json()
+    assert result["summary"]["overcommitment_ratio"] == "1.6389"
+    late = {g["goal_id"]: g["delay_months"] for g in result["goals"] if g["status"] != "on_track"}
+    assert late == {"home": 5}
 
 
 def test_unknown_sample_uses_the_error_shape():

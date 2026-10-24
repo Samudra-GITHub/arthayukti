@@ -35,6 +35,8 @@ export interface Store {
   setGoalAmount: (goalId: string, amount: string) => void
   setGoalDate: (goalId: string, month: string) => void
   moveGoal: (goalId: string, direction: 'up' | 'down') => void
+  /** Makes the first goal in the list priority 1, the next priority 2, and so on. */
+  applyOrder: (goalIds: string[]) => void
   resetPlan: () => void
 }
 

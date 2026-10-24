@@ -7,6 +7,7 @@ import { Home } from './pages/Home'
 import { PlanPage } from './pages/Plan'
 import { Dreams, MoneyIn, MoneyOut } from './pages/Setup'
 import { WhatIfPage } from './pages/WhatIf'
+import { TradeoffsPage } from './pages/Tradeoffs'
 import { StoreProvider } from './state/store'
 import { useStore } from './state/useStore'
 
@@ -37,6 +38,8 @@ function Screens() {
       return <FixesPage navigate={navigate} />
     case 'compare':
       return <ComparePage navigate={navigate} />
+    case 'tradeoffs':
+      return <TradeoffsPage navigate={navigate} />
     default:
       return <Home navigate={navigate} />
   }

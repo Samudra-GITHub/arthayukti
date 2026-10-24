@@ -9,6 +9,7 @@ export type Route =
   | 'what-if'
   | 'fixes'
   | 'compare'
+  | 'tradeoffs'
 
 const ROUTES: Route[] = [
   'home',
@@ -19,6 +20,7 @@ const ROUTES: Route[] = [
   'what-if',
   'fixes',
   'compare',
+  'tradeoffs',
 ]
 
 export function parseRoute(hash: string): Route {

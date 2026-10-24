@@ -158,6 +158,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     [update],
   )
 
+  const applyOrder = useCallback(
+    (goalIds: string[]) =>
+      update((current) => ({
+        ...current,
+        goals: current.goals.map((goal) => {
+          const rank = goalIds.indexOf(goal.id)
+          return rank < 0 ? goal : { ...goal, priority: rank + 1 }
+        }),
+      })),
+    [update],
+  )
+
   const resetPlan = useCallback(() => {
     if (sample) setPlan(sample.plan)
     setChoiceState('normal')
@@ -185,6 +197,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setGoalAmount,
     setGoalDate,
     moveGoal,
+    applyOrder,
     resetPlan,
   }
 
