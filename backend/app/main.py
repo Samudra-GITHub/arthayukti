@@ -1,12 +1,37 @@
+import logging
 import os
+import uuid
+from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
-from app.api import analysis, health, plans, samples
-from app.errors import register_error_handlers
+from app.api import (
+    ai,
+    analysis,
+    auth,
+    financials,
+    health,
+    insurance,
+    market,
+    plans,
+    rescue,
+    samples,
+)
+from app.config import settings
+from app.db.init_db import seed_demo_user_if_enabled
+from app.errors import ErrorBody, ErrorResponse, register_error_handlers
 
-DEFAULT_ORIGINS = "http://localhost:5173,http://127.0.0.1:5173"
+logger = logging.getLogger("arthayukti")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # The schema is created by `alembic upgrade head`, never here. The only startup work is the
+    # optional development demo account, which is off unless explicitly configured.
+    seed_demo_user_if_enabled()
+    yield
 
 
 def create_app() -> FastAPI:
@@ -18,17 +43,48 @@ def create_app() -> FastAPI:
             "Every number is reproducible and every suggested fix is verified. "
             "Illustrative, not financial advice."
         ),
+        lifespan=lifespan,
     )
-    origins = os.environ.get("ALLOWED_ORIGINS", DEFAULT_ORIGINS).split(",")
+
+    origins = os.environ.get("ALLOWED_ORIGINS", settings.ALLOWED_ORIGINS).split(",")
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[origin.strip() for origin in origins if origin.strip()],
-        allow_methods=["GET", "POST", "PUT"],
-        allow_headers=["Content-Type"],
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allow_headers=["Content-Type", "Authorization", "X-Request-ID"],
+        expose_headers=["X-Request-ID", "Retry-After"],
     )
+
+    @app.middleware("http")
+    async def limit_body_and_add_request_id(request: Request, call_next):
+        req_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())
+        declared = request.headers.get("content-length")
+        if declared and declared.isdigit() and int(declared) > settings.MAX_REQUEST_BYTES:
+            body = ErrorResponse(
+                error=ErrorBody(code="payload_too_large", message="The request is too large.")
+            )
+            response = JSONResponse(status_code=413, content=body.model_dump(mode="json"))
+        else:
+            response = await call_next(request)
+        response.headers["X-Request-ID"] = req_id
+        return response
+
     register_error_handlers(app)
-    for module in (health, samples, analysis, plans):
+
+    for module in (
+        health,
+        samples,
+        analysis,
+        plans,
+        auth,
+        insurance,
+        financials,
+        rescue,
+        market,
+        ai,
+    ):
         app.include_router(module.router, prefix="/api/v1")
+
     return app
 
 

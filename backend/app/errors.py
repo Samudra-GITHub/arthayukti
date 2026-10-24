@@ -35,9 +35,17 @@ class ApiError(Exception):
         self.message = message
 
 
-def _response(status_code: int, code: str, message: str, details: list | None = None):
+def _response(
+    status_code: int,
+    code: str,
+    message: str,
+    details: list | None = None,
+    headers: dict[str, str] | None = None,
+):
     body = ErrorResponse(error=ErrorBody(code=code, message=message, details=details or []))
-    return JSONResponse(status_code=status_code, content=body.model_dump(mode="json"))
+    return JSONResponse(
+        status_code=status_code, content=body.model_dump(mode="json"), headers=headers
+    )
 
 
 def register_error_handlers(app: FastAPI) -> None:
@@ -55,8 +63,10 @@ def register_error_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(StarletteHTTPException)
     async def _http_error(_: Request, exc: StarletteHTTPException):
-        code = "not_found" if exc.status_code == 404 else "http_error"
-        return _response(exc.status_code, code, str(exc.detail))
+        code = {401: "unauthorized", 403: "forbidden", 404: "not_found", 429: "rate_limited"}.get(
+            exc.status_code, "http_error"
+        )
+        return _response(exc.status_code, code, str(exc.detail), headers=dict(exc.headers or {}))
 
     @app.exception_handler(Exception)
     async def _unexpected(_: Request, exc: Exception):

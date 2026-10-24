@@ -2,10 +2,11 @@
 
 from fastapi import APIRouter
 
-from app.api.common import ERROR_RESPONSES, VALIDATION_RESPONSES, not_implemented
+from app.api.common import VALIDATION_RESPONSES
 from app.engine.compare import compare
 from app.engine.fixes import find_fixes
 from app.engine.projection import project
+from app.engine.tradeoffs import compute_tradeoffs
 from app.errors import ApiError
 from app.schemas.requests import (
     CompareRequest,
@@ -27,9 +28,13 @@ def create_projection(request: ProjectionRequest) -> ProjectionResult:
         raise ApiError(422, "scenario_invalid", str(error)) from error
 
 
-@router.post("/tradeoffs", response_model=TradeoffResult, responses=ERROR_RESPONSES)
+@router.post("/tradeoffs", response_model=TradeoffResult, responses=VALIDATION_RESPONSES)
 def create_tradeoffs(request: TradeoffRequest) -> TradeoffResult:
-    raise not_implemented("The trade-off matrix")
+    """Trade-off matrix: re-run the engine prioritising each goal in turn."""
+    try:
+        return compute_tradeoffs(request.plan, request.scenario)
+    except ValueError as error:
+        raise ApiError(422, "scenario_invalid", str(error)) from error
 
 
 @router.post("/fixes", response_model=FixResult, responses=VALIDATION_RESPONSES)

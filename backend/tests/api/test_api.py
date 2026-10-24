@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from tests.engine.helpers import SAMPLES
+from tests.helpers import authed_client
 
 client = TestClient(app)
 
@@ -67,7 +68,8 @@ def test_sample_ids_cannot_escape_the_samples_folder():
     ],
 )
 def test_invalid_bodies_get_the_validation_error_shape(method, path, body):
-    response = getattr(client, method)(path, json=body)
+    caller = authed_client() if path.endswith("/plans") else client
+    response = getattr(caller, method)(path, json=body)
     assert response.status_code == 422
     error = response.json()["error"]
     assert error["code"] == "validation_error"
@@ -75,16 +77,14 @@ def test_invalid_bodies_get_the_validation_error_shape(method, path, body):
     assert all({"loc", "msg"} <= set(detail) for detail in error["details"])
 
 
-@pytest.mark.parametrize(
-    ("method", "path"),
-    [
-        ("post", "/api/v1/tradeoffs"),
-    ],
-)
-def test_later_calculation_endpoints_are_not_implemented_yet(method, path):
-    response = getattr(client, method)(path, json={"plan": sample_plan()})
-    assert response.status_code == 501
-    assert response.json()["error"]["code"] == "not_implemented"
+def test_tradeoffs_endpoint_returns_valid_tradeoff_matrix():
+    response = client.post("/api/v1/tradeoffs", json={"plan": sample_plan()})
+    assert response.status_code == 200
+    body = response.json()
+    assert "baseline" in body
+    assert "rows" in body
+    assert len(body["rows"]) == len(sample_plan()["goals"])
+    assert body["rows"][0]["prioritised_goal_id"] == "home_deposit"
 
 
 def test_fixes_returns_verified_options_for_the_delayed_goal():

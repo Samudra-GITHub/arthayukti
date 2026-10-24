@@ -26,10 +26,10 @@ The engine, the API and the screens from the design are built. Deployment is not
 
 | Part | State |
 |---|---|
-| Financial model | [docs/FINANCIAL_MODEL.md](docs/FINANCIAL_MODEL.md) |
-| API | Projections, fixes and compare are live: [docs/API.md](docs/API.md). Trade-offs and saved plans are contract-only (501) |
+| Financial model | Deterministic 5-tier allocation, precision 40 Decimal arithmetic: [docs/FINANCIAL_MODEL.md](docs/FINANCIAL_MODEL.md) |
+| API | Projections, Trade-offs, Fixes, Compare, Rescue Engine, Insurance Escalation, Financial Records, Net Worth, Auth & Tenancy are live: [docs/API.md](docs/API.md) |
 | Frontend | All screens from the design, in English and Hindi, at phone, tablet and desktop widths |
-| Deployment | Not done yet |
+| Deployment | Configured for Render and Vercel: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
 
 ## Layout
 

@@ -1,78 +1,98 @@
-# API contract (v1)
+# API Contract (v1)
 
-The API serves one narrow job: explainable decision support for competing money goals. Every result is computed by the engine, is reproducible for the same inputs, and every suggested fix is verified by a re-run. It does not predict markets, model taxes, or give advice.
+The API serves explainable, constraint-aware financial decision support for individuals and families across income levels and competing money goals. Every result is computed deterministically by the calculation engine, is reproducible for the same inputs, and every suggested rescue alternative is verified by a full engine re-run.
 
-The machine-readable contract is [contracts/openapi.json](../contracts/openapi.json), generated from the Pydantic schemas in `backend/app/schemas/`. The frontend types in `frontend/src/api/schema.d.ts` are generated from it. Regenerate both with `make gen-api`. A backend test fails if the committed file is stale.
+The machine-readable contract is [contracts/openapi.json](../contracts/openapi.json), generated from Pydantic schemas in `backend/app/schemas/`. The frontend TypeScript types in `frontend/src/api/schema.d.ts` are generated from it via `make gen-api`.
 
 Base path: `/api/v1`.
 
 ## Conventions
 
-- Money and rates are **decimal strings** (`"600000.00"`, `"0.06"`). JSON numbers are rejected for them.
-- Months are `YYYY-MM`. Rates are fractions (0.06 means 6%), nominal annual, compounded monthly.
-- Unknown fields are rejected.
-- Every failure uses one shape:
+- Money and rates are **decimal strings** (`"600000.00"`, `"0.06"`). JSON numbers are rejected so that no monetary value is degraded by floating-point approximation.
+- Monetary precision: Python `Decimal` with precision 40, `ROUND_HALF_UP` for posted amounts, `ROUND_CEILING` for required monthly contributions.
+- Months are `YYYY-MM`. Dates are `YYYY-MM-DD`.
+- Unknown fields are rejected (`extra="forbid"`).
+- Strict tenant isolation: users access only their own records.
+- Consistent error envelope on every failure:
 
 ```json
-{ "error": { "code": "validation_error", "message": "The request is invalid.",
-             "details": [ { "loc": ["body", "plan", "goals", 0, "target_date"], "msg": "..." } ] } }
+{
+  "error": {
+    "code": "validation_error",
+    "message": "The request is invalid.",
+    "details": [
+      { "loc": ["body", "plan", "goals", 0, "target_date"], "msg": "..." }
+    ]
+  }
+}
 ```
 
-Codes in use: `validation_error` (422), `scenario_invalid` (422), `not_found` (404), `not_implemented` (501), `internal_error` (500).
+Error codes in use: `validation_error` (422), `scenario_invalid` (422), `not_found` (404), `unauthorized` (401), `forbidden` (403), `internal_error` (500).
 
-## Endpoints
+## Core Endpoints
 
+### 1. Health & Reference Data
 | Method and path | Purpose | Status |
 |---|---|---|
-| `GET /health` | Liveness | Implemented (M0) |
-| `GET /samples`, `GET /samples/{id}` | Bundled plans and preset scenarios | Implemented (M0) |
-| `POST /projections` | Baseline, shock and reprioritisation: a plan plus an optional scenario | Implemented. An inconsistent scenario returns 422 `scenario_invalid` |
-| `POST /tradeoffs` | Trade-off matrix | Contract only |
-| `POST /fixes` | Verified minimal-fix options | Implemented |
-| `POST /compare` | 2-3 scenarios side by side | Implemented |
-| `POST /plans`, `GET /plans`, `GET /plans/{id}`, `PUT /plans/{id}` | Save, list, load, edit plans | Contract only |
+| `GET /health` | Liveness and health check | Live |
+| `GET /samples`, `GET /samples/{id}` | Bundled reference households and preset scenarios | Live |
 
-"Contract only" endpoints validate their input, then answer `501 not_implemented`. They never return invented results.
-
-## Scenario
-
-One object carries everything that differs from the plan, so shocks, reprioritisation, assumption changes and applied fixes all use the same code path.
-
-| Field | Meaning |
-|---|---|
-| `events` | `income_change` (stream or all, month range, multiplier; 0 means loss), `expense_change` (month range, monthly delta), `one_time_expense`, `one_time_income` |
-| `priority_order` | Goal ids in the order to prioritise, or null to keep the plan's priorities |
-| `assumption_overrides` | Replacement rates, or null |
-| `extra_monthly_savings` | Added to the monthly surplus |
-| `goal_overrides` | New `target_date` and/or `target_amount_today` for named goals |
-
-## Worked example
-
-Request body for `POST /projections`: the plan in [contracts/samples/tiny_delayed_goal.json](../contracts/samples/tiny_delayed_goal.json), with `"scenario": null`.
-
-Result for that plan, derived by hand (surplus 30,000, required level amount (6,00,000 - 1,20,000) / 12 = 40,000) and confirmed by the engine as golden test T3:
-
-| Field | Value |
-|---|---|
-| `status` | `delayed` |
-| `required_monthly_level_standalone` | `40000.00` |
-| `balance_at_deadline` | `480000.00` |
-| `shortfall_at_deadline_nominal` | `120000.00` |
-| `projected_completion` | `2028-02` |
-| `delay_months` | `4` |
-
-Expected `POST /fixes` options for the same plan, using the default limits (extra savings capped at 20% of income, delay up to 24 months, target no lower than 80%):
-
-| Option | Magnitude | Normalised cost |
+### 2. Decision Engine & Projections
+| Method and path | Purpose | Status |
 |---|---|---|
-| Delay the goal | 4 months | 4 / 24 = 0.167 |
-| Extra monthly savings | 10,000 | 10,000 / 18,000 = 0.556 |
-| Reduce the target | 20% | 20 / 20 = 1.000 |
+| `POST /projections` | Baseline, shock, and reprioritization projection | Live |
+| `POST /tradeoffs` | Complete priority trade-off matrix: evaluates systematic goal reprioritization | Live |
+| `POST /fixes` | Verified minimal-fix recommendations (savings, delay, downscale) | Live |
+| `POST /compare` | Side-by-side comparison of 2-3 scenarios measured against baseline | Live |
+| `POST /rescue/analyze` | Constraint-Aware Rescue Engine: resolves multi-goal conflicts across levers | Live |
 
-## Validation rules
+### 3. Saved Plans (Persistence & Tenancy)
+| Method and path | Purpose | Status |
+|---|---|---|
+| `POST /plans` | Save a new financial plan (scoped to authenticated user/tenant) | Live |
+| `GET /plans` | List saved plans for current tenant | Live |
+| `GET /plans/{id}` | Retrieve saved plan by ID | Live |
+| `PUT /plans/{id}` | Update an existing saved plan | Live |
 
-- 1-8 goals. Priorities unique and running 1..n with no gaps. Ids unique within each list.
-- `target_date` not before `as_of` and at most 600 months away.
-- Amounts from 0 to Rs 100 crore with at most 2 decimals. Targets must be above 0.
-- Inflation and return rates between 0 and 0.30. Income and expense growth between -0.10 and 0.30.
-- Event month ranges ordered and within 600 months. A scenario carries at most 20 events.
+### 4. Insurance & Coverage Escalation
+| Method and path | Purpose | Status |
+|---|---|---|
+| `POST /insurance/policies` | Register a normalized insurance policy (term, health, motor, home, ULIP, endowment) | Live |
+| `GET /insurance/policies` | List all insurance policies for user | Live |
+| `GET /insurance/policies/{id}` | Get policy details | Live |
+| `POST /insurance/escalations` | Configure increasing cover / step-up schedule with contract caps | Live |
+| `GET /insurance/escalations/{id}` | View escalation rules and caps | Live |
+| `POST /insurance/escalations/{id}/process-event` | Process an escalation step with strict idempotency protection | Live |
+| `GET /insurance/escalations/{id}/history` | Audit trail of completed coverage escalation events | Live |
+| `GET /insurance/dashboard` | Dashboard metrics: base cover, effective cover, growth, next increase, health NCB | Live |
+| `GET /insurance/reminders` | Active reminders for upcoming increases, medical underwriting, and NCB eligibility | Live |
+| `POST /insurance/reminders/{id}/ack` | Acknowledge and dismiss reminder | Live |
+
+### 5. Broader Financial Records & Net Worth
+| Method and path | Purpose | Status |
+|---|---|---|
+| `POST /financials/accounts`, `GET /financials/accounts` | Create and list bank, savings, checking, and brokerage accounts | Live |
+| `POST /financials/transactions`, `GET /financials/transactions` | Record individual income and expense transactions | Live |
+| `POST /financials/transactions/import` | CSV import with exact Decimal validation | Live |
+| `POST /financials/investments`, `GET /financials/investments` | Record assets and investments (equity, mutual funds, gold, EPF) | Live |
+| `POST /financials/liabilities`, `GET /financials/liabilities` | Record debt and loan commitments | Live |
+| `GET /financials/net-worth` | Net worth aggregate: liquid vs illiquid assets minus liabilities | Live |
+
+### 6. Authentication & Security
+| Method and path | Purpose | Status |
+|---|---|---|
+| `POST /auth/signup` | Register new user account with bcrypt password hashing | Live |
+| `POST /auth/login` | Login and receive JWT access token | Live |
+| `POST /auth/logout` | Terminate session | Live |
+| `GET /auth/me` | Fetch authenticated user profile | Live |
+| `POST /auth/password-reset/request` | Request password reset token | Live |
+| `POST /auth/password-reset/confirm` | Confirm password reset | Live |
+| `GET /auth/export-data` | GDPR-compliant personal financial data export | Live |
+| `DELETE /auth/delete-account` | Permanent account and data erasure | Live |
+
+### 7. External Market Data & AI Orchestrator
+| Method and path | Purpose | Status |
+|---|---|---|
+| `GET /market/quotes/{symbol}` | Fetch market quotes (NIFTY, SENSEX, Gold, CPI) with cache and stale fallback | Live |
+| `POST /ai/consult` | Natural language intent extraction coupled with deterministic engine rescue | Live |
+| `POST /ai/parse-intent` | Structured goal and constraint extraction from plain words | Live |

@@ -30,6 +30,8 @@ class Expense(ApiModel):
     id: Id
     label: Label
     monthly: Money
+    # Protected by default. Only expenses marked False can be trimmed by the rescue engine.
+    essential: bool = True
 
 
 class Commitment(ApiModel):

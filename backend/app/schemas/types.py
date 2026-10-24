@@ -9,6 +9,7 @@ from decimal import Decimal
 from typing import Annotated, Any
 
 from pydantic import (
+    AfterValidator,
     BaseModel,
     BeforeValidator,
     ConfigDict,
@@ -57,6 +58,33 @@ Amount = DecimalStr
 Month = Annotated[str, StringConstraints(pattern=MONTH_PATTERN)]
 Id = Annotated[str, StringConstraints(pattern=r"^[A-Za-z0-9_-]{1,40}$")]
 Label = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=80)]
+
+
+def _real_date(value: str) -> str:
+    from datetime import date
+
+    try:
+        date.fromisoformat(value)
+    except ValueError as error:
+        raise ValueError("must be a real calendar date written YYYY-MM-DD") from error
+    return value
+
+
+IsoDate = Annotated[
+    str, StringConstraints(pattern=r"^\d{4}-\d{2}-\d{2}$"), AfterValidator(_real_date)
+]
+ShortText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
+OptionalShortText = Annotated[str, StringConstraints(strip_whitespace=True, max_length=120)]
+LongText = Annotated[str, StringConstraints(strip_whitespace=True, max_length=1000)]
+Code = Annotated[
+    str,
+    StringConstraints(
+        strip_whitespace=True, min_length=1, max_length=40, pattern=r"^[A-Za-z0-9._/_\- ]+$"
+    ),
+]
+IdempotencyKey = Annotated[
+    str, StringConstraints(min_length=1, max_length=128, pattern=r"^[A-Za-z0-9._:\-]+$")
+]
 
 
 class ApiModel(BaseModel):

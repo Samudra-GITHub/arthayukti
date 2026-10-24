@@ -1,6 +1,334 @@
 {
   "components": {
     "schemas": {
+      "AIAlternative": {
+        "additionalProperties": false,
+        "properties": {
+          "alternative_id": {
+            "title": "Alternative Id",
+            "type": "string"
+          },
+          "assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Assumptions",
+            "type": "array"
+          },
+          "constraints_satisfied": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Constraints Satisfied",
+            "type": "array"
+          },
+          "constraints_violated": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Constraints Violated",
+            "type": "array"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "is_feasible": {
+            "title": "Is Feasible",
+            "type": "boolean"
+          },
+          "monthly_savings_change": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Monthly Savings Change",
+            "type": "string"
+          },
+          "strategy": {
+            "title": "Strategy",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "total_shortfall_today": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Shortfall Today",
+            "type": "string"
+          },
+          "tradeoffs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tradeoffs",
+            "type": "array"
+          }
+        },
+        "required": [
+          "alternative_id",
+          "title",
+          "description",
+          "strategy",
+          "is_feasible",
+          "total_shortfall_today",
+          "monthly_savings_change",
+          "constraints_satisfied",
+          "constraints_violated",
+          "tradeoffs",
+          "assumptions"
+        ],
+        "title": "AIAlternative",
+        "type": "object"
+      },
+      "AIConsultRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "plan": {
+            "$ref": "#/components/schemas/Plan"
+          },
+          "scenario": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Scenario"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "user_prompt": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "User Prompt",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user_prompt",
+          "plan"
+        ],
+        "title": "AIConsultRequest",
+        "type": "object"
+      },
+      "AIConsultResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "alternatives": {
+            "items": {
+              "$ref": "#/components/schemas/AIAlternative"
+            },
+            "title": "Alternatives",
+            "type": "array"
+          },
+          "binding_constraint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Binding Constraint"
+          },
+          "calculation_run_id": {
+            "title": "Calculation Run Id",
+            "type": "string"
+          },
+          "intent": {
+            "$ref": "#/components/schemas/IntentSuggestions"
+          },
+          "is_baseline_feasible": {
+            "title": "Is Baseline Feasible",
+            "type": "boolean"
+          },
+          "missing_information": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing Information",
+            "type": "array"
+          },
+          "ranking_criteria": {
+            "title": "Ranking Criteria",
+            "type": "string"
+          },
+          "recommended_alternative_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recommended Alternative Id"
+          },
+          "unresolved_gap": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unresolved Gap"
+          }
+        },
+        "required": [
+          "intent",
+          "is_baseline_feasible",
+          "recommended_alternative_id",
+          "binding_constraint",
+          "unresolved_gap",
+          "ranking_criteria",
+          "missing_information",
+          "alternatives",
+          "calculation_run_id"
+        ],
+        "title": "AIConsultResponse",
+        "type": "object"
+      },
+      "AccountCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "account_name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Account Name",
+            "type": "string"
+          },
+          "account_type": {
+            "enum": [
+              "savings",
+              "checking",
+              "fixed_deposit",
+              "brokerage",
+              "wallet",
+              "other"
+            ],
+            "title": "Account Type",
+            "type": "string"
+          },
+          "balance": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Balance",
+            "type": "string"
+          },
+          "currency": {
+            "const": "INR",
+            "default": "INR",
+            "title": "Currency",
+            "type": "string"
+          },
+          "institution_name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Institution Name"
+          },
+          "is_liquid": {
+            "default": true,
+            "title": "Is Liquid",
+            "type": "boolean"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "required": [
+          "account_name",
+          "account_type",
+          "balance"
+        ],
+        "title": "AccountCreateRequest",
+        "type": "object"
+      },
+      "AccountResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "account_name": {
+            "title": "Account Name",
+            "type": "string"
+          },
+          "account_type": {
+            "title": "Account Type",
+            "type": "string"
+          },
+          "balance": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Balance",
+            "type": "string"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "institution_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Institution Name"
+          },
+          "is_liquid": {
+            "title": "Is Liquid",
+            "type": "boolean"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "required": [
+          "id",
+          "account_name",
+          "account_type",
+          "balance",
+          "currency",
+          "is_liquid",
+          "institution_name",
+          "notes",
+          "created_at"
+        ],
+        "title": "AccountResponse",
+        "type": "object"
+      },
       "AssumptionOverrides": {
         "additionalProperties": false,
         "properties": {
@@ -88,6 +416,80 @@
           "expense_growth_annual"
         ],
         "title": "Assumptions",
+        "type": "object"
+      },
+      "AuthResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "access_token": {
+            "title": "Access Token",
+            "type": "string"
+          },
+          "token_type": {
+            "default": "bearer",
+            "title": "Token Type",
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserProfile"
+          }
+        },
+        "required": [
+          "access_token",
+          "user"
+        ],
+        "title": "AuthResponse",
+        "type": "object"
+      },
+      "Body_import_transactions_csv_api_v1_financials_transactions_import_post": {
+        "properties": {
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_import_transactions_csv_api_v1_financials_transactions_import_post",
+        "type": "object"
+      },
+      "CSVImportResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "duplicate_count": {
+            "default": 0,
+            "title": "Duplicate Count",
+            "type": "integer"
+          },
+          "errors": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "errors_truncated": {
+            "default": false,
+            "title": "Errors Truncated",
+            "type": "boolean"
+          },
+          "failed_count": {
+            "title": "Failed Count",
+            "type": "integer"
+          },
+          "imported_count": {
+            "title": "Imported Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "imported_count",
+          "failed_count"
+        ],
+        "title": "CSVImportResponse",
         "type": "object"
       },
       "Commitment": {
@@ -330,9 +732,493 @@
         "title": "ErrorResponse",
         "type": "object"
       },
+      "EscalationCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "age_limit": {
+            "anyOf": [
+              {
+                "maximum": 120.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age Limit"
+          },
+          "custom_interval_months": {
+            "anyOf": [
+              {
+                "maximum": 600.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custom Interval Months"
+          },
+          "escalation_frequency": {
+            "default": "annual",
+            "enum": [
+              "annual",
+              "every_5_years",
+              "policy_anniversary",
+              "custom"
+            ],
+            "title": "Escalation Frequency",
+            "type": "string"
+          },
+          "escalation_rate": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Escalation Rate"
+          },
+          "escalation_terms": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Escalation Terms"
+          },
+          "escalation_type": {
+            "enum": [
+              "none",
+              "fixed_percentage",
+              "fixed_amount",
+              "step_up",
+              "inflation_linked",
+              "life_event_enhancement",
+              "bonus_accrual"
+            ],
+            "title": "Escalation Type",
+            "type": "string"
+          },
+          "first_escalation_date": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Escalation Date"
+          },
+          "fixed_escalation_amount": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fixed Escalation Amount"
+          },
+          "maximum_cover_multiple": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maximum Cover Multiple"
+          },
+          "maximum_increase_percentage": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maximum Increase Percentage"
+          },
+          "maximum_total_cover": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maximum Total Cover"
+          },
+          "medical_underwriting_required": {
+            "default": false,
+            "title": "Medical Underwriting Required",
+            "type": "boolean"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "policy_id": {
+            "title": "Policy Id",
+            "type": "string"
+          },
+          "premium_change_rule": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Premium Change Rule"
+          },
+          "premium_increases_with_cover": {
+            "default": false,
+            "title": "Premium Increases With Cover",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "policy_id",
+          "escalation_type"
+        ],
+        "title": "EscalationCreateRequest",
+        "type": "object"
+      },
+      "EscalationHistoryResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "effective_date": {
+            "title": "Effective Date",
+            "type": "string"
+          },
+          "escalation_id": {
+            "title": "Escalation Id",
+            "type": "string"
+          },
+          "event_type": {
+            "title": "Event Type",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "increase_amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Increase Amount",
+            "type": "string"
+          },
+          "policy_id": {
+            "title": "Policy Id",
+            "type": "string"
+          },
+          "premium_after": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Premium After"
+          },
+          "premium_before": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Premium Before"
+          },
+          "prior_cover": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Prior Cover",
+            "type": "string"
+          },
+          "resulting_cover": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Resulting Cover",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "underwriting_requirement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Underwriting Requirement"
+          }
+        },
+        "required": [
+          "id",
+          "escalation_id",
+          "policy_id",
+          "effective_date",
+          "event_type",
+          "prior_cover",
+          "increase_amount",
+          "resulting_cover",
+          "premium_before",
+          "premium_after",
+          "underwriting_requirement",
+          "source",
+          "idempotency_key",
+          "created_at"
+        ],
+        "title": "EscalationHistoryResponse",
+        "type": "object"
+      },
+      "EscalationResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "age_limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age Limit"
+          },
+          "base_sum_assured": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Base Sum Assured",
+            "type": "string"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "current_effective_sum_assured": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Current Effective Sum Assured",
+            "type": "string"
+          },
+          "custom_interval_months": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custom Interval Months"
+          },
+          "escalation_frequency": {
+            "title": "Escalation Frequency",
+            "type": "string"
+          },
+          "escalation_rate": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Escalation Rate"
+          },
+          "escalation_status": {
+            "title": "Escalation Status",
+            "type": "string"
+          },
+          "escalation_type": {
+            "title": "Escalation Type",
+            "type": "string"
+          },
+          "first_escalation_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Escalation Date"
+          },
+          "fixed_escalation_amount": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fixed Escalation Amount"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "maximum_cover_multiple": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maximum Cover Multiple"
+          },
+          "maximum_increase_percentage": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maximum Increase Percentage"
+          },
+          "maximum_total_cover": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maximum Total Cover"
+          },
+          "medical_underwriting_required": {
+            "title": "Medical Underwriting Required",
+            "type": "boolean"
+          },
+          "next_escalation_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Escalation Date"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "policy_id": {
+            "title": "Policy Id",
+            "type": "string"
+          },
+          "premium_increases_with_cover": {
+            "title": "Premium Increases With Cover",
+            "type": "boolean"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "policy_id",
+          "escalation_type",
+          "base_sum_assured",
+          "current_effective_sum_assured",
+          "escalation_rate",
+          "fixed_escalation_amount",
+          "escalation_frequency",
+          "custom_interval_months",
+          "first_escalation_date",
+          "next_escalation_date",
+          "maximum_total_cover",
+          "maximum_increase_percentage",
+          "maximum_cover_multiple",
+          "premium_increases_with_cover",
+          "medical_underwriting_required",
+          "age_limit",
+          "escalation_status",
+          "notes",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "EscalationResponse",
+        "type": "object"
+      },
       "Expense": {
         "additionalProperties": false,
         "properties": {
+          "essential": {
+            "default": true,
+            "title": "Essential",
+            "type": "boolean"
+          },
           "id": {
             "pattern": "^[A-Za-z0-9_-]{1,40}$",
             "title": "Id",
@@ -389,6 +1275,149 @@
           "delta_monthly"
         ],
         "title": "ExpenseChange",
+        "type": "object"
+      },
+      "ExportAccount": {
+        "additionalProperties": false,
+        "properties": {
+          "balance": {
+            "title": "Balance",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "balance"
+        ],
+        "title": "ExportAccount",
+        "type": "object"
+      },
+      "ExportPlan": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "title": "As Of",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "as_of"
+        ],
+        "title": "ExportPlan",
+        "type": "object"
+      },
+      "ExportPolicy": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "type"
+        ],
+        "title": "ExportPolicy",
+        "type": "object"
+      },
+      "ExportResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "accounts": {
+            "items": {
+              "$ref": "#/components/schemas/ExportAccount"
+            },
+            "title": "Accounts",
+            "type": "array"
+          },
+          "plans": {
+            "items": {
+              "$ref": "#/components/schemas/ExportPlan"
+            },
+            "title": "Plans",
+            "type": "array"
+          },
+          "policies": {
+            "items": {
+              "$ref": "#/components/schemas/ExportPolicy"
+            },
+            "title": "Policies",
+            "type": "array"
+          },
+          "user": {
+            "$ref": "#/components/schemas/ExportUser"
+          }
+        },
+        "required": [
+          "user",
+          "plans",
+          "accounts",
+          "policies"
+        ],
+        "title": "ExportResponse",
+        "type": "object"
+      },
+      "ExportUser": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "full_name": {
+            "title": "Full Name",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "full_name",
+          "created_at"
+        ],
+        "title": "ExportUser",
         "type": "object"
       },
       "FixLimits": {
@@ -658,6 +1687,31 @@
         "title": "Goal",
         "type": "object"
       },
+      "GoalHint": {
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "target_amount_today": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Target Amount Today",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "label",
+          "target_amount_today"
+        ],
+        "title": "GoalHint",
+        "type": "object"
+      },
       "GoalOutcome": {
         "additionalProperties": false,
         "properties": {
@@ -920,6 +1974,616 @@
         "title": "IncomeStream",
         "type": "object"
       },
+      "InsuranceDashboardSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "effective_health_sum_insured": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Effective Health Sum Insured",
+            "type": "string"
+          },
+          "health_ncb_total": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Health Ncb Total",
+            "type": "string"
+          },
+          "maximum_possible_cover": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maximum Possible Cover"
+          },
+          "next_increase_amount": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Increase Amount"
+          },
+          "next_increase_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Increase Date"
+          },
+          "total_base_cover": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Base Cover",
+            "type": "string"
+          },
+          "total_cover_growth": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Cover Growth",
+            "type": "string"
+          },
+          "total_effective_cover": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Effective Cover",
+            "type": "string"
+          },
+          "upcoming_alerts_count": {
+            "title": "Upcoming Alerts Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total_base_cover",
+          "total_effective_cover",
+          "total_cover_growth",
+          "next_increase_amount",
+          "next_increase_date",
+          "maximum_possible_cover",
+          "health_ncb_total",
+          "effective_health_sum_insured",
+          "upcoming_alerts_count"
+        ],
+        "title": "InsuranceDashboardSummary",
+        "type": "object"
+      },
+      "InsuranceReminderItem": {
+        "additionalProperties": false,
+        "properties": {
+          "due_date": {
+            "title": "Due Date",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "is_acknowledged": {
+            "title": "Is Acknowledged",
+            "type": "boolean"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "policy_id": {
+            "title": "Policy Id",
+            "type": "string"
+          },
+          "reminder_type": {
+            "title": "Reminder Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "policy_id",
+          "reminder_type",
+          "due_date",
+          "message",
+          "is_acknowledged"
+        ],
+        "title": "InsuranceReminderItem",
+        "type": "object"
+      },
+      "IntentSuggestions": {
+        "additionalProperties": false,
+        "description": "Suggestions read out of a typed question by keyword rules. Not a calculation.",
+        "properties": {
+          "detected_constraints": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Detected Constraints",
+            "type": "array"
+          },
+          "extraction_method": {
+            "const": "keyword_rules",
+            "title": "Extraction Method",
+            "type": "string"
+          },
+          "identified_goals": {
+            "items": {
+              "$ref": "#/components/schemas/GoalHint"
+            },
+            "title": "Identified Goals",
+            "type": "array"
+          },
+          "missing_critical_info": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing Critical Info",
+            "type": "array"
+          },
+          "plain_english_summary": {
+            "title": "Plain English Summary",
+            "type": "string"
+          },
+          "plain_hindi_summary": {
+            "title": "Plain Hindi Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "extraction_method",
+          "identified_goals",
+          "detected_constraints",
+          "missing_critical_info",
+          "plain_english_summary",
+          "plain_hindi_summary"
+        ],
+        "title": "IntentSuggestions",
+        "type": "object"
+      },
+      "InvestmentCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Asset Name",
+            "type": "string"
+          },
+          "asset_type": {
+            "enum": [
+              "stock",
+              "mutual_fund",
+              "gold",
+              "real_estate",
+              "epf",
+              "ppf",
+              "crypto",
+              "other"
+            ],
+            "title": "Asset Type",
+            "type": "string"
+          },
+          "current_value": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Current Value",
+            "type": "string"
+          },
+          "is_liquid": {
+            "default": false,
+            "title": "Is Liquid",
+            "type": "boolean"
+          },
+          "last_valuation_date": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Valuation Date"
+          },
+          "purchase_price": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Purchase Price",
+            "type": "string"
+          },
+          "quantity": {
+            "default": "1.0000",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "symbol": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symbol"
+          }
+        },
+        "required": [
+          "asset_name",
+          "asset_type",
+          "purchase_price",
+          "current_value"
+        ],
+        "title": "InvestmentCreateRequest",
+        "type": "object"
+      },
+      "InvestmentResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_name": {
+            "title": "Asset Name",
+            "type": "string"
+          },
+          "asset_type": {
+            "title": "Asset Type",
+            "type": "string"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "current_value": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Current Value",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "is_liquid": {
+            "title": "Is Liquid",
+            "type": "boolean"
+          },
+          "last_valuation_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Valuation Date"
+          },
+          "purchase_price": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Purchase Price",
+            "type": "string"
+          },
+          "quantity": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "symbol": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symbol"
+          }
+        },
+        "required": [
+          "id",
+          "asset_name",
+          "asset_type",
+          "symbol",
+          "quantity",
+          "purchase_price",
+          "current_value",
+          "is_liquid",
+          "last_valuation_date",
+          "created_at"
+        ],
+        "title": "InvestmentResponse",
+        "type": "object"
+      },
+      "LiabilityCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "current_balance": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Current Balance",
+            "type": "string"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          },
+          "interest_rate": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Interest Rate",
+            "type": "string"
+          },
+          "liability_name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Liability Name",
+            "type": "string"
+          },
+          "liability_type": {
+            "enum": [
+              "home_loan",
+              "personal_loan",
+              "auto_loan",
+              "education_loan",
+              "credit_card",
+              "other"
+            ],
+            "title": "Liability Type",
+            "type": "string"
+          },
+          "monthly_emi": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Monthly Emi",
+            "type": "string"
+          },
+          "principal_amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Principal Amount",
+            "type": "string"
+          },
+          "remaining_months": {
+            "maximum": 1200.0,
+            "minimum": 0.0,
+            "title": "Remaining Months",
+            "type": "integer"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          }
+        },
+        "required": [
+          "liability_name",
+          "liability_type",
+          "principal_amount",
+          "current_balance",
+          "interest_rate",
+          "monthly_emi",
+          "remaining_months"
+        ],
+        "title": "LiabilityCreateRequest",
+        "type": "object"
+      },
+      "LiabilityResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "current_balance": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Current Balance",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "interest_rate": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Interest Rate",
+            "type": "string"
+          },
+          "liability_name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Liability Name",
+            "type": "string"
+          },
+          "liability_type": {
+            "title": "Liability Type",
+            "type": "string"
+          },
+          "monthly_emi": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Monthly Emi",
+            "type": "string"
+          },
+          "principal_amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Principal Amount",
+            "type": "string"
+          },
+          "remaining_months": {
+            "title": "Remaining Months",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "liability_name",
+          "liability_type",
+          "principal_amount",
+          "current_balance",
+          "interest_rate",
+          "monthly_emi",
+          "remaining_months",
+          "created_at"
+        ],
+        "title": "LiabilityResponse",
+        "type": "object"
+      },
+      "LoginRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "maxLength": 254,
+            "pattern": "^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9\\-]+(\\.[A-Za-z0-9\\-]+)+$",
+            "title": "Email",
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginRequest",
+        "type": "object"
+      },
+      "MarketQuoteResponse": {
+        "additionalProperties": false,
+        "description": "A stored quote with its freshness, or an explicit \"unavailable\". Never an invented price.",
+        "properties": {
+          "asset_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asset Type"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "fetched_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fetched At"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "title": "Metadata",
+            "type": "object"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "status": {
+            "enum": [
+              "fresh",
+              "stale",
+              "unavailable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "symbol": {
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "status",
+          "price",
+          "currency",
+          "asset_type",
+          "source",
+          "fetched_at",
+          "message",
+          "metadata"
+        ],
+        "title": "MarketQuoteResponse",
+        "type": "object"
+      },
+      "MessageResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "message": {
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "title": "MessageResponse",
+        "type": "object"
+      },
       "MonthGoalRow": {
         "additionalProperties": false,
         "properties": {
@@ -1041,6 +2705,45 @@
         "title": "MonthRow",
         "type": "object"
       },
+      "NetWorthResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "illiquid_assets": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Illiquid Assets",
+            "type": "string"
+          },
+          "liquid_assets": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Liquid Assets",
+            "type": "string"
+          },
+          "net_worth": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Net Worth",
+            "type": "string"
+          },
+          "total_assets": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Assets",
+            "type": "string"
+          },
+          "total_liabilities": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Liabilities",
+            "type": "string"
+          }
+        },
+        "required": [
+          "total_assets",
+          "liquid_assets",
+          "illiquid_assets",
+          "total_liabilities",
+          "net_worth"
+        ],
+        "title": "NetWorthResponse",
+        "type": "object"
+      },
       "OneTimeExpense": {
         "additionalProperties": false,
         "properties": {
@@ -1107,6 +2810,61 @@
           "label"
         ],
         "title": "OneTimeIncome",
+        "type": "object"
+      },
+      "ParseIntentRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "prompt": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Prompt",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "title": "ParseIntentRequest",
+        "type": "object"
+      },
+      "PasswordResetConfirm": {
+        "additionalProperties": false,
+        "properties": {
+          "new_password": {
+            "maxLength": 72,
+            "minLength": 10,
+            "title": "New Password",
+            "type": "string"
+          },
+          "token": {
+            "maxLength": 200,
+            "minLength": 20,
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "new_password"
+        ],
+        "title": "PasswordResetConfirm",
+        "type": "object"
+      },
+      "PasswordResetRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "maxLength": 254,
+            "pattern": "^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9\\-]+(\\.[A-Za-z0-9\\-]+)+$",
+            "title": "Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "title": "PasswordResetRequest",
         "type": "object"
       },
       "Plan": {
@@ -1273,6 +3031,291 @@
         "title": "PlanWarning",
         "type": "object"
       },
+      "PolicyCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "base_sum_assured": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Base Sum Assured",
+            "type": "string"
+          },
+          "expiry_date": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiry Date"
+          },
+          "insurer_name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Insurer Name",
+            "type": "string"
+          },
+          "plan_name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Plan Name",
+            "type": "string"
+          },
+          "policy_details": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Policy Details"
+          },
+          "policy_number": {
+            "maxLength": 40,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._/_\\- ]+$",
+            "title": "Policy Number",
+            "type": "string"
+          },
+          "policy_type": {
+            "enum": [
+              "term_life",
+              "health",
+              "ulip",
+              "endowment_money_back",
+              "motor",
+              "home"
+            ],
+            "title": "Policy Type",
+            "type": "string"
+          },
+          "premium_amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Premium Amount",
+            "type": "string"
+          },
+          "premium_frequency": {
+            "default": "annual",
+            "enum": [
+              "annual",
+              "monthly",
+              "quarterly"
+            ],
+            "title": "Premium Frequency",
+            "type": "string"
+          },
+          "renewal_date": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Renewal Date"
+          },
+          "start_date": {
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "title": "Start Date",
+            "type": "string"
+          },
+          "status": {
+            "default": "active",
+            "enum": [
+              "active",
+              "lapsed",
+              "expired"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "policy_number",
+          "policy_type",
+          "insurer_name",
+          "plan_name",
+          "start_date",
+          "base_sum_assured",
+          "premium_amount"
+        ],
+        "title": "PolicyCreateRequest",
+        "type": "object"
+      },
+      "PolicyResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "base_sum_assured": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Base Sum Assured",
+            "type": "string"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "current_effective_sum_assured": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Current Effective Sum Assured",
+            "type": "string"
+          },
+          "expiry_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiry Date"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "insurer_name": {
+            "title": "Insurer Name",
+            "type": "string"
+          },
+          "plan_name": {
+            "title": "Plan Name",
+            "type": "string"
+          },
+          "policy_details": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Policy Details"
+          },
+          "policy_number": {
+            "title": "Policy Number",
+            "type": "string"
+          },
+          "policy_type": {
+            "title": "Policy Type",
+            "type": "string"
+          },
+          "premium_amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Premium Amount",
+            "type": "string"
+          },
+          "premium_frequency": {
+            "title": "Premium Frequency",
+            "type": "string"
+          },
+          "renewal_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Renewal Date"
+          },
+          "start_date": {
+            "title": "Start Date",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "policy_number",
+          "policy_type",
+          "insurer_name",
+          "plan_name",
+          "start_date",
+          "renewal_date",
+          "expiry_date",
+          "base_sum_assured",
+          "current_effective_sum_assured",
+          "premium_amount",
+          "premium_frequency",
+          "status",
+          "policy_details",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "PolicyResponse",
+        "type": "object"
+      },
+      "ProcessEscalationEventRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "effective_date": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective Date"
+          },
+          "event_type": {
+            "default": "scheduled_escalation",
+            "maxLength": 40,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._/_\\- ]+$",
+            "title": "Event Type",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9._:\\-]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "title": "ProcessEscalationEventRequest",
+        "type": "object"
+      },
       "ProjectionRequest": {
         "additionalProperties": false,
         "properties": {
@@ -1407,6 +3450,293 @@
           "total_shortfall_today"
         ],
         "title": "ProjectionSummary",
+        "type": "object"
+      },
+      "RescueAlternativeItem": {
+        "additionalProperties": false,
+        "properties": {
+          "alternative_id": {
+            "title": "Alternative Id",
+            "type": "string"
+          },
+          "assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Assumptions",
+            "type": "array"
+          },
+          "constraints_satisfied": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Constraints Satisfied",
+            "type": "array"
+          },
+          "constraints_violated": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Constraints Violated",
+            "type": "array"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "is_feasible": {
+            "title": "Is Feasible",
+            "type": "boolean"
+          },
+          "monthly_savings_change": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Monthly Savings Change",
+            "type": "string"
+          },
+          "result_summary": {
+            "$ref": "#/components/schemas/ProjectionSummary"
+          },
+          "scenario": {
+            "$ref": "#/components/schemas/Scenario"
+          },
+          "strategy": {
+            "title": "Strategy",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "total_shortfall_today": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Shortfall Today",
+            "type": "string"
+          },
+          "tradeoffs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tradeoffs",
+            "type": "array"
+          }
+        },
+        "required": [
+          "alternative_id",
+          "title",
+          "description",
+          "strategy",
+          "is_feasible",
+          "scenario",
+          "result_summary",
+          "monthly_savings_change",
+          "total_shortfall_today",
+          "constraints_satisfied",
+          "constraints_violated",
+          "tradeoffs",
+          "assumptions"
+        ],
+        "title": "RescueAlternativeItem",
+        "type": "object"
+      },
+      "RescueRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "allow_asset_sale": {
+            "default": false,
+            "title": "Allow Asset Sale",
+            "type": "boolean"
+          },
+          "allow_discretionary_cut_pct": {
+            "default": "0.20",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Allow Discretionary Cut Pct",
+            "type": "string"
+          },
+          "asset_sale_amount": {
+            "default": "0.00",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Asset Sale Amount",
+            "type": "string"
+          },
+          "avoid_new_debt": {
+            "default": true,
+            "title": "Avoid New Debt",
+            "type": "boolean"
+          },
+          "extra_monthly_budget": {
+            "default": "0.00",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Extra Monthly Budget",
+            "type": "string"
+          },
+          "housing_mode": {
+            "anyOf": [
+              {
+                "const": "rent_vs_buy",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Housing Mode"
+          },
+          "housing_monthly_saving": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Housing Monthly Saving"
+          },
+          "max_delay_months": {
+            "default": 24,
+            "maximum": 120.0,
+            "minimum": 0.0,
+            "title": "Max Delay Months",
+            "type": "integer"
+          },
+          "min_emergency_reserve": {
+            "default": "0.00",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Min Emergency Reserve",
+            "type": "string"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/Plan"
+          },
+          "scenario": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Scenario"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "transit_mode": {
+            "anyOf": [
+              {
+                "const": "transit_vs_car",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transit Mode"
+          },
+          "transit_monthly_saving": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transit Monthly Saving"
+          }
+        },
+        "required": [
+          "plan"
+        ],
+        "title": "RescueRequest",
+        "type": "object"
+      },
+      "RescueResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "alternatives": {
+            "items": {
+              "$ref": "#/components/schemas/RescueAlternativeItem"
+            },
+            "title": "Alternatives",
+            "type": "array"
+          },
+          "assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Assumptions",
+            "type": "array"
+          },
+          "baseline_summary": {
+            "$ref": "#/components/schemas/ProjectionSummary"
+          },
+          "binding_constraint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Binding Constraint"
+          },
+          "is_baseline_feasible": {
+            "title": "Is Baseline Feasible",
+            "type": "boolean"
+          },
+          "missing_information": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing Information",
+            "type": "array"
+          },
+          "ranking_criteria": {
+            "title": "Ranking Criteria",
+            "type": "string"
+          },
+          "recommended_alternative_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recommended Alternative Id"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "unresolved_gap": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unresolved Gap"
+          }
+        },
+        "required": [
+          "is_baseline_feasible",
+          "baseline_summary",
+          "alternatives",
+          "recommended_alternative_id",
+          "unresolved_gap",
+          "binding_constraint",
+          "run_id",
+          "ranking_criteria",
+          "missing_information",
+          "assumptions"
+        ],
+        "title": "RescueResponse",
         "type": "object"
       },
       "SampleDetail": {
@@ -1559,6 +3889,35 @@
         "title": "Scenario",
         "type": "object"
       },
+      "SignupRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "maxLength": 254,
+            "pattern": "^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9\\-]+(\\.[A-Za-z0-9\\-]+)+$",
+            "title": "Email",
+            "type": "string"
+          },
+          "full_name": {
+            "default": "",
+            "maxLength": 80,
+            "title": "Full Name",
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 72,
+            "minLength": 10,
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "SignupRequest",
+        "type": "object"
+      },
       "TradeoffOutcome": {
         "additionalProperties": false,
         "properties": {
@@ -1706,6 +4065,181 @@
         ],
         "title": "TradeoffTotals",
         "type": "object"
+      },
+      "TransactionCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Id"
+          },
+          "amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Amount",
+            "type": "string"
+          },
+          "category": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Category",
+            "type": "string"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "is_essential": {
+            "default": false,
+            "title": "Is Essential",
+            "type": "boolean"
+          },
+          "transaction_date": {
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "title": "Transaction Date",
+            "type": "string"
+          },
+          "transaction_type": {
+            "enum": [
+              "credit",
+              "debit"
+            ],
+            "title": "Transaction Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "transaction_date",
+          "amount",
+          "transaction_type",
+          "category"
+        ],
+        "title": "TransactionCreateRequest",
+        "type": "object"
+      },
+      "TransactionResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Id"
+          },
+          "amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Amount",
+            "type": "string"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "is_essential": {
+            "title": "Is Essential",
+            "type": "boolean"
+          },
+          "transaction_date": {
+            "title": "Transaction Date",
+            "type": "string"
+          },
+          "transaction_type": {
+            "title": "Transaction Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "account_id",
+          "transaction_date",
+          "amount",
+          "transaction_type",
+          "category",
+          "description",
+          "is_essential",
+          "created_at"
+        ],
+        "title": "TransactionResponse",
+        "type": "object"
+      },
+      "UserProfile": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "full_name": {
+            "title": "Full Name",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "is_active": {
+            "title": "Is Active",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "full_name",
+          "is_active",
+          "created_at"
+        ],
+        "title": "UserProfile",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "description": "Access token from /auth/login or /auth/signup",
+        "scheme": "bearer",
+        "type": "http"
       }
     }
   },
@@ -1716,6 +4250,646 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/ai/consult": {
+      "post": {
+        "description": "Read a typed question into suggested goals and constraints, then run the deterministic\nrescue engine on the submitted plan. The reading step is keyword matching; every figure in\nthe answer comes from the engine.",
+        "operationId": "ai_consult_api_v1_ai_consult_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AIConsultRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIConsultResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          }
+        },
+        "summary": "Ai Consult",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/v1/ai/parse-intent": {
+      "post": {
+        "description": "Pick suggested goals and constraints out of a typed question. Suggestions only.",
+        "operationId": "ai_parse_intent_api_v1_ai_parse_intent_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParseIntentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntentSuggestions"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          }
+        },
+        "summary": "Ai Parse Intent",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/v1/auth/delete-account": {
+      "delete": {
+        "description": "Completely wipe user account and all associated tenant data.",
+        "operationId": "delete_account_api_v1_auth_delete_account_delete",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Account",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/v1/auth/export-data": {
+      "get": {
+        "description": "Export of the personal data held for the signed-in user.",
+        "operationId": "export_user_data_api_v1_auth_export_data_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExportResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Export User Data",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "description": "Authenticate with email and password and receive a signed JWT.",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "summary": "Login",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "description": "End the session on the client. Tokens are stateless, so they expire on their own.",
+        "operationId": "logout_api_v1_auth_logout_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Logout",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "description": "Fetch profile of current authenticated user.",
+        "operationId": "get_current_user_profile_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfile"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Current User Profile",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/v1/auth/password-reset/confirm": {
+      "post": {
+        "description": "Set a new password with a valid, unused, unexpired reset token.",
+        "operationId": "confirm_password_reset_api_v1_auth_password_reset_confirm_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetConfirm"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "summary": "Confirm Password Reset",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/v1/auth/password-reset/request": {
+      "post": {
+        "description": "E-mail a single-use reset link. Unavailable until a mail transport is configured.",
+        "operationId": "request_password_reset_api_v1_auth_password_reset_request_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "summary": "Request Password Reset",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/v1/auth/signup": {
+      "post": {
+        "description": "Register a new user account with secure password hashing.",
+        "operationId": "signup_api_v1_auth_signup_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "summary": "Signup",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
     "/api/v1/compare": {
       "post": {
         "description": "Two or three scenarios side by side, measured against the first.",
@@ -1755,6 +4929,734 @@
         "summary": "Compare Scenarios",
         "tags": [
           "analysis"
+        ]
+      }
+    },
+    "/api/v1/financials/accounts": {
+      "get": {
+        "description": "List all accounts for the current user.",
+        "operationId": "list_accounts_api_v1_financials_accounts_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AccountResponse"
+                  },
+                  "title": "Response List Accounts Api V1 Financials Accounts Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Accounts",
+        "tags": [
+          "financials"
+        ]
+      },
+      "post": {
+        "description": "Create a new financial account (savings, checking, deposit, brokerage, etc.).",
+        "operationId": "create_account_api_v1_financials_accounts_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Account",
+        "tags": [
+          "financials"
+        ]
+      }
+    },
+    "/api/v1/financials/investments": {
+      "get": {
+        "description": "List all assets and investments for the user.",
+        "operationId": "list_investments_api_v1_financials_investments_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/InvestmentResponse"
+                  },
+                  "title": "Response List Investments Api V1 Financials Investments Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Investments",
+        "tags": [
+          "financials"
+        ]
+      },
+      "post": {
+        "description": "Record an asset or investment (stocks, mutual funds, gold, EPF, etc.).",
+        "operationId": "create_investment_api_v1_financials_investments_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvestmentCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvestmentResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Investment",
+        "tags": [
+          "financials"
+        ]
+      }
+    },
+    "/api/v1/financials/liabilities": {
+      "get": {
+        "description": "List all liabilities for the user.",
+        "operationId": "list_liabilities_api_v1_financials_liabilities_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/LiabilityResponse"
+                  },
+                  "title": "Response List Liabilities Api V1 Financials Liabilities Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Liabilities",
+        "tags": [
+          "financials"
+        ]
+      },
+      "post": {
+        "description": "Record a loan, mortgage or credit liability.",
+        "operationId": "create_liability_api_v1_financials_liabilities_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LiabilityCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiabilityResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Liability",
+        "tags": [
+          "financials"
+        ]
+      }
+    },
+    "/api/v1/financials/net-worth": {
+      "get": {
+        "description": "Calculate comprehensive personal net worth with liquid and illiquid breakdowns.",
+        "operationId": "get_net_worth_api_v1_financials_net_worth_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetWorthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Net Worth",
+        "tags": [
+          "financials"
+        ]
+      }
+    },
+    "/api/v1/financials/transactions": {
+      "get": {
+        "description": "List transactions for the current user.",
+        "operationId": "list_transactions_api_v1_financials_transactions_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TransactionResponse"
+                  },
+                  "title": "Response List Transactions Api V1 Financials Transactions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Transactions",
+        "tags": [
+          "financials"
+        ]
+      },
+      "post": {
+        "description": "Create an individual income/expense transaction.",
+        "operationId": "create_transaction_api_v1_financials_transactions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Transaction",
+        "tags": [
+          "financials"
+        ]
+      }
+    },
+    "/api/v1/financials/transactions/import": {
+      "post": {
+        "description": "Import transactions from a CSV file. Rows that fail validation or repeat an existing\ntransaction are skipped and reported; nothing invalid is stored or silently corrected.",
+        "operationId": "import_transactions_csv_api_v1_financials_transactions_import_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_import_transactions_csv_api_v1_financials_transactions_import_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CSVImportResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Import Transactions Csv",
+        "tags": [
+          "financials"
         ]
       }
     },
@@ -1821,19 +5723,795 @@
         ]
       }
     },
-    "/api/v1/plans": {
+    "/api/v1/insurance/dashboard": {
       "get": {
-        "operationId": "list_plans_api_v1_plans_get",
+        "description": "Return aggregated insurance dashboard metrics across all policies.",
+        "operationId": "get_insurance_dashboard_api_v1_insurance_dashboard_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InsuranceDashboardSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Insurance Dashboard",
+        "tags": [
+          "insurance"
+        ]
+      }
+    },
+    "/api/v1/insurance/escalations": {
+      "post": {
+        "description": "Create a coverage escalation schedule for a verified policy.",
+        "operationId": "create_escalation_api_v1_insurance_escalations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EscalationCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EscalationResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Escalation",
+        "tags": [
+          "insurance"
+        ]
+      }
+    },
+    "/api/v1/insurance/escalations/{escalation_id}": {
+      "get": {
+        "description": "Retrieve coverage escalation configuration.",
+        "operationId": "get_escalation_api_v1_insurance_escalations__escalation_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "escalation_id",
+            "required": true,
+            "schema": {
+              "title": "Escalation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EscalationResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Escalation",
+        "tags": [
+          "insurance"
+        ]
+      }
+    },
+    "/api/v1/insurance/escalations/{escalation_id}/history": {
+      "get": {
+        "description": "Get audit trail of all completed escalation events.",
+        "operationId": "get_escalation_history_api_v1_insurance_escalations__escalation_id__history_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "escalation_id",
+            "required": true,
+            "schema": {
+              "title": "Escalation Id",
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/PlanSummary"
+                    "$ref": "#/components/schemas/EscalationHistoryResponse"
                   },
-                  "title": "Response List Plans Api V1 Plans Get",
+                  "title": "Response Get Escalation History Api V1 Insurance Escalations  Escalation Id  History Get",
                   "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Escalation History",
+        "tags": [
+          "insurance"
+        ]
+      }
+    },
+    "/api/v1/insurance/escalations/{escalation_id}/process-event": {
+      "post": {
+        "description": "Process an escalation increase event deterministically with idempotency protection.",
+        "operationId": "process_escalation_event_api_v1_insurance_escalations__escalation_id__process_event_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "escalation_id",
+            "required": true,
+            "schema": {
+              "title": "Escalation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProcessEscalationEventRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EscalationHistoryResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Process Escalation Event",
+        "tags": [
+          "insurance"
+        ]
+      }
+    },
+    "/api/v1/insurance/policies": {
+      "get": {
+        "description": "List all insurance policies belonging to the current user.",
+        "operationId": "list_policies_api_v1_insurance_policies_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PolicyResponse"
+                  },
+                  "title": "Response List Policies Api V1 Insurance Policies Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Policies",
+        "tags": [
+          "insurance"
+        ]
+      },
+      "post": {
+        "description": "Create a new normalized insurance policy.",
+        "operationId": "create_policy_api_v1_insurance_policies_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Policy",
+        "tags": [
+          "insurance"
+        ]
+      }
+    },
+    "/api/v1/insurance/policies/{policy_id}": {
+      "get": {
+        "description": "Get insurance policy by ID with tenant isolation.",
+        "operationId": "get_policy_api_v1_insurance_policies__policy_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "policy_id",
+            "required": true,
+            "schema": {
+              "title": "Policy Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Policy",
+        "tags": [
+          "insurance"
+        ]
+      }
+    },
+    "/api/v1/insurance/reminders": {
+      "get": {
+        "description": "List active insurance reminders and policy alerts.",
+        "operationId": "list_reminders_api_v1_insurance_reminders_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/InsuranceReminderItem"
+                  },
+                  "title": "Response List Reminders Api V1 Insurance Reminders Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Reminders",
+        "tags": [
+          "insurance"
+        ]
+      }
+    },
+    "/api/v1/insurance/reminders/{reminder_id}/ack": {
+      "post": {
+        "description": "Acknowledge and dismiss an insurance alert.",
+        "operationId": "acknowledge_reminder_api_v1_insurance_reminders__reminder_id__ack_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "reminder_id",
+            "required": true,
+            "schema": {
+              "title": "Reminder Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Acknowledge Reminder Api V1 Insurance Reminders  Reminder Id  Ack Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Acknowledge Reminder",
+        "tags": [
+          "insurance"
+        ]
+      }
+    },
+    "/api/v1/market/quotes/{symbol}": {
+      "get": {
+        "description": "A stored market quote with its age. If no trusted source has supplied one, the answer is\nstatus \"unavailable\" with no price.",
+        "operationId": "get_quote_api_v1_market_quotes__symbol__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "symbol",
+            "required": true,
+            "schema": {
+              "pattern": "^[A-Za-z0-9._&\\-]{1,30}$",
+              "title": "Symbol",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketQuoteResponse"
                 }
               }
             },
@@ -1860,12 +6538,84 @@
             "description": "Not available yet in this milestone."
           }
         },
+        "summary": "Get Quote",
+        "tags": [
+          "market"
+        ]
+      }
+    },
+    "/api/v1/plans": {
+      "get": {
+        "description": "List saved plans for the current tenant.",
+        "operationId": "list_plans_api_v1_plans_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PlanSummary"
+                  },
+                  "title": "Response List Plans Api V1 Plans Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "summary": "List Plans",
         "tags": [
           "plans"
         ]
       },
       "post": {
+        "description": "Save a financial plan.",
         "operationId": "create_plan_api_v1_plans_post",
         "requestBody": {
           "content": {
@@ -1888,6 +6638,26 @@
             },
             "description": "Successful Response"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
           "422": {
             "content": {
               "application/json": {
@@ -1898,7 +6668,7 @@
             },
             "description": "The request is invalid."
           },
-          "501": {
+          "429": {
             "content": {
               "application/json": {
                 "schema": {
@@ -1906,9 +6676,14 @@
                 }
               }
             },
-            "description": "Not available yet in this milestone."
+            "description": "Too many attempts. Try again later."
           }
         },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "summary": "Create Plan",
         "tags": [
           "plans"
@@ -1917,6 +6692,7 @@
     },
     "/api/v1/plans/{plan_id}": {
       "get": {
+        "description": "Load a specific saved plan by ID.",
         "operationId": "get_plan_api_v1_plans__plan_id__get",
         "parameters": [
           {
@@ -1940,6 +6716,26 @@
             },
             "description": "Successful Response"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
           "422": {
             "content": {
               "application/json": {
@@ -1950,7 +6746,7 @@
             },
             "description": "The request is invalid."
           },
-          "501": {
+          "429": {
             "content": {
               "application/json": {
                 "schema": {
@@ -1958,15 +6754,21 @@
                 }
               }
             },
-            "description": "Not available yet in this milestone."
+            "description": "Too many attempts. Try again later."
           }
         },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "summary": "Get Plan",
         "tags": [
           "plans"
         ]
       },
       "put": {
+        "description": "Update a saved plan.",
         "operationId": "update_plan_api_v1_plans__plan_id__put",
         "parameters": [
           {
@@ -2000,6 +6802,26 @@
             },
             "description": "Successful Response"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
           "422": {
             "content": {
               "application/json": {
@@ -2010,7 +6832,7 @@
             },
             "description": "The request is invalid."
           },
-          "501": {
+          "429": {
             "content": {
               "application/json": {
                 "schema": {
@@ -2018,9 +6840,14 @@
                 }
               }
             },
-            "description": "Not available yet in this milestone."
+            "description": "Too many attempts. Try again later."
           }
         },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "summary": "Update Plan",
         "tags": [
           "plans"
@@ -2066,6 +6893,83 @@
         "summary": "Create Projection",
         "tags": [
           "analysis"
+        ]
+      }
+    },
+    "/api/v1/rescue/analyze": {
+      "post": {
+        "description": "Run constraint-aware rescue analysis to solve competing multi-goal conflicts.",
+        "operationId": "analyze_and_rescue_api_v1_rescue_analyze_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RescueRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RescueResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Analyze And Rescue",
+        "tags": [
+          "rescue"
         ]
       }
     },
@@ -2148,6 +7052,7 @@
     },
     "/api/v1/tradeoffs": {
       "post": {
+        "description": "Trade-off matrix: re-run the engine prioritising each goal in turn.",
         "operationId": "create_tradeoffs_api_v1_tradeoffs_post",
         "requestBody": {
           "content": {
@@ -2179,16 +7084,6 @@
               }
             },
             "description": "The request is invalid."
-          },
-          "501": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Not available yet in this milestone."
           }
         },
         "summary": "Create Tradeoffs",

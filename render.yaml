@@ -7,11 +7,17 @@ services:
     branch: main
     # Editable install keeps the code next to contracts/samples, which the API reads.
     buildCommand: pip install -e backend
-    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    # The schema comes only from migrations, so they run before the server starts.
+    startCommand: cd backend && alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/v1/health
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.10
+      # Anything other than development/test refuses to start without a strong SECRET_KEY.
+      - key: ENVIRONMENT
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
       # The Vercel site's address, for example https://arthayukti.vercel.app (no trailing slash).
       - key: ALLOWED_ORIGINS
         sync: false
