@@ -42,6 +42,8 @@ PUBLIC_PATHS = {
     ("POST", "/api/v1/auth/login"),
     ("POST", "/api/v1/auth/password-reset/request"),
     ("POST", "/api/v1/auth/password-reset/confirm"),
+    ("POST", "/api/v1/debt/amortize"),
+    ("POST", "/api/v1/financials/investments/sip-calculator"),
 }
 
 
@@ -55,8 +57,16 @@ PROTECTED = sorted(r for r in _routes() if r not in PUBLIC_PATHS)
 
 
 def _call(method: str, path: str, headers: dict | None = None):
-    url = path.replace("{plan_id}", "x").replace("{policy_id}", "x").replace("{escalation_id}", "x")
-    url = url.replace("{reminder_id}", "x")
+    url = (
+        path.replace("{plan_id}", "x")
+        .replace("{policy_id}", "x")
+        .replace("{escalation_id}", "x")
+        .replace("{reminder_id}", "x")
+        .replace("{account_id}", "x")
+        .replace("{investment_id}", "x")
+        .replace("{liability_id}", "x")
+        .replace("{transaction_id}", "x")
+    )
     kwargs = {"json": {}} if method in ("POST", "PUT") else {}
     return client.request(method, url, headers=headers or {}, **kwargs)
 

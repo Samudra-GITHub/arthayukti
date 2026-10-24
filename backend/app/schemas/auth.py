@@ -2,6 +2,15 @@ from typing import Annotated
 
 from pydantic import AfterValidator, Field, StringConstraints
 
+from app.schemas.financials import (
+    AccountResponse,
+    InvestmentResponse,
+    LiabilityResponse,
+    TransactionResponse,
+)
+from app.schemas.household import HouseholdProfileResponse
+from app.schemas.insurance import PolicyResponse
+from app.schemas.plan import Plan
 from app.schemas.types import ApiModel
 
 # bcrypt only reads the first 72 bytes, so longer passwords would be silently truncated.
@@ -82,6 +91,7 @@ class ExportPlan(ApiModel):
     id: str
     name: str
     as_of: str
+    plan: Plan
 
 
 class ExportAccount(ApiModel):
@@ -89,12 +99,14 @@ class ExportAccount(ApiModel):
     name: str
     type: str
     balance: str
+    details: AccountResponse
 
 
 class ExportPolicy(ApiModel):
     id: str
     number: str
     type: str
+    details: PolicyResponse
 
 
 class ExportResponse(ApiModel):
@@ -102,3 +114,7 @@ class ExportResponse(ApiModel):
     plans: list[ExportPlan]
     accounts: list[ExportAccount]
     policies: list[ExportPolicy]
+    investments: list[InvestmentResponse]
+    liabilities: list[LiabilityResponse]
+    transactions: list[TransactionResponse]
+    household_profile: HouseholdProfileResponse

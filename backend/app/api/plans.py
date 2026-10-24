@@ -129,3 +129,23 @@ def update_plan(
         created_at=record.created_at.isoformat(),
         updated_at=record.updated_at.isoformat(),
     )
+
+
+@router.delete("/plans/{plan_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_plan(
+    plan_id: str,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> None:
+    """Delete a saved plan."""
+    owner = user
+    record = (
+        db.query(SavedPlan).filter(SavedPlan.id == plan_id, SavedPlan.user_id == owner.id).first()
+    )
+    if record is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Plan {plan_id} not found",
+        )
+    db.delete(record)
+    db.commit()

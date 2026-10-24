@@ -107,6 +107,25 @@ def get_policy(
     return _to_policy_response(policy)
 
 
+@router.delete("/policies/{policy_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_policy(
+    policy_id: str,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> None:
+    """Delete an insurance policy and associated schedules."""
+    owner = user
+    policy = (
+        db.query(InsurancePolicy)
+        .filter(InsurancePolicy.id == policy_id, InsurancePolicy.user_id == owner.id)
+        .first()
+    )
+    if not policy:
+        raise HTTPException(status_code=404, detail="Policy not found")
+    db.delete(policy)
+    db.commit()
+
+
 # =========================================================================
 # Coverage Escalation
 # =========================================================================

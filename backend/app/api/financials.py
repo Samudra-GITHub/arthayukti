@@ -5,7 +5,7 @@ import uuid
 from datetime import date
 from decimal import Decimal, InvalidOperation
 
-from fastapi import APIRouter, Depends, File, UploadFile, status
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from sqlalchemy.orm import Session
 
 from app.api.common import AUTH_RESPONSES
@@ -17,19 +17,26 @@ from app.db.models import (
     Liability,
     User,
 )
+from app.engine.investments import calculate_sip_projection
 from app.errors import ApiError
 from app.schemas.financials import (
     AccountCreateRequest,
     AccountResponse,
+    AccountUpdateRequest,
     CSVImportResponse,
     InvestmentCreateRequest,
     InvestmentResponse,
+    InvestmentUpdateRequest,
     LiabilityCreateRequest,
     LiabilityResponse,
+    LiabilityUpdateRequest,
     NetWorthResponse,
     TransactionCreateRequest,
     TransactionResponse,
+    TransferCreateRequest,
+    TransferResponse,
 )
+from app.schemas.investments import SipProjectionRequest, SipProjectionResponse
 from app.schemas.types import MAX_MONEY
 
 router = APIRouter(prefix="/financials", tags=["financials"], responses=AUTH_RESPONSES)
@@ -79,6 +86,80 @@ def list_accounts(
         .all()
     )
     return [_to_account_response(a) for a in accounts]
+
+
+@router.get("/accounts/{account_id}", response_model=AccountResponse)
+def get_account(
+    account_id: str,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> AccountResponse:
+    """Get a specific account by ID."""
+    owner = user
+    acc = (
+        db.query(FinancialAccount)
+        .filter(FinancialAccount.id == account_id, FinancialAccount.user_id == owner.id)
+        .first()
+    )
+    if acc is None:
+        raise HTTPException(status_code=404, detail="Account not found")
+    return _to_account_response(acc)
+
+
+@router.put("/accounts/{account_id}", response_model=AccountResponse)
+def update_account(
+    account_id: str,
+    req: AccountUpdateRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> AccountResponse:
+    """Update an existing financial account."""
+    owner = user
+    acc = (
+        db.query(FinancialAccount)
+        .filter(FinancialAccount.id == account_id, FinancialAccount.user_id == owner.id)
+        .first()
+    )
+    if acc is None:
+        raise HTTPException(status_code=404, detail="Account not found")
+
+    if req.account_name is not None:
+        acc.account_name = req.account_name
+    if req.account_type is not None:
+        acc.account_type = req.account_type
+    if req.balance is not None:
+        acc.balance = req.balance
+    if req.currency is not None:
+        acc.currency = req.currency
+    if req.is_liquid is not None:
+        acc.is_liquid = req.is_liquid
+    if req.institution_name is not None:
+        acc.institution_name = req.institution_name
+    if req.notes is not None:
+        acc.notes = req.notes
+
+    db.commit()
+    db.refresh(acc)
+    return _to_account_response(acc)
+
+
+@router.delete("/accounts/{account_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_account(
+    account_id: str,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> None:
+    """Delete a financial account."""
+    owner = user
+    acc = (
+        db.query(FinancialAccount)
+        .filter(FinancialAccount.id == account_id, FinancialAccount.user_id == owner.id)
+        .first()
+    )
+    if acc is None:
+        raise HTTPException(status_code=404, detail="Account not found")
+    db.delete(acc)
+    db.commit()
 
 
 # =========================================================================
@@ -145,6 +226,102 @@ def list_transactions(
         .all()
     )
     return [_to_tx_response(t) for t in txs]
+
+
+@router.delete("/transactions/{transaction_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_transaction(
+    transaction_id: str,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> None:
+    """Delete a transaction and reverse its effect on account balance if applicable."""
+    owner = user
+    tx = (
+        db.query(FinancialTransaction)
+        .filter(FinancialTransaction.id == transaction_id, FinancialTransaction.user_id == owner.id)
+        .first()
+    )
+    if tx is None:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+
+    if tx.account_id:
+        account = (
+            db.query(FinancialAccount)
+            .filter(FinancialAccount.id == tx.account_id, FinancialAccount.user_id == owner.id)
+            .first()
+        )
+        if account:
+            if tx.transaction_type == "credit":
+                account.balance -= tx.amount
+            else:
+                account.balance += tx.amount
+
+    db.delete(tx)
+    db.commit()
+
+
+@router.post("/transfers", response_model=TransferResponse, status_code=status.HTTP_201_CREATED)
+def create_transfer(
+    req: TransferCreateRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> TransferResponse:
+    """Transfer funds between two accounts without double-counting as income or expenditure."""
+    owner = user
+    if req.from_account_id == req.to_account_id:
+        raise ApiError(400, "invalid_transfer", "Source and destination accounts must be different.")
+
+    from_acc = (
+        db.query(FinancialAccount)
+        .filter(FinancialAccount.id == req.from_account_id, FinancialAccount.user_id == owner.id)
+        .first()
+    )
+    to_acc = (
+        db.query(FinancialAccount)
+        .filter(FinancialAccount.id == req.to_account_id, FinancialAccount.user_id == owner.id)
+        .first()
+    )
+    if not from_acc or not to_acc:
+        raise ApiError(404, "not_found", "One or both accounts not found.")
+
+    desc = req.description or f"Transfer from {from_acc.account_name} to {to_acc.account_name}"
+
+    out_tx = FinancialTransaction(
+        id=str(uuid.uuid4()),
+        user_id=owner.id,
+        account_id=from_acc.id,
+        transaction_date=req.transaction_date,
+        amount=req.amount,
+        transaction_type="debit",
+        category="Transfer",
+        description=f"{desc} (Outflow)",
+        is_essential=False,
+    )
+    in_tx = FinancialTransaction(
+        id=str(uuid.uuid4()),
+        user_id=owner.id,
+        account_id=to_acc.id,
+        transaction_date=req.transaction_date,
+        amount=req.amount,
+        transaction_type="credit",
+        category="Transfer",
+        description=f"{desc} (Inflow)",
+        is_essential=False,
+    )
+
+    from_acc.balance -= req.amount
+    to_acc.balance += req.amount
+
+    db.add(out_tx)
+    db.add(in_tx)
+    db.commit()
+    db.refresh(out_tx)
+    db.refresh(in_tx)
+
+    return TransferResponse(
+        from_transaction=_to_tx_response(out_tx),
+        to_transaction=_to_tx_response(in_tx),
+    )
 
 
 MAX_IMPORT_BYTES = 1_000_000
@@ -319,6 +496,97 @@ def list_investments(
     return [_to_inv_response(i) for i in items]
 
 
+@router.get("/investments/{investment_id}", response_model=InvestmentResponse)
+def get_investment(
+    investment_id: str,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> InvestmentResponse:
+    """Get an investment by ID."""
+    owner = user
+    inv = (
+        db.query(AssetInvestment)
+        .filter(AssetInvestment.id == investment_id, AssetInvestment.user_id == owner.id)
+        .first()
+    )
+    if not inv:
+        raise HTTPException(status_code=404, detail="Investment not found")
+    return _to_inv_response(inv)
+
+
+@router.put("/investments/{investment_id}", response_model=InvestmentResponse)
+def update_investment(
+    investment_id: str,
+    req: InvestmentUpdateRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> InvestmentResponse:
+    """Update an investment."""
+    owner = user
+    inv = (
+        db.query(AssetInvestment)
+        .filter(AssetInvestment.id == investment_id, AssetInvestment.user_id == owner.id)
+        .first()
+    )
+    if not inv:
+        raise HTTPException(status_code=404, detail="Investment not found")
+
+    if req.asset_name is not None:
+        inv.asset_name = req.asset_name
+    if req.asset_type is not None:
+        inv.asset_type = req.asset_type
+    if req.symbol is not None:
+        inv.symbol = req.symbol
+    if req.quantity is not None:
+        inv.quantity = Decimal(str(req.quantity))
+    if req.purchase_price is not None:
+        inv.purchase_price = req.purchase_price
+    if req.current_value is not None:
+        inv.current_value = req.current_value
+    if req.is_liquid is not None:
+        inv.is_liquid = req.is_liquid
+    if req.last_valuation_date is not None:
+        inv.last_valuation_date = req.last_valuation_date
+
+    db.commit()
+    db.refresh(inv)
+    return _to_inv_response(inv)
+
+
+@router.delete("/investments/{investment_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_investment(
+    investment_id: str,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> None:
+    """Delete an investment."""
+    owner = user
+    inv = (
+        db.query(AssetInvestment)
+        .filter(AssetInvestment.id == investment_id, AssetInvestment.user_id == owner.id)
+        .first()
+    )
+    if not inv:
+        raise HTTPException(status_code=404, detail="Investment not found")
+    db.delete(inv)
+    db.commit()
+
+
+@router.post("/investments/sip-calculator", response_model=SipProjectionResponse)
+def calculate_sip(req: SipProjectionRequest) -> SipProjectionResponse:
+    """Calculate SIP wealth growth trajectory with optional periodic step-ups."""
+    res = calculate_sip_projection(
+        monthly_investment=req.monthly_investment,
+        annual_expected_return=req.annual_expected_return,
+        tenure_years=req.tenure_years,
+        initial_investment=req.initial_investment,
+        step_up_percentage=req.step_up_percentage,
+        step_up_amount=req.step_up_amount,
+        step_up_frequency_months=req.step_up_frequency_months,
+    )
+    return SipProjectionResponse.model_validate(res)
+
+
 # =========================================================================
 # Liabilities
 # =========================================================================
@@ -365,6 +633,84 @@ def list_liabilities(
         .all()
     )
     return [_to_liab_response(liab) for liab in items]
+
+
+@router.get("/liabilities/{liability_id}", response_model=LiabilityResponse)
+def get_liability(
+    liability_id: str,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> LiabilityResponse:
+    """Get a liability by ID."""
+    owner = user
+    liab = (
+        db.query(Liability)
+        .filter(Liability.id == liability_id, Liability.user_id == owner.id)
+        .first()
+    )
+    if not liab:
+        raise HTTPException(status_code=404, detail="Liability not found")
+    return _to_liab_response(liab)
+
+
+@router.put("/liabilities/{liability_id}", response_model=LiabilityResponse)
+def update_liability(
+    liability_id: str,
+    req: LiabilityUpdateRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> LiabilityResponse:
+    """Update a liability."""
+    owner = user
+    liab = (
+        db.query(Liability)
+        .filter(Liability.id == liability_id, Liability.user_id == owner.id)
+        .first()
+    )
+    if not liab:
+        raise HTTPException(status_code=404, detail="Liability not found")
+
+    if req.liability_name is not None:
+        liab.liability_name = req.liability_name
+    if req.liability_type is not None:
+        liab.liability_type = req.liability_type
+    if req.principal_amount is not None:
+        liab.principal_amount = req.principal_amount
+    if req.current_balance is not None:
+        liab.current_balance = req.current_balance
+    if req.interest_rate is not None:
+        liab.interest_rate = req.interest_rate
+    if req.monthly_emi is not None:
+        liab.monthly_emi = req.monthly_emi
+    if req.remaining_months is not None:
+        liab.remaining_months = req.remaining_months
+    if req.start_date is not None:
+        liab.start_date = req.start_date
+    if req.end_date is not None:
+        liab.end_date = req.end_date
+
+    db.commit()
+    db.refresh(liab)
+    return _to_liab_response(liab)
+
+
+@router.delete("/liabilities/{liability_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_liability(
+    liability_id: str,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> None:
+    """Delete a liability."""
+    owner = user
+    liab = (
+        db.query(Liability)
+        .filter(Liability.id == liability_id, Liability.user_id == owner.id)
+        .first()
+    )
+    if not liab:
+        raise HTTPException(status_code=404, detail="Liability not found")
+    db.delete(liab)
+    db.commit()
 
 
 # =========================================================================

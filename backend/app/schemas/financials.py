@@ -127,3 +127,49 @@ class CSVImportResponse(ApiModel):
     duplicate_count: int = 0
     errors: list[str] = []
     errors_truncated: bool = False
+
+
+class AccountUpdateRequest(ApiModel):
+    account_name: ShortText | None = None
+    account_type: AccountType | None = None
+    balance: Money | None = None
+    currency: Literal["INR"] | None = None
+    is_liquid: bool | None = None
+    institution_name: OptionalShortText | None = None
+    notes: LongText | None = None
+
+
+class InvestmentUpdateRequest(ApiModel):
+    asset_name: ShortText | None = None
+    asset_type: AssetType | None = None
+    symbol: OptionalShortText | None = None
+    quantity: DecimalStr | None = Field(default=None, gt=0, max_digits=20, decimal_places=4)
+    purchase_price: Money | None = None
+    current_value: Money | None = None
+    is_liquid: bool | None = None
+    last_valuation_date: IsoDate | None = None
+
+
+class LiabilityUpdateRequest(ApiModel):
+    liability_name: ShortText | None = None
+    liability_type: LiabilityType | None = None
+    principal_amount: Money | None = None
+    current_balance: Money | None = None
+    interest_rate: Rate | None = None
+    monthly_emi: Money | None = None
+    remaining_months: int | None = Field(default=None, ge=0, le=1200)
+    start_date: IsoDate | None = None
+    end_date: IsoDate | None = None
+
+
+class TransferCreateRequest(ApiModel):
+    from_account_id: str
+    to_account_id: str
+    amount: Money
+    transaction_date: IsoDate
+    description: LongText | None = None
+
+
+class TransferResponse(ApiModel):
+    from_transaction: TransactionResponse
+    to_transaction: TransactionResponse

@@ -11,8 +11,10 @@ from app.api import (
     ai,
     analysis,
     auth,
+    debt,
     financials,
     health,
+    household,
     insurance,
     market,
     plans,
@@ -94,6 +96,8 @@ def create_app() -> FastAPI:
         rescue,
         market,
         ai,
+        household,
+        debt,
     ):
         app.include_router(module.router, prefix="/api/v1")
 

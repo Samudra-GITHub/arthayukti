@@ -11,11 +11,23 @@ from sqlalchemy.orm import Session
 from app import mail, ratelimit
 from app.api.common import AUTH_RESPONSES
 from app.api.deps import get_current_user, get_db
+from app.api.financials import (
+    _to_account_response,
+    _to_inv_response,
+    _to_liab_response,
+    _to_tx_response,
+)
+from app.api.household import _to_profile_response
+from app.api.insurance import _to_policy_response
 from app.config import settings
 from app.db.models import (
+    AssetInvestment,
     AuditLog,
     FinancialAccount,
+    FinancialTransaction,
+    HouseholdProfile,
     InsurancePolicy,
+    Liability,
     PasswordReset,
     SavedPlan,
     User,
@@ -34,6 +46,7 @@ from app.schemas.auth import (
     SignupRequest,
     UserProfile,
 )
+from app.schemas.plan import Plan
 from app.security import (
     create_access_token,
     hash_password,
@@ -232,9 +245,19 @@ def export_user_data(
     current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
 ) -> ExportResponse:
     """Export of the personal data held for the signed-in user."""
-    plans = db.query(SavedPlan).filter(SavedPlan.user_id == current_user.id).all()
-    accounts = db.query(FinancialAccount).filter(FinancialAccount.user_id == current_user.id).all()
-    policies = db.query(InsurancePolicy).filter(InsurancePolicy.user_id == current_user.id).all()
+    uid = current_user.id
+    plans = db.query(SavedPlan).filter(SavedPlan.user_id == uid).all()
+    accounts = db.query(FinancialAccount).filter(FinancialAccount.user_id == uid).all()
+    policies = db.query(InsurancePolicy).filter(InsurancePolicy.user_id == uid).all()
+    investments = db.query(AssetInvestment).filter(AssetInvestment.user_id == uid).all()
+    liabilities = db.query(Liability).filter(Liability.user_id == uid).all()
+    transactions = (
+        db.query(FinancialTransaction)
+        .filter(FinancialTransaction.user_id == uid)
+        .order_by(FinancialTransaction.transaction_date, FinancialTransaction.id)
+        .all()
+    )
+    household = db.query(HouseholdProfile).filter(HouseholdProfile.user_id == uid).first()
     return ExportResponse(
         user=ExportUser(
             id=current_user.id,
@@ -242,14 +265,28 @@ def export_user_data(
             full_name=current_user.full_name,
             created_at=current_user.created_at.isoformat(),
         ),
-        plans=[ExportPlan(id=p.id, name=p.name, as_of=p.as_of) for p in plans],
+        plans=[
+            ExportPlan(id=p.id, name=p.name, as_of=p.as_of, plan=Plan.model_validate_json(p.plan_json))
+            for p in plans
+        ],
         accounts=[
-            ExportAccount(id=a.id, name=a.account_name, type=a.account_type, balance=str(a.balance))
+            ExportAccount(
+                id=a.id,
+                name=a.account_name,
+                type=a.account_type,
+                balance=str(a.balance),
+                details=_to_account_response(a),
+            )
             for a in accounts
         ],
         policies=[
-            ExportPolicy(id=p.id, number=p.policy_number, type=p.policy_type) for p in policies
+            ExportPolicy(id=p.id, number=p.policy_number, type=p.policy_type, details=_to_policy_response(p))
+            for p in policies
         ],
+        investments=[_to_inv_response(i) for i in investments],
+        liabilities=[_to_liab_response(liab) for liab in liabilities],
+        transactions=[_to_tx_response(t) for t in transactions],
+        household_profile=_to_profile_response(household),
     )
 
 

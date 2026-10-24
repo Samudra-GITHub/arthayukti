@@ -46,6 +46,9 @@ class User(Base):
         "AssetInvestment", back_populates="user", cascade="all, delete-orphan"
     )
     liabilities = relationship("Liability", back_populates="user", cascade="all, delete-orphan")
+    household_profile = relationship(
+        "HouseholdProfile", uselist=False, back_populates="user", cascade="all, delete-orphan"
+    )
 
 
 class PasswordReset(Base):
@@ -382,3 +385,33 @@ class MarketDataSnapshot(Base):
     fetched_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
     is_stale = Column(Boolean, default=False, nullable=False)
     metadata_json = Column(Text, nullable=True)
+
+
+class HouseholdProfile(Base):
+    __tablename__ = "household_profiles"
+
+    id = Column(String(36), primary_key=True, default=_gen_uuid)
+    user_id = Column(
+        String(36),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        unique=True,
+        nullable=False,
+        index=True,
+    )
+    primary_earner_age = Column(Integer, nullable=True)
+    # Every detail is NULL until the person provides it: nothing here is a default presented as a fact.
+    household_type = Column(String(50), nullable=True)  # single_earner, dual_earner, retiree
+    dependants_count = Column(Integer, nullable=True)
+    children_count = Column(Integer, nullable=True)
+    elderly_dependants_count = Column(Integer, nullable=True)
+    monthly_family_support = Column(Numeric(20, 2), nullable=True)
+    job_stability = Column(String(50), nullable=True)  # high, stable, moderate, variable
+    emergency_fund_months_target = Column(Integer, nullable=True)
+    dependants_details_json = Column(Text, nullable=True)
+    planned_events_json = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
+    updated_at = Column(
+        DateTime(timezone=True), default=_now_utc, onupdate=_now_utc, nullable=False
+    )
+
+    user = relationship("User", back_populates="household_profile")

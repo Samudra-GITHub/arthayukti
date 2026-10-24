@@ -329,6 +329,251 @@
         "title": "AccountResponse",
         "type": "object"
       },
+      "AccountUpdateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "account_name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Name"
+          },
+          "account_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "savings",
+                  "checking",
+                  "fixed_deposit",
+                  "brokerage",
+                  "wallet",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Type"
+          },
+          "balance": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Balance"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "const": "INR",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "institution_name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Institution Name"
+          },
+          "is_liquid": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Liquid"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "title": "AccountUpdateRequest",
+        "type": "object"
+      },
+      "AmortizationRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "annual_interest_rate": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Annual Interest Rate",
+            "type": "string"
+          },
+          "extra_monthly_payment": {
+            "default": "0.00",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Extra Monthly Payment",
+            "type": "string"
+          },
+          "monthly_emi": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Monthly Emi"
+          },
+          "principal": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Principal",
+            "type": "string"
+          },
+          "tenure_months": {
+            "maximum": 1200.0,
+            "minimum": 1.0,
+            "title": "Tenure Months",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "principal",
+          "annual_interest_rate",
+          "tenure_months"
+        ],
+        "title": "AmortizationRequest",
+        "type": "object"
+      },
+      "AmortizationResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "effective_months": {
+            "title": "Effective Months",
+            "type": "integer"
+          },
+          "interest_saved": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Interest Saved",
+            "type": "string"
+          },
+          "monthly_emi": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Monthly Emi",
+            "type": "string"
+          },
+          "months_saved": {
+            "title": "Months Saved",
+            "type": "integer"
+          },
+          "schedule": {
+            "items": {
+              "$ref": "#/components/schemas/AmortizationScheduleItem"
+            },
+            "title": "Schedule",
+            "type": "array"
+          },
+          "total_amount_paid": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Amount Paid",
+            "type": "string"
+          },
+          "total_interest_paid": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Interest Paid",
+            "type": "string"
+          },
+          "total_principal": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Principal",
+            "type": "string"
+          }
+        },
+        "required": [
+          "monthly_emi",
+          "total_principal",
+          "total_interest_paid",
+          "total_amount_paid",
+          "effective_months",
+          "months_saved",
+          "interest_saved",
+          "schedule"
+        ],
+        "title": "AmortizationResponse",
+        "type": "object"
+      },
+      "AmortizationScheduleItem": {
+        "additionalProperties": false,
+        "properties": {
+          "extra_payment": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Extra Payment",
+            "type": "string"
+          },
+          "interest_paid": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Interest Paid",
+            "type": "string"
+          },
+          "month": {
+            "title": "Month",
+            "type": "integer"
+          },
+          "payment": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Payment",
+            "type": "string"
+          },
+          "principal_paid": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Principal Paid",
+            "type": "string"
+          },
+          "remaining_balance": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Remaining Balance",
+            "type": "string"
+          }
+        },
+        "required": [
+          "month",
+          "payment",
+          "principal_paid",
+          "interest_paid",
+          "extra_payment",
+          "remaining_balance"
+        ],
+        "title": "AmortizationScheduleItem",
+        "type": "object"
+      },
       "AssumptionOverrides": {
         "additionalProperties": false,
         "properties": {
@@ -661,6 +906,98 @@
           "amount"
         ],
         "title": "CrowdedOut",
+        "type": "object"
+      },
+      "DebtItemInput": {
+        "additionalProperties": false,
+        "properties": {
+          "balance": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Balance",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "interest_rate": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Interest Rate",
+            "type": "string"
+          },
+          "monthly_emi": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Monthly Emi",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "balance",
+          "interest_rate",
+          "monthly_emi"
+        ],
+        "title": "DebtItemInput",
+        "type": "object"
+      },
+      "DependantDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "age": {
+            "maximum": 120.0,
+            "minimum": 0.0,
+            "title": "Age",
+            "type": "integer"
+          },
+          "annual_support_cost": {
+            "default": "0.00",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Annual Support Cost",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "relationship": {
+            "enum": [
+              "child",
+              "spouse",
+              "parent",
+              "sibling",
+              "other"
+            ],
+            "title": "Relationship",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "relationship",
+          "age"
+        ],
+        "title": "DependantDetail",
         "type": "object"
       },
       "ErrorBody": {
@@ -1284,6 +1621,9 @@
             "title": "Balance",
             "type": "string"
           },
+          "details": {
+            "$ref": "#/components/schemas/AccountResponse"
+          },
           "id": {
             "title": "Id",
             "type": "string"
@@ -1301,7 +1641,8 @@
           "id",
           "name",
           "type",
-          "balance"
+          "balance",
+          "details"
         ],
         "title": "ExportAccount",
         "type": "object"
@@ -1320,12 +1661,16 @@
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/Plan"
           }
         },
         "required": [
           "id",
           "name",
-          "as_of"
+          "as_of",
+          "plan"
         ],
         "title": "ExportPlan",
         "type": "object"
@@ -1333,6 +1678,9 @@
       "ExportPolicy": {
         "additionalProperties": false,
         "properties": {
+          "details": {
+            "$ref": "#/components/schemas/PolicyResponse"
+          },
           "id": {
             "title": "Id",
             "type": "string"
@@ -1349,7 +1697,8 @@
         "required": [
           "id",
           "number",
-          "type"
+          "type",
+          "details"
         ],
         "title": "ExportPolicy",
         "type": "object"
@@ -1362,6 +1711,23 @@
               "$ref": "#/components/schemas/ExportAccount"
             },
             "title": "Accounts",
+            "type": "array"
+          },
+          "household_profile": {
+            "$ref": "#/components/schemas/HouseholdProfileResponse"
+          },
+          "investments": {
+            "items": {
+              "$ref": "#/components/schemas/InvestmentResponse"
+            },
+            "title": "Investments",
+            "type": "array"
+          },
+          "liabilities": {
+            "items": {
+              "$ref": "#/components/schemas/LiabilityResponse"
+            },
+            "title": "Liabilities",
             "type": "array"
           },
           "plans": {
@@ -1378,6 +1744,13 @@
             "title": "Policies",
             "type": "array"
           },
+          "transactions": {
+            "items": {
+              "$ref": "#/components/schemas/TransactionResponse"
+            },
+            "title": "Transactions",
+            "type": "array"
+          },
           "user": {
             "$ref": "#/components/schemas/ExportUser"
           }
@@ -1386,7 +1759,11 @@
           "user",
           "plans",
           "accounts",
-          "policies"
+          "policies",
+          "investments",
+          "liabilities",
+          "transactions",
+          "household_profile"
         ],
         "title": "ExportResponse",
         "type": "object"
@@ -1888,6 +2265,303 @@
         "title": "HealthResponse",
         "type": "object"
       },
+      "HouseholdProfileResponse": {
+        "additionalProperties": false,
+        "description": "The details the person has provided. A field that was never provided is null, never a default.",
+        "properties": {
+          "children_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Children Count"
+          },
+          "dependants_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dependants Count"
+          },
+          "dependants_details": {
+            "items": {
+              "$ref": "#/components/schemas/DependantDetail"
+            },
+            "title": "Dependants Details",
+            "type": "array"
+          },
+          "elderly_dependants_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Elderly Dependants Count"
+          },
+          "emergency_fund_months_target": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emergency Fund Months Target"
+          },
+          "household_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Household Type"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "is_saved": {
+            "title": "Is Saved",
+            "type": "boolean"
+          },
+          "job_stability": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Stability"
+          },
+          "monthly_family_support": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Monthly Family Support"
+          },
+          "planned_events": {
+            "items": {
+              "$ref": "#/components/schemas/PlannedLifeEvent"
+            },
+            "title": "Planned Events",
+            "type": "array"
+          },
+          "primary_earner_age": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Earner Age"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "required": [
+          "is_saved",
+          "id",
+          "primary_earner_age",
+          "household_type",
+          "dependants_count",
+          "children_count",
+          "elderly_dependants_count",
+          "monthly_family_support",
+          "job_stability",
+          "emergency_fund_months_target",
+          "dependants_details",
+          "planned_events",
+          "updated_at"
+        ],
+        "title": "HouseholdProfileResponse",
+        "type": "object"
+      },
+      "HouseholdProfileUpdateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "children_count": {
+            "anyOf": [
+              {
+                "maximum": 15.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Children Count"
+          },
+          "dependants_count": {
+            "anyOf": [
+              {
+                "maximum": 20.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dependants Count"
+          },
+          "dependants_details": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DependantDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dependants Details"
+          },
+          "elderly_dependants_count": {
+            "anyOf": [
+              {
+                "maximum": 10.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Elderly Dependants Count"
+          },
+          "emergency_fund_months_target": {
+            "anyOf": [
+              {
+                "maximum": 24.0,
+                "minimum": 3.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emergency Fund Months Target"
+          },
+          "household_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "single_earner",
+                  "dual_earner",
+                  "retiree"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Household Type"
+          },
+          "job_stability": {
+            "anyOf": [
+              {
+                "enum": [
+                  "high",
+                  "stable",
+                  "moderate",
+                  "variable"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Stability"
+          },
+          "monthly_family_support": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Monthly Family Support"
+          },
+          "planned_events": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/PlannedLifeEvent"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planned Events"
+          },
+          "primary_earner_age": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 18.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Earner Age"
+          }
+        },
+        "title": "HouseholdProfileUpdateRequest",
+        "type": "object"
+      },
       "IncomeChange": {
         "additionalProperties": false,
         "description": "Scale income for a month range. A multiplier of 0 models losing the income.",
@@ -2299,6 +2973,121 @@
         "title": "InvestmentResponse",
         "type": "object"
       },
+      "InvestmentUpdateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asset Name"
+          },
+          "asset_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "stock",
+                  "mutual_fund",
+                  "gold",
+                  "real_estate",
+                  "epf",
+                  "ppf",
+                  "crypto",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asset Type"
+          },
+          "current_value": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Value"
+          },
+          "is_liquid": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Liquid"
+          },
+          "last_valuation_date": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Valuation Date"
+          },
+          "purchase_price": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purchase Price"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "decimal_places": 4,
+                "gt": 0,
+                "max_digits": 20,
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "symbol": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symbol"
+          }
+        },
+        "title": "InvestmentUpdateRequest",
+        "type": "object"
+      },
       "LiabilityCreateRequest": {
         "additionalProperties": false,
         "properties": {
@@ -2441,6 +3230,130 @@
           "created_at"
         ],
         "title": "LiabilityResponse",
+        "type": "object"
+      },
+      "LiabilityUpdateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "current_balance": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Balance"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          },
+          "interest_rate": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interest Rate"
+          },
+          "liability_name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Liability Name"
+          },
+          "liability_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "home_loan",
+                  "personal_loan",
+                  "auto_loan",
+                  "education_loan",
+                  "credit_card",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Liability Type"
+          },
+          "monthly_emi": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Monthly Emi"
+          },
+          "principal_amount": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Principal Amount"
+          },
+          "remaining_months": {
+            "anyOf": [
+              {
+                "maximum": 1200.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remaining Months"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          }
+        },
+        "title": "LiabilityUpdateRequest",
         "type": "object"
       },
       "LoginRequest": {
@@ -3029,6 +3942,53 @@
           "message"
         ],
         "title": "PlanWarning",
+        "type": "object"
+      },
+      "PlannedLifeEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "estimated_lump_sum_cost": {
+            "default": "0.00",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Estimated Lump Sum Cost",
+            "type": "string"
+          },
+          "event_name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Event Name",
+            "type": "string"
+          },
+          "ongoing_monthly_cost": {
+            "default": "0.00",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Ongoing Monthly Cost",
+            "type": "string"
+          },
+          "years_ahead": {
+            "maximum": 50.0,
+            "minimum": 0.0,
+            "title": "Years Ahead",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "event_name",
+          "years_ahead"
+        ],
+        "title": "PlannedLifeEvent",
         "type": "object"
       },
       "PolicyCreateRequest": {
@@ -3739,6 +4699,93 @@
         "title": "RescueResponse",
         "type": "object"
       },
+      "RiskCapacityIndicatorResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "dependants_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dependants Count"
+          },
+          "explanation": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Explanation",
+            "type": "array"
+          },
+          "household_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Household Type"
+          },
+          "liquid_reserves": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Liquid Reserves",
+            "type": "string"
+          },
+          "monthly_commitments": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Monthly Commitments",
+            "type": "string"
+          },
+          "primary_earner_age": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Earner Age"
+          },
+          "recommended_reserve_months": {
+            "title": "Recommended Reserve Months",
+            "type": "integer"
+          },
+          "reserve_coverage_months": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Reserve Coverage Months",
+            "type": "string"
+          },
+          "risk_capacity_level": {
+            "enum": [
+              "Low",
+              "Moderate",
+              "High",
+              "Not assessed"
+            ],
+            "title": "Risk Capacity Level",
+            "type": "string"
+          }
+        },
+        "required": [
+          "primary_earner_age",
+          "household_type",
+          "dependants_count",
+          "monthly_commitments",
+          "liquid_reserves",
+          "reserve_coverage_months",
+          "recommended_reserve_months",
+          "risk_capacity_level",
+          "explanation"
+        ],
+        "title": "RiskCapacityIndicatorResponse",
+        "type": "object"
+      },
       "SampleDetail": {
         "additionalProperties": false,
         "properties": {
@@ -3916,6 +4963,273 @@
           "password"
         ],
         "title": "SignupRequest",
+        "type": "object"
+      },
+      "SipProjectionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "annual_expected_return": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Annual Expected Return",
+            "type": "string"
+          },
+          "initial_investment": {
+            "default": "0.00",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Initial Investment",
+            "type": "string"
+          },
+          "monthly_investment": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Monthly Investment",
+            "type": "string"
+          },
+          "step_up_amount": {
+            "default": "0.00",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Step Up Amount",
+            "type": "string"
+          },
+          "step_up_frequency_months": {
+            "default": 12,
+            "maximum": 60.0,
+            "minimum": 1.0,
+            "title": "Step Up Frequency Months",
+            "type": "integer"
+          },
+          "step_up_percentage": {
+            "default": "0.00",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Step Up Percentage",
+            "type": "string"
+          },
+          "tenure_years": {
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Tenure Years",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "monthly_investment",
+          "annual_expected_return",
+          "tenure_years"
+        ],
+        "title": "SipProjectionRequest",
+        "type": "object"
+      },
+      "SipProjectionResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "estimated_returns": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Estimated Returns",
+            "type": "string"
+          },
+          "final_monthly_sip": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Final Monthly Sip",
+            "type": "string"
+          },
+          "final_wealth": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Final Wealth",
+            "type": "string"
+          },
+          "initial_investment": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Initial Investment",
+            "type": "string"
+          },
+          "starting_monthly_sip": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Starting Monthly Sip",
+            "type": "string"
+          },
+          "tenure_years": {
+            "title": "Tenure Years",
+            "type": "integer"
+          },
+          "total_invested": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Invested",
+            "type": "string"
+          },
+          "wealth_multiplier": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Wealth Multiplier",
+            "type": "string"
+          },
+          "yearly_milestones": {
+            "items": {
+              "$ref": "#/components/schemas/SipYearlyMilestone"
+            },
+            "title": "Yearly Milestones",
+            "type": "array"
+          }
+        },
+        "required": [
+          "initial_investment",
+          "starting_monthly_sip",
+          "final_monthly_sip",
+          "total_invested",
+          "estimated_returns",
+          "final_wealth",
+          "wealth_multiplier",
+          "tenure_years",
+          "yearly_milestones"
+        ],
+        "title": "SipProjectionResponse",
+        "type": "object"
+      },
+      "SipYearlyMilestone": {
+        "additionalProperties": false,
+        "properties": {
+          "estimated_returns_to_date": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Estimated Returns To Date",
+            "type": "string"
+          },
+          "monthly_sip_amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Monthly Sip Amount",
+            "type": "string"
+          },
+          "total_corpus": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Corpus",
+            "type": "string"
+          },
+          "total_invested_to_date": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Invested To Date",
+            "type": "string"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "monthly_sip_amount",
+          "total_invested_to_date",
+          "estimated_returns_to_date",
+          "total_corpus"
+        ],
+        "title": "SipYearlyMilestone",
+        "type": "object"
+      },
+      "StrategyComparisonRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "debts": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DebtItemInput"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Debts"
+          },
+          "extra_monthly_budget": {
+            "default": "0.00",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Extra Monthly Budget",
+            "type": "string"
+          }
+        },
+        "title": "StrategyComparisonRequest",
+        "type": "object"
+      },
+      "StrategyComparisonResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "avalanche": {
+            "$ref": "#/components/schemas/StrategySummary"
+          },
+          "interest_difference": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Interest Difference",
+            "type": "string"
+          },
+          "recommendation": {
+            "title": "Recommendation",
+            "type": "string"
+          },
+          "snowball": {
+            "$ref": "#/components/schemas/StrategySummary"
+          },
+          "time_difference_months": {
+            "title": "Time Difference Months",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "avalanche",
+          "snowball",
+          "interest_difference",
+          "time_difference_months",
+          "recommendation"
+        ],
+        "title": "StrategyComparisonResponse",
+        "type": "object"
+      },
+      "StrategyPayoffOrder": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "payoff_month": {
+            "title": "Payoff Month",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "payoff_month"
+        ],
+        "title": "StrategyPayoffOrder",
+        "type": "object"
+      },
+      "StrategySummary": {
+        "additionalProperties": false,
+        "properties": {
+          "months_to_debt_free": {
+            "title": "Months To Debt Free",
+            "type": "integer"
+          },
+          "payoff_order": {
+            "items": {
+              "$ref": "#/components/schemas/StrategyPayoffOrder"
+            },
+            "title": "Payoff Order",
+            "type": "array"
+          },
+          "total_interest_paid": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Interest Paid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "total_interest_paid",
+          "months_to_debt_free",
+          "payoff_order"
+        ],
+        "title": "StrategySummary",
         "type": "object"
       },
       "TradeoffOutcome": {
@@ -4198,6 +5512,66 @@
           "created_at"
         ],
         "title": "TransactionResponse",
+        "type": "object"
+      },
+      "TransferCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Amount",
+            "type": "string"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "from_account_id": {
+            "title": "From Account Id",
+            "type": "string"
+          },
+          "to_account_id": {
+            "title": "To Account Id",
+            "type": "string"
+          },
+          "transaction_date": {
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "title": "Transaction Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "from_account_id",
+          "to_account_id",
+          "amount",
+          "transaction_date"
+        ],
+        "title": "TransferCreateRequest",
+        "type": "object"
+      },
+      "TransferResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "from_transaction": {
+            "$ref": "#/components/schemas/TransactionResponse"
+          },
+          "to_transaction": {
+            "$ref": "#/components/schemas/TransactionResponse"
+          }
+        },
+        "required": [
+          "from_transaction",
+          "to_transaction"
+        ],
+        "title": "TransferResponse",
         "type": "object"
       },
       "UserProfile": {
@@ -4932,6 +6306,242 @@
         ]
       }
     },
+    "/api/v1/debt/amortize": {
+      "post": {
+        "description": "Calculate complete loan amortization schedule with prepayment acceleration and interest savings.",
+        "operationId": "calculate_amortization_api_v1_debt_amortize_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AmortizationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AmortizationResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "summary": "Calculate Amortization",
+        "tags": [
+          "debt"
+        ]
+      }
+    },
+    "/api/v1/debt/compare-strategies": {
+      "post": {
+        "description": "Compare Debt Avalanche (highest interest first) vs Debt Snowball (lowest balance first).\n\nIf `debts` is omitted or empty, the caller's active liabilities from their profile are used.",
+        "operationId": "compare_strategies_api_v1_debt_compare_strategies_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StrategyComparisonRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StrategyComparisonResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Compare Strategies",
+        "tags": [
+          "debt"
+        ]
+      }
+    },
+    "/api/v1/debt/strategies": {
+      "get": {
+        "description": "Run Avalanche vs Snowball debt payoff analysis on the current user's recorded liabilities.",
+        "operationId": "get_user_debt_strategies_api_v1_debt_strategies_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "extra_budget",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "minimum": 0.0,
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "default": "0.00",
+              "title": "Extra Budget"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StrategyComparisonResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get User Debt Strategies",
+        "tags": [
+          "debt"
+        ]
+      }
+    },
     "/api/v1/financials/accounts": {
       "get": {
         "description": "List all accounts for the current user.",
@@ -5073,6 +6683,239 @@
           }
         ],
         "summary": "Create Account",
+        "tags": [
+          "financials"
+        ]
+      }
+    },
+    "/api/v1/financials/accounts/{account_id}": {
+      "delete": {
+        "description": "Delete a financial account.",
+        "operationId": "delete_account_api_v1_financials_accounts__account_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "title": "Account Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Account",
+        "tags": [
+          "financials"
+        ]
+      },
+      "get": {
+        "description": "Get a specific account by ID.",
+        "operationId": "get_account_api_v1_financials_accounts__account_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "title": "Account Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Account",
+        "tags": [
+          "financials"
+        ]
+      },
+      "put": {
+        "description": "Update an existing financial account.",
+        "operationId": "update_account_api_v1_financials_accounts__account_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "title": "Account Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Account",
         "tags": [
           "financials"
         ]
@@ -5224,6 +7067,311 @@
         ]
       }
     },
+    "/api/v1/financials/investments/sip-calculator": {
+      "post": {
+        "description": "Calculate SIP wealth growth trajectory with optional periodic step-ups.",
+        "operationId": "calculate_sip_api_v1_financials_investments_sip_calculator_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SipProjectionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SipProjectionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "summary": "Calculate Sip",
+        "tags": [
+          "financials"
+        ]
+      }
+    },
+    "/api/v1/financials/investments/{investment_id}": {
+      "delete": {
+        "description": "Delete an investment.",
+        "operationId": "delete_investment_api_v1_financials_investments__investment_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "investment_id",
+            "required": true,
+            "schema": {
+              "title": "Investment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Investment",
+        "tags": [
+          "financials"
+        ]
+      },
+      "get": {
+        "description": "Get an investment by ID.",
+        "operationId": "get_investment_api_v1_financials_investments__investment_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "investment_id",
+            "required": true,
+            "schema": {
+              "title": "Investment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvestmentResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Investment",
+        "tags": [
+          "financials"
+        ]
+      },
+      "put": {
+        "description": "Update an investment.",
+        "operationId": "update_investment_api_v1_financials_investments__investment_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "investment_id",
+            "required": true,
+            "schema": {
+              "title": "Investment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvestmentUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvestmentResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Investment",
+        "tags": [
+          "financials"
+        ]
+      }
+    },
     "/api/v1/financials/liabilities": {
       "get": {
         "description": "List all liabilities for the user.",
@@ -5365,6 +7513,239 @@
           }
         ],
         "summary": "Create Liability",
+        "tags": [
+          "financials"
+        ]
+      }
+    },
+    "/api/v1/financials/liabilities/{liability_id}": {
+      "delete": {
+        "description": "Delete a liability.",
+        "operationId": "delete_liability_api_v1_financials_liabilities__liability_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "liability_id",
+            "required": true,
+            "schema": {
+              "title": "Liability Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Liability",
+        "tags": [
+          "financials"
+        ]
+      },
+      "get": {
+        "description": "Get a liability by ID.",
+        "operationId": "get_liability_api_v1_financials_liabilities__liability_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "liability_id",
+            "required": true,
+            "schema": {
+              "title": "Liability Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiabilityResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Liability",
+        "tags": [
+          "financials"
+        ]
+      },
+      "put": {
+        "description": "Update a liability.",
+        "operationId": "update_liability_api_v1_financials_liabilities__liability_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "liability_id",
+            "required": true,
+            "schema": {
+              "title": "Liability Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LiabilityUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiabilityResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Liability",
         "tags": [
           "financials"
         ]
@@ -5660,6 +8041,154 @@
         ]
       }
     },
+    "/api/v1/financials/transactions/{transaction_id}": {
+      "delete": {
+        "description": "Delete a transaction and reverse its effect on account balance if applicable.",
+        "operationId": "delete_transaction_api_v1_financials_transactions__transaction_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "transaction_id",
+            "required": true,
+            "schema": {
+              "title": "Transaction Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Transaction",
+        "tags": [
+          "financials"
+        ]
+      }
+    },
+    "/api/v1/financials/transfers": {
+      "post": {
+        "description": "Transfer funds between two accounts without double-counting as income or expenditure.",
+        "operationId": "create_transfer_api_v1_financials_transfers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Transfer",
+        "tags": [
+          "financials"
+        ]
+      }
+    },
     "/api/v1/fixes": {
       "post": {
         "description": "Verified minimal changes that bring the failing goals back on time.",
@@ -5720,6 +8249,215 @@
         "summary": "Health",
         "tags": [
           "health"
+        ]
+      }
+    },
+    "/api/v1/household/profile": {
+      "get": {
+        "description": "The household details the current user has provided. Nothing is created or assumed: with no\nsaved profile, `is_saved` is false and every detail is null.",
+        "operationId": "get_household_profile_api_v1_household_profile_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HouseholdProfileResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Household Profile",
+        "tags": [
+          "household"
+        ]
+      },
+      "put": {
+        "description": "Save household composition, dependants and family support. Only the fields sent are stored.",
+        "operationId": "update_household_profile_api_v1_household_profile_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HouseholdProfileUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HouseholdProfileResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Household Profile",
+        "tags": [
+          "household"
+        ]
+      }
+    },
+    "/api/v1/household/risk-capacity": {
+      "get": {
+        "description": "Risk capacity from the details the person provided, plus their recorded balances and loans.\n\nA detail that was not provided is left out of the assessment and said so. With no saved profile\nthe level is \"Not assessed\".",
+        "operationId": "get_risk_capacity_api_v1_household_risk_capacity_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskCapacityIndicatorResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Risk Capacity",
+        "tags": [
+          "household"
         ]
       }
     },
@@ -6262,6 +9000,75 @@
       }
     },
     "/api/v1/insurance/policies/{policy_id}": {
+      "delete": {
+        "description": "Delete an insurance policy and associated schedules.",
+        "operationId": "delete_policy_api_v1_insurance_policies__policy_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "policy_id",
+            "required": true,
+            "schema": {
+              "title": "Policy Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Policy",
+        "tags": [
+          "insurance"
+        ]
+      },
       "get": {
         "description": "Get insurance policy by ID with tenant isolation.",
         "operationId": "get_policy_api_v1_insurance_policies__policy_id__get",
@@ -6691,6 +9498,75 @@
       }
     },
     "/api/v1/plans/{plan_id}": {
+      "delete": {
+        "description": "Delete a saved plan.",
+        "operationId": "delete_plan_api_v1_plans__plan_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "title": "Plan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Plan",
+        "tags": [
+          "plans"
+        ]
+      },
       "get": {
         "description": "Load a specific saved plan by ID.",
         "operationId": "get_plan_api_v1_plans__plan_id__get",
