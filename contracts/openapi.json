@@ -2079,16 +2079,6 @@
               }
             },
             "description": "The request is invalid."
-          },
-          "501": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Not available yet in this milestone."
           }
         },
         "summary": "Create Projection",

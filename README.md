@@ -8,14 +8,14 @@ Built for Srujana Hackathon 2026 (Finance track, problem F-02: Multi-Goal Financ
 
 ## Status
 
-Milestone M0 (foundations and frozen contracts) is nearly done.
+Milestone M1 (the calculation engine) is done. Next: the frontend screens.
 
 | Part | State |
 |---|---|
 | Financial model | Frozen: [docs/FINANCIAL_MODEL.md](docs/FINANCIAL_MODEL.md) |
 | API contract | Frozen: [docs/API.md](docs/API.md), [contracts/openapi.json](contracts/openapi.json) |
-| Backend | FastAPI skeleton, schemas and validation. The calculation engine is not written yet (M1) |
-| Frontend | Vite, React, TypeScript and Tailwind shell with generated API types |
+| Backend | Projection engine and `POST /api/v1/projections` are live. Trade-offs, fixes, compare and saved plans are contract-only (501) |
+| Frontend | Vite, React, TypeScript and Tailwind shell with generated API types. Screens not built yet |
 | Deployment | Not done yet |
 
 ## Layout
@@ -43,7 +43,7 @@ On Windows, `make setup` uses `py -3.12`. Override with `make setup BOOTSTRAP_PY
 
 ## Tests
 
-`backend/tests/engine/test_golden.py` holds hand-checked cases written before the engine. They are expected to fail until M1 and are marked so that an unexpected pass fails the run.
+`backend/tests/engine/test_golden.py` holds hand-checked cases that were written before the engine. `test_projection.py` adds income-loss and expense shocks, edge cases, and checks over seeded random plans: money is conserved every month, balances never go negative, results are deterministic, and extra savings never delay a goal.
 
 ## Disclaimer
 

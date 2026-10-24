@@ -62,6 +62,16 @@ S_t = sum(income_t) - sum(expenses_t) - sum(commitments_t)
 
 Rounding: all amounts are quantized to 0.01 (half-up). Only `required` rounds up.
 
+### Implementation notes (M1)
+
+- The required level amount uses the balance after this month's growth: `(N_d - B' * (1+r)^(m-1)) / s(m)`, because this month's contribution is made at the end of the month and first grows next month.
+- Money moved from `unassigned_savings` to goals at month 1 is not counted as a monthly contribution. It shows only in balances.
+- Realised goals earn no growth. Leftover surplus and released excess collect in free cash, which earns nothing and is only used to cover later deficits.
+- `crowded_out_by` adds, for each month in which a goal received less than its required amount, what each higher-ranked goal was paid in pass 1.
+- `average_monthly_contribution` is total contributed divided by the months to completion, or by the months to the deadline if the goal never completes.
+- Interest is rounded to the paisa each month, so a balance can differ by a paisa or two from unrounded compounding. The test suite checks the engine against an independent month-by-month ledger.
+- Pass 2 (accelerate) means a household with spare surplus completes goals well before their deadlines. A shock only bites once that slack is used up.
+
 ## 7. Definitions
 
 - Projected completion: first month a goal is realised (for emergency funds, first reached). `null` if not within the horizon (latest deadline plus 20 years, capped at 600 months).

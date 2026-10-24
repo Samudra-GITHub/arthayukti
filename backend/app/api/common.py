@@ -1,7 +1,11 @@
 from app.errors import ApiError, ErrorResponse
 
-ERROR_RESPONSES = {
+VALIDATION_RESPONSES = {
     422: {"model": ErrorResponse, "description": "The request is invalid."},
+}
+
+ERROR_RESPONSES = {
+    **VALIDATION_RESPONSES,
     501: {"model": ErrorResponse, "description": "Not available yet in this milestone."},
 }
 

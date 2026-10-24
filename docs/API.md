@@ -16,7 +16,7 @@ Base path: `/api/v1`.
              "details": [ { "loc": ["body", "plan", "goals", 0, "target_date"], "msg": "..." } ] } }
 ```
 
-Codes in use: `validation_error` (422), `not_found` (404), `not_implemented` (501), `internal_error` (500).
+Codes in use: `validation_error` (422), `scenario_invalid` (422), `not_found` (404), `not_implemented` (501), `internal_error` (500).
 
 ## Endpoints
 
@@ -24,7 +24,7 @@ Codes in use: `validation_error` (422), `not_found` (404), `not_implemented` (50
 |---|---|---|
 | `GET /health` | Liveness | Implemented (M0) |
 | `GET /samples`, `GET /samples/{id}` | Bundled plans and preset scenarios | Implemented (M0) |
-| `POST /projections` | Baseline, shock and reprioritisation: a plan plus an optional scenario | Contract only, engine in M1-M2 |
+| `POST /projections` | Baseline, shock and reprioritisation: a plan plus an optional scenario | Implemented (M1). An inconsistent scenario returns 422 `scenario_invalid` |
 | `POST /tradeoffs` | Trade-off matrix | Contract only, M3 |
 | `POST /fixes` | Verified minimal-fix options | Contract only, M3-M4 |
 | `POST /compare` | 2-3 scenarios side by side | Contract only, M3 |
@@ -48,7 +48,7 @@ One object carries everything that differs from the plan, so shocks, reprioritis
 
 Request body for `POST /projections`: the plan in [contracts/samples/tiny_delayed_goal.json](../contracts/samples/tiny_delayed_goal.json), with `"scenario": null`.
 
-Expected result for that plan, derived by hand (surplus 30,000, required level amount (6,00,000 - 1,20,000) / 12 = 40,000). It is golden test T3 and becomes real in M1:
+Result for that plan, derived by hand (surplus 30,000, required level amount (6,00,000 - 1,20,000) / 12 = 40,000) and confirmed by the engine as golden test T3:
 
 | Field | Value |
 |---|---|

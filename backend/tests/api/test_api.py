@@ -69,15 +69,64 @@ def test_invalid_bodies_get_the_validation_error_shape(method, path, body):
 @pytest.mark.parametrize(
     ("method", "path"),
     [
-        ("post", "/api/v1/projections"),
         ("post", "/api/v1/tradeoffs"),
         ("post", "/api/v1/fixes"),
     ],
 )
-def test_calculation_endpoints_are_not_implemented_yet(method, path):
+def test_later_calculation_endpoints_are_not_implemented_yet(method, path):
     response = getattr(client, method)(path, json={"plan": sample_plan()})
     assert response.status_code == 501
     assert response.json()["error"]["code"] == "not_implemented"
+
+
+def test_projection_returns_the_hand_checked_result():
+    response = client.post("/api/v1/projections", json={"plan": sample_plan()})
+    assert response.status_code == 200
+    body = response.json()
+    goal = body["goals"][0]
+    assert goal["status"] == "delayed"
+    assert goal["delay_months"] == 4
+    assert goal["projected_completion"] == "2028-02"
+    assert goal["shortfall_at_deadline_nominal"] == "120000.00"
+    assert goal["required_monthly_level_standalone"] == "40000.00"
+    assert body["summary"]["plan_feasible"] is False
+    assert len(body["monthly"]) == body["horizon_months"]
+
+
+def test_projection_can_leave_out_the_monthly_rows():
+    response = client.post(
+        "/api/v1/projections", json={"plan": sample_plan(), "include_monthly": False}
+    )
+    assert response.status_code == 200
+    assert response.json()["monthly"] == []
+
+
+def test_projection_applies_a_scenario():
+    scenario = {"name": "Save more", "extra_monthly_savings": "10000.00"}
+    response = client.post(
+        "/api/v1/projections", json={"plan": sample_plan(), "scenario": scenario}
+    )
+    assert response.status_code == 200
+    assert response.json()["summary"]["plan_feasible"] is True
+
+
+def test_projection_reports_an_inconsistent_scenario_as_422():
+    scenario = {"name": "Bad", "priority_order": ["ghost"]}
+    response = client.post(
+        "/api/v1/projections", json={"plan": sample_plan(), "scenario": scenario}
+    )
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "scenario_invalid"
+
+
+def test_projection_for_the_bundled_household_runs():
+    household = client.get("/api/v1/samples/household").json()
+    response = client.post(
+        "/api/v1/projections",
+        json={"plan": household["plan"], "scenario": household["scenarios"][0]},
+    )
+    assert response.status_code == 200
+    assert response.json()["summary"]["goals_total"] == 4
 
 
 def test_json_numbers_are_rejected_for_money():

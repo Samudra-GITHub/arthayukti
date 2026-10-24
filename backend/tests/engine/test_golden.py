@@ -1,20 +1,12 @@
 """Hand-checked golden cases (docs/FINANCIAL_MODEL.md, section 12).
 
-Written before the engine. They are expected to fail with NotImplementedError until M1;
-`strict=True` turns an unexpected pass into a failure, so each marker must be removed
-as the engine lands.
+Written before the engine, then made to pass in M1.
 """
 
 from decimal import Decimal
 
-import pytest
-
 from app.engine.projection import inflated_target, monthly_surplus_series, project
 from tests.engine.helpers import goal, load_sample_plan, make_plan
-
-pytestmark = pytest.mark.xfail(
-    raises=NotImplementedError, strict=True, reason="engine arrives in M1"
-)
 
 
 def D(value: str) -> Decimal:

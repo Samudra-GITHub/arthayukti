@@ -1,8 +1,10 @@
-"""Calculation endpoints. The contract is frozen in M0; the engine arrives in M1-M3."""
+"""Calculation endpoints. Projections are live; the rest follow in M3-M4."""
 
 from fastapi import APIRouter
 
-from app.api.common import ERROR_RESPONSES, not_implemented
+from app.api.common import ERROR_RESPONSES, VALIDATION_RESPONSES, not_implemented
+from app.engine.projection import project
+from app.errors import ApiError
 from app.schemas.requests import (
     CompareRequest,
     FixRequest,
@@ -14,10 +16,13 @@ from app.schemas.results import CompareResult, FixResult, ProjectionResult, Trad
 router = APIRouter(tags=["analysis"])
 
 
-@router.post("/projections", response_model=ProjectionResult, responses=ERROR_RESPONSES)
+@router.post("/projections", response_model=ProjectionResult, responses=VALIDATION_RESPONSES)
 def create_projection(request: ProjectionRequest) -> ProjectionResult:
     """Baseline, shock and reprioritisation: all are a plan plus an optional scenario."""
-    raise not_implemented("Projections")
+    try:
+        return project(request.plan, request.scenario, request.include_monthly)
+    except ValueError as error:
+        raise ApiError(422, "scenario_invalid", str(error)) from error
 
 
 @router.post("/tradeoffs", response_model=TradeoffResult, responses=ERROR_RESPONSES)
