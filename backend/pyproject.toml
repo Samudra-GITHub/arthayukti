@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "arthayukti-backend"
 version = "0.1.0"
-description = "ArthaYukti API and financial calculation engine"
+description = "ArthaYukti: explainable decision support for competing money goals (API and calculation engine)"
 requires-python = ">=3.12"
 # Pinned: contracts/openapi.json is generated from these versions and checked by a test.
 dependencies = [

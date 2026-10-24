@@ -13,7 +13,11 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="ArthaYukti API",
         version="0.1.0",
-        description="Multi-goal financial planning. Illustrative decision support, not advice.",
+        description=(
+            "Explainable decision support for families with several competing money goals. "
+            "Every number is reproducible and every suggested fix is verified. "
+            "Illustrative, not financial advice."
+        ),
     )
     origins = os.environ.get("ALLOWED_ORIGINS", DEFAULT_ORIGINS).split(",")
     app.add_middleware(

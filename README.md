@@ -2,9 +2,23 @@
 
 See which goal you lose when money runs short, and the smallest change that fixes it.
 
-ArthaYukti helps individuals and couples plan several competing financial goals. It shows when money is insufficient, compares alternative plans, simulates unexpected changes, and suggests the smallest verified change that makes the plan work.
+ArthaYukti is a focused, explainable decision-support tool for families with several competing money goals. It answers one question well: when money is short, which goal slips, by how much, and what is the smallest change that fixes it.
 
 Built for Srujana Hackathon 2026 (Finance track, problem F-02: Multi-Goal Financial Planning Under Uncertainty).
+
+## What it is, and what it is not
+
+It is not a replacement for banking, budgeting, or investment apps, and it does not claim to be better than them. It does one narrow job and shows its working.
+
+What you can check for yourself:
+
+- **Every number is reproducible.** The same inputs always give the same result. There is no randomness and no black-box model.
+- **The rules are written down.** The allocation policy is in [docs/FINANCIAL_MODEL.md](docs/FINANCIAL_MODEL.md), and the tests include hand-checked cases and checks that money is conserved every month.
+- **Every suggested fix is verified.** Each option is re-run through the same engine before it is shown, with its cost against the limits you set.
+- **Assumptions are visible.** Interest, inflation, and growth are explicit inputs, set to zero in the sample household. Amounts are exact decimals, never floats.
+- **It works in plain words.** Short sentences, jars instead of charts, Hindi and English, and a Listen button for people who are new to smartphones.
+
+What it deliberately does not do: predict markets, recommend investments, model taxes, or give financial advice. Uncertainty is explored through what-if scenarios, not probabilities.
 
 ## Status
 

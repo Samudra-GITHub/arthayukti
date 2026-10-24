@@ -1,6 +1,7 @@
 {
   "name": "frontend",
   "private": true,
+  "description": "ArthaYukti web app: explainable decision support for competing money goals",
   "version": "0.0.0",
   "type": "module",
   "scripts": {

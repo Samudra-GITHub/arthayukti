@@ -66,6 +66,7 @@ export function Layout({ route, navigate, speak, children }: LayoutProps) {
       <footer className="border-t border-line px-4 py-6 text-muted sm:px-8 lg:px-20">
         <div className="mx-auto max-w-[1280px]">
           <p>{text.footer.example}</p>
+          <p>{text.footer.scope}</p>
           <p>{text.footer.legal}</p>
         </div>
       </footer>

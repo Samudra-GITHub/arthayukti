@@ -1,4 +1,6 @@
-# Financial Model (v1, frozen at M0)
+# Financial Model (v1)
+
+**Purpose.** ArthaYukti is a focused, explainable decision-support tool. It does not try to replace banking, budgeting or investment apps. The model is deterministic, every rule below can be checked by hand, and the tests include hand-checked cases and invariants such as money being conserved every month.
 
 Source of truth for the calculation engine. Any change to this document needs both team members' agreement and a matching change to the golden tests.
 

@@ -1,4 +1,6 @@
-# API contract (v1, frozen at M0)
+# API contract (v1)
+
+The API serves one narrow job: explainable decision support for competing money goals. Every result is computed by the engine, is reproducible for the same inputs, and every suggested fix is verified by a re-run. It does not predict markets, model taxes, or give advice.
 
 The machine-readable contract is [contracts/openapi.json](../contracts/openapi.json), generated from the Pydantic schemas in `backend/app/schemas/`. The frontend types in `frontend/src/api/schema.d.ts` are generated from it. Regenerate both with `make gen-api`. A backend test fails if the committed file is stale.
 

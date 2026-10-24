@@ -7,7 +7,7 @@ export interface Copy {
   nav: { myPlan: string; whatIf: string; compare: string }
   listen: string
   family: string
-  footer: { example: string; legal: string }
+  footer: { example: string; scope: string; legal: string }
   common: {
     back: string
     stepOf: (step: number) => string
@@ -203,6 +203,7 @@ const en: Copy = {
   family: 'Arjun & Meera',
   footer: {
     example: 'An example, with no interest or growth assumed.',
+    scope: 'A helper for your decisions. It does not predict markets or replace your bank or adviser.',
     legal: 'Illustrative tool, not investment advice.',
   },
   common: {
@@ -418,6 +419,7 @@ const hi: Copy = {
   family: 'अर्जुन और मीरा',
   footer: {
     example: 'बिना ब्याज या बढ़त का उदाहरण।',
+    scope: 'यह आपके फ़ैसलों में मदद करता है। यह बाज़ार का अनुमान नहीं लगाता और आपके बैंक या सलाहकार की जगह नहीं लेता।',
     legal: 'सिर्फ़ समझने के लिए, निवेश की सलाह नहीं।',
   },
   common: {
