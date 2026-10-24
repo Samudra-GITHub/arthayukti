@@ -84,7 +84,10 @@ export function share(part: string, whole: string): number {
 export function parseRupeeInput(text: string): string | null {
   const stripped = text.replace(/[₹,\s]/g, '')
   if (stripped === '') return '0.00'
-  const digits = stripped.replace(/[^\d]/g, '')
-  if (digits === '' || digits.length > 10) return null
+  // A minus sign is refused, not dropped: "-500" must never become ₹500.
+  if (stripped.includes('-')) return null
+  // Amounts are whole rupees: anything after a decimal point is ignored, not read as more digits.
+  const digits = stripped.split('.')[0].replace(/[^\d]/g, '')
+  if (digits === '' || digits.length > 10) return stripped.startsWith('.') ? '0.00' : null
   return `${BigInt(digits)}.00`
 }

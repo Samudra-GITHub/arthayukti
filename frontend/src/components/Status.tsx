@@ -32,6 +32,9 @@ export function Await<T>({
   remote: Remote<T>
   children: (data: T) => React.ReactNode
 }) {
+  // A failed request hides the earlier answer: numbers from before the change must not stay
+  // on screen as if they were still right.
+  if (remote.error) return <ErrorNote />
   if (remote.data) {
     return (
       <>
@@ -40,6 +43,5 @@ export function Await<T>({
       </>
     )
   }
-  if (remote.error) return <ErrorNote />
   return <LoadingNote />
 }

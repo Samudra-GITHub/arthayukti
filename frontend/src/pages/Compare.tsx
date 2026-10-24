@@ -28,7 +28,7 @@ function spendingTotal(plan: Plan): string {
 }
 
 export function ComparePage({ navigate }: PageProps) {
-  const { text, plan, situation, fix, setFix, fixes, choice } = useStore()
+  const { text, plan, situation, fix, setFix, fixes, activeChoice: choice } = useStore()
   const copy = text.compare
 
   const suggested = fixes.data?.options.find((option) => option.id === fixes.data?.recommended_option_id)

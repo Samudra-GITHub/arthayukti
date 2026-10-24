@@ -4,6 +4,7 @@ import { Card, CardTitle, PageHeading, SummaryTiles, VerdictBanner } from '../co
 import { PrimaryButton, SecondaryButton } from '../components/Controls'
 import { GoalGrid } from '../components/GoalCard'
 import { Layout } from '../components/Layout'
+import { MoneyField } from '../components/Fields'
 import { Await } from '../components/Status'
 import { fixSummary } from '../lib/fixText'
 import { addMoney, atLeastZero, formatMoney, isNegative, mulMoney, subMoney } from '../lib/money'
@@ -33,10 +34,12 @@ function spendingTotal(plan: Plan): string {
 }
 
 export function WhatIfPage({ navigate }: PageProps) {
-  const { text, language, plan, projection, choice, setChoice, situation, fix, setFix, fixes } =
+  const { text, language, plan, projection, choice, setChoice, situation, fix, setFix, fixes, source, shockAmount, setShockAmount } =
     useStore()
   const copy = text.whatIf
 
+  // An own plan has no expense until an amount is typed, so there is nothing to show yet.
+  const awaitingAmount = source === 'own' && choice === 'expense' && !situation
   const events = situation?.events ?? []
   const incomeEvent = events.find((event) => event.type === 'income_change')
   const expenseEvent = events.find((event) => event.type === 'one_time_expense')
@@ -87,6 +90,19 @@ export function WhatIfPage({ navigate }: PageProps) {
         })}
       </fieldset>
 
+      {source === 'own' && choice === 'expense' ? (
+        <Card>
+          <MoneyField
+            icon={<Wrench size={20} aria-hidden="true" />}
+            label={copy.expenseAmount}
+            hint={copy.expenseAmountHint}
+            value={shockAmount === '' ? '0.00' : shockAmount}
+            onChange={(amount) => setShockAmount(amount)}
+          />
+        </Card>
+      ) : null}
+
+      {awaitingAmount ? null : (
       <Await remote={projection}>
         {(result) => {
           if (!plan || !verdict) return null
@@ -156,6 +172,7 @@ export function WhatIfPage({ navigate }: PageProps) {
           )
         }}
       </Await>
+      )}
     </Layout>
   )
 }

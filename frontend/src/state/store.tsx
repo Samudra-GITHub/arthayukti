@@ -1,15 +1,16 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { api } from '../api/client'
-import type { FixOption, Plan, SampleDetail } from '../api/types'
+import type { FixOption, Goal, Plan, SampleDetail } from '../api/types'
 import { copy } from '../i18n/copy'
 import type { Language } from '../lib/months'
+import { blankPlan, hasGoals, MAX_GOALS, newGoal } from '../lib/blank'
 import { currentOrder } from '../lib/tradeoffs'
-import { scenarioFor, withFix, type Choice } from '../lib/scenarios'
+import { ownScenario, scenarioFor, withFix, type Choice } from '../lib/scenarios'
 import { StoreContext, type Store } from './useStore'
 import { useRemote } from './useRemote'
 
 const LANGUAGE_KEY = 'arthayukti.language'
-const SAMPLE_ID = 'household'
+const EXAMPLE_ID = 'household'
 const EDIT_DELAY_MS = 200
 
 
@@ -25,6 +26,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(readLanguage)
   const [sample, setSample] = useState<SampleDetail | null>(null)
   const [sampleError, setSampleError] = useState<string | null>(null)
+  const [exampleLoading, setExampleLoading] = useState(false)
+  const [source, setSource] = useState<'own' | 'example' | null>(null)
+  const [shockAmount, setShockAmount] = useState('')
   const [plan, setPlan] = useState<Plan | null>(null)
   const [choice, setChoiceState] = useState<Choice>('normal')
   const [fix, setFix] = useState<FixOption | null>(null)
@@ -34,19 +38,46 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = copy[language].htmlLang
   }, [language])
 
-  useEffect(() => {
-    const controller = new AbortController()
-    api
-      .sample(SAMPLE_ID, controller.signal)
-      .then((loaded) => {
-        setSample(loaded)
-        setPlan(loaded.plan)
-      })
-      .catch((error: unknown) => {
-        if (error instanceof DOMException && error.name === 'AbortError') return
-        setSampleError('offline')
-      })
-    return () => controller.abort()
+  const startOwn = useCallback(() => {
+    setSample(null)
+    setSampleError(null)
+    setPlan(blankPlan())
+    setSource('own')
+    setChoiceState('normal')
+    setFix(null)
+    setShockAmount('')
+    setPreviousOrder(null)
+  }, [])
+
+  /** Loads the labelled example only when someone asks for it. Returns whether it loaded. */
+  const loadExample = useCallback(async () => {
+    setExampleLoading(true)
+    setSampleError(null)
+    try {
+      const loaded = await api.sample(EXAMPLE_ID)
+      setSample(loaded)
+      setPlan(loaded.plan)
+      setSource('example')
+      setChoiceState('normal')
+      setFix(null)
+      setPreviousOrder(null)
+      return true
+    } catch {
+      setSampleError('offline')
+      return false
+    } finally {
+      setExampleLoading(false)
+    }
+  }, [])
+
+  const startOver = useCallback(() => {
+    setSample(null)
+    setPlan(null)
+    setSource(null)
+    setChoiceState('normal')
+    setFix(null)
+    setShockAmount('')
+    setPreviousOrder(null)
   }, [])
 
   const setLanguage = useCallback((next: Language) => {
@@ -64,26 +95,33 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const situation = useMemo(
-    () => (sample ? scenarioFor(sample, choice) : undefined),
-    [sample, choice],
+    () =>
+      sample
+        ? scenarioFor(sample, choice)
+        : plan
+          ? ownScenario(plan, choice, shockAmount)
+          : undefined,
+    [sample, plan, choice, shockAmount],
   )
   const scenario = useMemo(() => withFix(situation, fix), [situation, fix])
+  const activeChoice: Choice = choice !== 'normal' && !situation ? 'normal' : choice
 
-  const projectionKey = plan ? JSON.stringify([plan, scenario]) : null
+  const ready = hasGoals(plan)
+  const projectionKey = ready ? JSON.stringify([plan, scenario]) : null
   const projection = useRemote(
     projectionKey,
     (signal) => api.project(plan as Plan, scenario, signal),
     EDIT_DELAY_MS,
   )
 
-  const baselineKey = plan && fix ? JSON.stringify([plan, situation]) : null
+  const baselineKey = ready && fix ? JSON.stringify([plan, situation]) : null
   const baseline = useRemote(
     baselineKey,
     (signal) => api.project(plan as Plan, situation, signal),
     EDIT_DELAY_MS,
   )
 
-  const fixesKey = plan ? JSON.stringify([plan, situation]) : null
+  const fixesKey = ready ? JSON.stringify([plan, situation]) : null
   const fixes = useRemote(
     fixesKey,
     (signal) => api.fixes(plan as Plan, situation, signal),
@@ -172,6 +210,25 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     [update],
   )
 
+  const addGoal = useCallback(
+    (type: Goal['type'], label: string, amount: string, targetDate: string) =>
+      update((current) =>
+        current.goals.length >= MAX_GOALS
+          ? current
+          : { ...current, goals: [...current.goals, newGoal(current, type, label, amount, targetDate)] },
+      ),
+    [update],
+  )
+
+  const removeGoal = useCallback(
+    (goalId: string) =>
+      update((current) => ({
+        ...current,
+        goals: current.goals.filter((goal) => goal.id !== goalId),
+      })),
+    [update],
+  )
+
   const applyOrder = useCallback(
     (goalIds: string[]) => {
       if (plan) setPreviousOrder(currentOrder(plan))
@@ -187,10 +244,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const resetPlan = useCallback(() => {
     if (sample) setPlan(sample.plan)
+    else if (source === 'own') setPlan(blankPlan())
     setPreviousOrder(null)
     setChoiceState('normal')
     setFix(null)
-  }, [sample])
+  }, [sample, source])
 
   const value: Store = {
     language,
@@ -198,8 +256,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     text: copy[language],
     sample,
     sampleError,
+    exampleLoading,
+    source,
+    startOwn,
+    loadExample,
+    startOver,
+    shockAmount,
+    setShockAmount,
+    addGoal,
+    removeGoal,
     plan,
     choice,
+    activeChoice,
     setChoice,
     fix,
     setFix,

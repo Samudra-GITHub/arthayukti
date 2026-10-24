@@ -22,7 +22,7 @@ function spendingTotal(plan: Plan): string {
 }
 
 export function FixesPage({ navigate }: PageProps) {
-  const { text, language, plan, fixes, choice, setFix } = useStore()
+  const { text, language, plan, fixes, activeChoice: choice, setFix } = useStore()
   const copy = text.fixes
 
   const after =

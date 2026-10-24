@@ -1,8 +1,10 @@
 import type { ReactNode } from 'react'
+import { ArrowDownUp, Columns2, Target, Zap, type LucideIcon } from 'lucide-react'
 import type { Route } from '../lib/route'
 import { householdName } from '../lib/household'
 import { useStore } from '../state/useStore'
 import { LanguageControl, ListenButton } from './Controls'
+import { Wordmark } from './Wordmark'
 
 interface LayoutProps {
   route: Route
@@ -12,11 +14,13 @@ interface LayoutProps {
   children: ReactNode
 }
 
-const NAV: { route: Route; key: 'myPlan' | 'whatIf' | 'compare' | 'tradeoffs'; covers: Route[] }[] = [
-  { route: 'plan', key: 'myPlan', covers: ['plan'] },
-  { route: 'tradeoffs', key: 'tradeoffs', covers: ['tradeoffs'] },
-  { route: 'what-if', key: 'whatIf', covers: ['what-if', 'fixes'] },
-  { route: 'compare', key: 'compare', covers: ['compare'] },
+type NavKey = 'myPlan' | 'whatIf' | 'compare' | 'tradeoffs'
+
+const NAV: { route: Route; key: NavKey; icon: LucideIcon; covers: Route[] }[] = [
+  { route: 'plan', key: 'myPlan', icon: Target, covers: ['plan'] },
+  { route: 'tradeoffs', key: 'tradeoffs', icon: ArrowDownUp, covers: ['tradeoffs'] },
+  { route: 'what-if', key: 'whatIf', icon: Zap, covers: ['what-if', 'fixes'] },
+  { route: 'compare', key: 'compare', icon: Columns2, covers: ['compare'] },
 ]
 
 export function Layout({ route, navigate, speak, children }: LayoutProps) {
@@ -25,57 +29,85 @@ export function Layout({ route, navigate, speak, children }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-cream">
-      <header className="border-b border-line bg-paper px-4 py-3 sm:px-8 lg:px-12">
-        <div className="mx-auto flex max-w-[1180px] flex-wrap items-center gap-x-6 gap-y-2">
-          <button
-            type="button"
-            onClick={() => navigate('home')}
-            className="font-display text-[28px] leading-none font-semibold text-ink"
-          >
-            ArthaYukti<span className="text-turmeric">.</span>
+      <header className="stage border-b border-night-line px-4 py-3 sm:px-8 lg:px-12">
+        <div className="mx-auto flex max-w-[1180px] flex-wrap items-center gap-x-8 gap-y-2">
+          <button type="button" onClick={() => navigate('home')} aria-label="ArthaYukti">
+            <Wordmark />
           </button>
-          <nav aria-label="Main" className="order-3 flex w-full flex-wrap gap-x-3 gap-y-0 sm:gap-x-5 lg:order-none lg:w-auto lg:flex-1">
-            {NAV.map((item) => {
-              const active = item.covers.includes(route)
-              return (
-                <button
-                  key={item.route}
-                  type="button"
-                  onClick={() => navigate(item.route)}
-                  aria-current={active ? 'page' : undefined}
-                  className={`min-h-11 border-b-2 text-[16px] whitespace-nowrap sm:text-[17px] ${
-                    active ? 'border-turmeric font-semibold' : 'border-transparent text-muted hover:text-ink'
-                  }`}
-                >
-                  {text.nav[item.key]}
-                </button>
-              )
-            })}
-          </nav>
-          <div className="ml-auto flex items-center gap-2">
+          {plan ? (
+            <nav aria-label={text.nav.label} className="hidden flex-1 items-center gap-1 md:flex">
+              {NAV.map((item) => {
+                const active = item.covers.includes(route)
+                return (
+                  <button
+                    key={item.route}
+                    type="button"
+                    onClick={() => navigate(item.route)}
+                    aria-current={active ? 'page' : undefined}
+                    className={`min-h-11 rounded-full px-4 text-[15px] whitespace-nowrap transition-colors motion-reduce:transition-none ${
+                      active ? 'bg-ink font-semibold text-cream' : 'text-muted hover:text-ink'
+                    }`}
+                  >
+                    {text.nav[item.key]}
+                  </button>
+                )
+              })}
+            </nav>
+          ) : (
+            <span className="flex-1" />
+          )}
+          <div className="flex items-center gap-2">
             <LanguageControl />
             <ListenButton speak={speak} />
           </div>
         </div>
         {name ? (
-          <div className="mx-auto mt-1 flex max-w-[1180px] items-center gap-2 text-[15px] text-muted">
+          <div className="mx-auto mt-2 flex max-w-[1180px] items-center gap-2 text-[14px] text-muted">
             <span className="font-semibold text-ink">{name}</span>
-            {sample ? <span className="rounded-full bg-sand px-2 py-0.5">{text.shell.sample}</span> : null}
+            <span className="rounded-full border border-night-line px-2 py-0.5">
+              {sample ? text.shell.sample : text.shell.unsaved}
+            </span>
           </div>
         ) : null}
       </header>
 
-      <main className="px-4 pt-8 pb-12 sm:px-8 lg:px-12">
+      <main className="px-4 pt-8 pb-28 sm:px-8 md:pb-12 lg:px-12">
         <div className="mx-auto flex max-w-[1180px] flex-col gap-8">{children}</div>
       </main>
 
-      <footer className="border-t border-line px-4 py-6 text-[15px] text-muted sm:px-8 lg:px-12">
+      <footer className="border-t border-line px-4 py-6 pb-28 text-[14px] text-muted sm:px-8 md:pb-6 lg:px-12">
         <div className="mx-auto max-w-[1180px]">
           <p>{text.footer.example}</p>
           <p>{text.footer.scope}</p>
           <p>{text.footer.legal}</p>
         </div>
       </footer>
+
+      {plan ? (
+        <nav
+          aria-label={text.nav.label}
+          className="stage fixed inset-x-0 bottom-0 z-10 grid grid-cols-4 border-t border-night-line pb-[env(safe-area-inset-bottom)] md:hidden"
+        >
+          {NAV.map((item) => {
+            const active = item.covers.includes(route)
+            const Icon = item.icon
+            return (
+              <button
+                key={item.route}
+                type="button"
+                onClick={() => navigate(item.route)}
+                aria-current={active ? 'page' : undefined}
+                className={`flex min-h-16 flex-col items-center justify-center gap-1 px-1 text-[12px] ${
+                  active ? 'font-semibold text-glow' : 'text-muted'
+                }`}
+              >
+                <Icon size={22} aria-hidden="true" />
+                <span className="max-w-full truncate">{text.nav[item.key]}</span>
+              </button>
+            )
+          })}
+        </nav>
+      ) : null}
     </div>
   )
 }

@@ -16,6 +16,14 @@ export function useRemote<T>(
   const [state, setState] = useState<Remote<T>>({ data: null, error: null, loading: key !== null })
   const loader = useRef(load)
 
+  // When there is nothing to request any more, drop the earlier answer so it cannot show
+  // against a different plan. (Adjusting state while rendering is the sanctioned pattern.)
+  const [previousKey, setPreviousKey] = useState(key)
+  if (key !== previousKey) {
+    setPreviousKey(key)
+    if (key === null) setState({ data: null, error: null, loading: false })
+  }
+
   useEffect(() => {
     loader.current = load
   })

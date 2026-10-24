@@ -1,6 +1,8 @@
 import { Layout } from './components/Layout'
-import { ErrorNote, LoadingNote } from './components/Status'
-import { useRoute } from './lib/route'
+import { Card, CardTitle, PageHeading } from './components/Cards'
+import { PrimaryButton } from './components/Controls'
+import { hasGoals } from './lib/blank'
+import { useRoute, type Route } from './lib/route'
 import { ComparePage } from './pages/Compare'
 import { FixesPage } from './pages/Fixes'
 import { Home } from './pages/Home'
@@ -11,14 +13,24 @@ import { TradeoffsPage } from './pages/Tradeoffs'
 import { StoreProvider } from './state/store'
 import { useStore } from './state/useStore'
 
+const NEEDS_GOALS: Route[] = ['plan', 'what-if', 'fixes', 'compare', 'tradeoffs']
+
 function Screens() {
   const [route, navigate] = useRoute()
-  const { plan, sampleError, text } = useStore()
+  const { plan, text } = useStore()
 
-  if (!plan) {
+  // Nothing is shown until the person starts their own plan or opens the labelled example.
+  if (!plan) return <Home navigate={navigate} />
+
+  if (!hasGoals(plan) && NEEDS_GOALS.includes(route)) {
+    const copy = text.needGoals
     return (
-      <Layout route={route} navigate={navigate} speak={text.common.loading}>
-        {sampleError ? <ErrorNote /> : <LoadingNote />}
+      <Layout route={route} navigate={navigate} speak={`${copy.title} ${copy.body}`}>
+        <PageHeading title={copy.title} />
+        <Card>
+          <CardTitle>{copy.body}</CardTitle>
+          <PrimaryButton onClick={() => navigate('dreams')}>{copy.action}</PrimaryButton>
+        </Card>
       </Layout>
     )
   }

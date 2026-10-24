@@ -87,8 +87,15 @@ describe('parseRupeeInput', () => {
     expect(parseRupeeInput('₹')).toBe('0.00')
   })
 
+  it('ignores anything after a decimal point instead of reading it as more digits', () => {
+    expect(parseRupeeInput('1500.50')).toBe('1500.00')
+    expect(parseRupeeInput('₹2,00,000.99')).toBe('200000.00')
+  })
+
   it('refuses text with no digits and absurd lengths', () => {
     expect(parseRupeeInput('abc')).toBeNull()
+    expect(parseRupeeInput('-500')).toBeNull()
+    expect(parseRupeeInput('₹-5,000')).toBeNull()
     expect(parseRupeeInput('123456789012')).toBeNull()
   })
 })

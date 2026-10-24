@@ -1,5 +1,7 @@
 @import 'tailwindcss';
-@import '@fontsource-variable/baloo-2';
+@import '@fontsource-variable/fraunces';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/noto-serif-devanagari';
 @import '@fontsource-variable/noto-sans-devanagari';
 
 @theme {
@@ -16,10 +18,16 @@
   --color-blush: #fbebe5;
   --color-bar: #9cced5;
 
-  --font-display: 'Baloo 2 Variable', 'Noto Sans Devanagari Variable', system-ui, sans-serif;
-  --font-body: 'Noto Sans Devanagari Variable', system-ui, sans-serif;
+  --color-night: #0c1322;
+  --color-night-soft: #162036;
+  --color-night-line: #2a3856;
+  --color-glow: #f3b34c;
+  --color-mint: #4fd1a1;
 
-  --shadow-card: 0 4px 16px 0 rgba(98, 75, 41, 0.06);
+  --font-display: 'Fraunces Variable', 'Noto Serif Devanagari Variable', Georgia, serif;
+  --font-body: 'Inter Variable', 'Noto Sans Devanagari Variable', system-ui, sans-serif;
+
+  --shadow-card: 0 1px 2px rgba(60, 45, 20, 0.06), 0 8px 24px -12px rgba(60, 45, 20, 0.14);
 }
 
 @layer base {
@@ -27,8 +35,8 @@
     background: var(--color-cream);
     color: var(--color-ink);
     font-family: var(--font-body);
-    font-size: 18px;
-    line-height: 1.5;
+    font-size: 17px;
+    line-height: 1.55;
     -webkit-text-size-adjust: 100%;
   }
 
@@ -71,5 +79,23 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* A dark stage: re-maps the page tokens so any component placed inside reads on midnight. */
+@layer utilities {
+  .stage {
+    --color-ink: #f4efe4;
+    --color-paper: #162036;
+    --color-cream: #0c1322;
+    --color-line: #2a3856;
+    --color-muted: #a3aec6;
+    --color-sand: #1d2a45;
+    --color-ontime: #4fd1a1;
+    --color-late: #ff8a6b;
+    --color-sage: #12352f;
+    --color-blush: #3a2230;
+    background: radial-gradient(120% 90% at 85% 0%, #1b2a4a 0%, #0c1322 60%);
+    color: var(--color-ink);
   }
 }

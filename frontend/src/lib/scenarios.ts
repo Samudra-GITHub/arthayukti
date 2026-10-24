@@ -1,5 +1,6 @@
-import type { FixOption, SampleDetail, Scenario } from '../api/types'
-import { addMoney } from './money'
+import type { FixOption, Plan, SampleDetail, Scenario } from '../api/types'
+import { addMoney, toPaise } from './money'
+import { addMonths } from './months'
 
 export type Choice = 'normal' | 'no_income' | 'expense'
 
@@ -39,4 +40,35 @@ export function withFix(scenario: Scenario | undefined, fix: FixOption | null): 
     extra_monthly_savings: addMoney(base.extra_monthly_savings, delta.extra_monthly_savings),
     goal_overrides: mergeOverrides(base.goal_overrides ?? [], delta.goal_overrides ?? []),
   }
+}
+
+/**
+ * The same two situations for a plan the person built. The six-month income stop needs no
+ * number. The expense needs an amount the person gives, so none is made up: without one
+ * there is no situation yet.
+ */
+export function ownScenario(plan: Plan, choice: Choice, expenseAmount: string): Scenario | undefined {
+  if (choice === 'no_income') {
+    return {
+      name: 'No income for 6 months',
+      extra_monthly_savings: '0.00',
+      events: [
+        {
+          type: 'income_change',
+          stream_id: null,
+          from_month: plan.as_of,
+          to_month: addMonths(plan.as_of, 5),
+          multiplier: '0',
+        },
+      ],
+    }
+  }
+  if (choice === 'expense' && expenseAmount !== '' && toPaise(expenseAmount) > 0n) {
+    return {
+      name: 'Sudden big expense',
+      extra_monthly_savings: '0.00',
+      events: [{ type: 'one_time_expense', month: plan.as_of, amount: expenseAmount, label: 'Big expense' }],
+    }
+  }
+  return undefined
 }

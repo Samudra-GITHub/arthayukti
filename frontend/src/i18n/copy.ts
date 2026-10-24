@@ -4,10 +4,11 @@
 export interface Copy {
   htmlLang: string
   speechLang: string
-  nav: { myPlan: string; whatIf: string; compare: string; tradeoffs: string }
+  nav: { label: string; myPlan: string; whatIf: string; compare: string; tradeoffs: string }
   listen: string
   households: Record<string, string>
-  shell: { sample: string; assumptions: string }
+  shell: { sample: string; assumptions: string; mine: string; unsaved: string }
+  needGoals: { title: string; body: string; action: string }
   footer: { example: string; scope: string; legal: string }
   common: {
     back: string
@@ -24,6 +25,7 @@ export interface Copy {
     title: string
     subtitle: string
     forFamily: (name: string) => string
+    forEveryone: string
     heroTitle: string
     heroBody: string
     start: string
@@ -31,6 +33,20 @@ export interface Copy {
     stepIn: string
     stepOut: string
     stepDreams: string
+    startMine: string
+    tryExample: string
+    exampleNote: string
+    continueMine: string
+    startOver: string
+    startOverWarn: string
+    notSaved: string
+    exampleFailed: string
+    tagline: string
+    hook: string
+    canTitle: string
+    can: { title: string; body: string }[]
+    soonTitle: string
+    soon: string[]
   }
   income: {
     title: string
@@ -43,6 +59,7 @@ export interface Copy {
     exampleNote: (name: string) => string
     noBank: string
     next: string
+    mine: string
   }
   spending: {
     title: string
@@ -75,6 +92,14 @@ export interface Copy {
     showPlan: string
     decrease: string
     increase: string
+    noGoals: string
+    addTitle: string
+    kind: string
+    amountLabel: string
+    add: string
+    remove: (goal: string) => string
+    maxGoals: string
+    needAmount: string
   }
   goalNames: Record<string, string>
   status: {
@@ -144,6 +169,8 @@ export interface Copy {
     smallestFix: (text: string) => string
     tryNoIncome: string
     tryExpense: string
+    expenseAmount: string
+    expenseAmountHint: string
     backToPlan: string
     whatCanIDo: string
     fixKept: (text: string) => string
@@ -268,10 +295,20 @@ export interface Copy {
 const en: Copy = {
   htmlLang: 'en',
   speechLang: 'en-IN',
-  nav: { myPlan: 'My plan', whatIf: 'What if', compare: 'Compare', tradeoffs: 'Who goes first' },
+  nav: { label: 'Main', myPlan: 'My plan', whatIf: 'What if', compare: 'Compare', tradeoffs: 'Who goes first' },
   listen: 'Listen',
   households: { household: 'Arjun & Meera', family_stretched: 'Ravi & Sunita' },
-  shell: { sample: 'Sample household', assumptions: 'Assumptions' },
+  shell: {
+    sample: 'Example household',
+    assumptions: 'Assumptions',
+    mine: 'My household',
+    unsaved: 'Not saved • this visit only',
+  },
+  needGoals: {
+    title: 'Add a goal first.',
+    body: 'The plan works out when each goal can be reached. Add at least one goal to begin.',
+    action: 'Add a goal',
+  },
   footer: {
     example: 'An example, with no interest or growth assumed.',
     scope: 'A helper for your decisions. It does not predict markets or replace your bank or adviser.',
@@ -292,6 +329,7 @@ const en: Copy = {
     title: 'A little planning. A brighter tomorrow.',
     subtitle: 'Your family. Your money. Your dreams.',
     forFamily: (name) => `For ${name}`,
+    forEveryone: 'For you and your household',
     heroTitle: 'Make room for what matters.',
     heroBody: 'See what comes in, what goes out, and how your dreams fill up.',
     start: 'Start',
@@ -299,6 +337,24 @@ const en: Copy = {
     stepIn: 'Money in',
     stepOut: 'Money out',
     stepDreams: 'Your dreams',
+    startMine: 'Start with my numbers',
+    tryExample: 'Look at an example household',
+    exampleNote: 'The example is made up and only for exploring. Your own numbers are never mixed with it.',
+    continueMine: 'Continue my plan',
+    startOver: 'Start over',
+    startOverWarn: 'This clears everything you entered. It cannot be undone.',
+    notSaved: 'Nothing is saved yet. Refreshing this page clears what you entered.',
+    exampleFailed: 'We could not load the example. Check your connection and try again.',
+    tagline: 'Every goal. One smarter plan.',
+    hook: 'When your money cannot cover every dream, ArthaYukti shows which one waits, for how long, and the smallest change that brings it back.',
+    canTitle: 'What works today',
+    can: [
+      { title: 'See which goal waits', body: 'Your income, spending and goals are worked out month by month, and each goal is marked on time or late.' },
+      { title: 'Try a different order', body: 'Put another goal first and see what happens to every goal before you change anything.' },
+      { title: 'Find the smallest fix', body: 'Each fix is checked against your whole plan before it is shown.' },
+    ],
+    soonTitle: 'Not built yet',
+    soon: ['Accounts and sign-in', 'Saved plans', 'Insurance', 'Documents and receipts'],
   },
   income: {
     title: 'What comes in each month?',
@@ -311,6 +367,7 @@ const en: Copy = {
     exampleNote: (name) => `An example for ${name}. You can change any amount.`,
     noBank: 'No bank details needed. Just the monthly amount.',
     next: 'Next: money out',
+    mine: 'Monthly income',
   },
   spending: {
     title: 'What goes out each month?',
@@ -328,7 +385,7 @@ const en: Copy = {
   },
   dreamsSetup: {
     title: 'Which dreams come first?',
-    subtitle: 'All four chosen. Move the most important one up.',
+    subtitle: 'Move the most important one up.',
     priority: (rank) => `Priority ${rank}`,
     moveUp: 'Move up',
     moveDown: 'Move down',
@@ -345,6 +402,14 @@ const en: Copy = {
     showPlan: 'Show my plan',
     decrease: 'Less',
     increase: 'More',
+    noGoals: 'No goals yet. Add the first one below.',
+    addTitle: 'Add a goal',
+    kind: 'What is it for?',
+    amountLabel: 'Money needed, in today’s rupees',
+    add: 'Add this goal',
+    remove: (goal) => `Remove ${goal}`,
+    maxGoals: 'You have reached the most goals this plan can hold.',
+    needAmount: 'Enter how much money this goal needs.',
   },
   goalNames: {
     emergency_fund: 'Emergency money',
@@ -370,7 +435,7 @@ const en: Copy = {
     tileIn: 'In',
     tileOut: 'Out',
     tileLeft: 'Left',
-    yourFour: 'Your four dreams',
+    yourFour: 'Your dreams',
     dashed: 'Dashed line = money needed by the target date',
     chartTitle: 'Each month’s money',
     living: 'Living costs',
@@ -386,14 +451,16 @@ const en: Copy = {
   },
   verdict: {
     allOnTime: 'You’re on time.',
-    allOnTimeBody: 'All four dreams fit your monthly money.',
+    allOnTimeBody: 'All your dreams fit your monthly money.',
     stillOnTime: 'Still on time.',
     stillOnTimeBody: 'Even with this change, every dream stays on time.',
     oneLateTitle: (goal, months) =>
       months === null ? `${goal} is out of reach.` : `${goal} waits ${months} months.`,
     oneLateBody: (others) =>
       others > 0
-        ? `The other ${others} jars stay on time.`
+        ? others === 1
+          ? 'The other jar stays on time.'
+          : `The other ${others} jars stay on time.`
         : 'Your savings are used first, starting with emergency money.',
     manyLateTitle: (count) => `${count} dreams run late.`,
     manyLateBody: 'Your savings are used first, starting with emergency money.',
@@ -425,6 +492,8 @@ const en: Copy = {
     smallestFix: (text) => `Smallest fix: ${text}`,
     tryNoIncome: 'Try no income',
     tryExpense: 'Try a big expense',
+    expenseAmount: 'How much is the expense?',
+    expenseAmountHint: 'Enter an amount to see what happens. It is taken from your savings in the first month.',
     backToPlan: 'Back to my plan',
     whatCanIDo: 'What can I do?',
     fixKept: (text) => `Fix kept: ${text}`,
@@ -560,10 +629,20 @@ const en: Copy = {
 const hi: Copy = {
   htmlLang: 'hi',
   speechLang: 'hi-IN',
-  nav: { myPlan: 'मेरी योजना', whatIf: 'अगर ऐसा हो', compare: 'तुलना करें', tradeoffs: 'किसे पहले?' },
+  nav: { label: 'मुख्य मेन्यू', myPlan: 'मेरी योजना', whatIf: 'अगर ऐसा हो', compare: 'तुलना करें', tradeoffs: 'किसे पहले?' },
   listen: 'सुनें',
   households: { household: 'अर्जुन और मीरा', family_stretched: 'रवि और सुनीता' },
-  shell: { sample: 'नमूना परिवार', assumptions: 'मान्यताएँ' },
+  shell: {
+    sample: 'उदाहरण परिवार',
+    assumptions: 'मान्यताएँ',
+    mine: 'मेरा परिवार',
+    unsaved: 'सेव नहीं • सिर्फ़ इस बार के लिए',
+  },
+  needGoals: {
+    title: 'पहले एक लक्ष्य जोड़ें।',
+    body: 'योजना बताती है कि हर लक्ष्य कब पूरा हो सकता है। शुरू करने के लिए कम से कम एक लक्ष्य जोड़ें।',
+    action: 'लक्ष्य जोड़ें',
+  },
   footer: {
     example: 'बिना ब्याज या बढ़त का उदाहरण।',
     scope: 'यह आपके फ़ैसलों में मदद करता है। यह बाज़ार का अनुमान नहीं लगाता और आपके बैंक या सलाहकार की जगह नहीं लेता।',
@@ -584,6 +663,7 @@ const hi: Copy = {
     title: 'थोड़ी योजना, बेहतर कल।',
     subtitle: 'आपका परिवार। आपका पैसा। आपके सपने।',
     forFamily: (name) => `${name} के लिए`,
+    forEveryone: 'आपके और आपके परिवार के लिए',
     heroTitle: 'जो ज़रूरी है, उसके लिए जगह बनाइए।',
     heroBody: 'देखिए कितना आता है, कितना जाता है, और आपके सपने कैसे भरते हैं।',
     start: 'शुरू करें',
@@ -591,6 +671,24 @@ const hi: Copy = {
     stepIn: 'आमदनी',
     stepOut: 'खर्च',
     stepDreams: 'आपके सपने',
+    startMine: 'अपने आँकड़ों से शुरू करें',
+    tryExample: 'एक उदाहरण परिवार देखें',
+    exampleNote: 'यह उदाहरण काल्पनिक है और सिर्फ़ देखने के लिए है। आपके अपने आँकड़े इसमें कभी नहीं मिलते।',
+    continueMine: 'मेरी योजना जारी रखें',
+    startOver: 'फिर से शुरू करें',
+    startOverWarn: 'इससे आपकी भरी हुई सारी जानकारी हट जाएगी। इसे वापस नहीं किया जा सकता।',
+    notSaved: 'अभी कुछ भी सेव नहीं होता। पेज रीफ़्रेश करने पर भरी हुई जानकारी हट जाती है।',
+    exampleFailed: 'उदाहरण लोड नहीं हो सका। कनेक्शन जाँचकर फिर कोशिश करें।',
+    tagline: 'हर लक्ष्य। एक समझदार योजना।',
+    hook: 'जब आपका पैसा हर सपने के लिए काफ़ी न हो, तब ArthaYukti बताता है कि कौन सा सपना, कितने समय, रुकेगा और उसे वापस लाने का सबसे छोटा बदलाव क्या है।',
+    canTitle: 'आज क्या काम करता है',
+    can: [
+      { title: 'देखें कौन सा लक्ष्य रुकेगा', body: 'आपकी आमदनी, खर्च और लक्ष्य महीने-दर-महीने जोड़े जाते हैं, और हर लक्ष्य समय पर या देर से दिखता है।' },
+      { title: 'दूसरा क्रम आज़माएँ', body: 'कुछ बदलने से पहले देखें कि कोई दूसरा लक्ष्य पहले आने पर हर लक्ष्य का क्या होता है।' },
+      { title: 'सबसे छोटा उपाय खोजें', body: 'हर उपाय दिखाने से पहले आपकी पूरी योजना पर जाँचा जाता है।' },
+    ],
+    soonTitle: 'अभी बना नहीं है',
+    soon: ['खाते और साइन-इन', 'सेव की गई योजनाएँ', 'बीमा', 'दस्तावेज़ और रसीदें'],
   },
   income: {
     title: 'हर महीने कितना आता है?',
@@ -603,6 +701,7 @@ const hi: Copy = {
     exampleNote: (name) => `यह ${name} का उदाहरण है। आप कोई भी रकम बदल सकते हैं।`,
     noBank: 'बैंक की जानकारी नहीं चाहिए। बस महीने की रकम।',
     next: 'आगे: खर्च',
+    mine: 'हर महीने की आमदनी',
   },
   spending: {
     title: 'हर महीने कितना जाता है?',
@@ -620,7 +719,7 @@ const hi: Copy = {
   },
   dreamsSetup: {
     title: 'कौन से सपने पहले?',
-    subtitle: 'चारों चुने जा चुके हैं। सबसे ज़रूरी को ऊपर ले जाइए।',
+    subtitle: 'सबसे ज़रूरी को ऊपर ले जाइए।',
     priority: (rank) => `प्राथमिकता ${rank}`,
     moveUp: 'ऊपर करें',
     moveDown: 'नीचे करें',
@@ -637,6 +736,14 @@ const hi: Copy = {
     showPlan: 'मेरी योजना दिखाइए',
     decrease: 'कम',
     increase: 'ज़्यादा',
+    noGoals: 'अभी कोई लक्ष्य नहीं। नीचे पहला लक्ष्य जोड़ें।',
+    addTitle: 'लक्ष्य जोड़ें',
+    kind: 'यह किसलिए है?',
+    amountLabel: 'ज़रूरी रकम, आज के रुपयों में',
+    add: 'यह लक्ष्य जोड़ें',
+    remove: (goal) => `${goal} हटाएँ`,
+    maxGoals: 'इस योजना में इससे ज़्यादा लक्ष्य नहीं आ सकते।',
+    needAmount: 'इस लक्ष्य के लिए कितनी रकम चाहिए, यह भरें।',
   },
   goalNames: {
     emergency_fund: 'आपातकालीन पैसा',
@@ -662,7 +769,7 @@ const hi: Copy = {
     tileIn: 'आमदनी',
     tileOut: 'खर्च',
     tileLeft: 'बचा',
-    yourFour: 'आपके चार सपने',
+    yourFour: 'आपके सपने',
     dashed: 'टूटी रेखा = तय तारीख तक ज़रूरत',
     chartTitle: 'हर महीने का पैसा',
     living: 'खर्च',
@@ -678,7 +785,7 @@ const hi: Copy = {
   },
   verdict: {
     allOnTime: 'सपने समय पर पूरे होंगे।',
-    allOnTimeBody: 'चारों सपनों के लिए हर महीने पैसा है।',
+    allOnTimeBody: 'आपके सभी सपनों के लिए हर महीने पैसा है।',
     stillOnTime: 'अब भी समय पर।',
     stillOnTimeBody: 'इस बदलाव के बाद भी हर सपना समय पर रहेगा।',
     oneLateTitle: (goal, months) =>
@@ -717,6 +824,8 @@ const hi: Copy = {
     smallestFix: (text) => `सबसे छोटा उपाय: ${text}`,
     tryNoIncome: 'बिना आमदनी आज़माएँ',
     tryExpense: 'बड़ा खर्च आज़माएँ',
+    expenseAmount: 'खर्च कितना है?',
+    expenseAmountHint: 'क्या होगा, यह देखने के लिए रकम भरें। यह पहले महीने में आपकी बचत से लिया जाता है।',
     backToPlan: 'मेरी योजना पर वापस',
     whatCanIDo: 'मैं क्या कर सकता हूँ?',
     fixKept: (text) => `उपाय रखा गया: ${text}`,

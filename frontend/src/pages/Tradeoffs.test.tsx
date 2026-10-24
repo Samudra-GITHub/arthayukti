@@ -1,7 +1,7 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import stretched from '../../../contracts/samples/family_stretched.json'
-import App from '../App'
+import { openExample } from '../test/openExample'
 import fixture from '../test/tradeoffs.fixture.json'
 
 function reply(body: unknown, status = 200) {
@@ -33,7 +33,7 @@ function lastPriorities(fetchMock: ReturnType<typeof serve>, path: string) {
 }
 
 beforeEach(() => {
-  window.location.hash = '/tradeoffs'
+  window.location.hash = ''
   window.localStorage.clear()
 })
 
@@ -45,7 +45,7 @@ afterEach(() => {
 describe('Goal collision lab', () => {
   it('opens on a goal that waits today and shows what changes for every goal', async () => {
     serve(() => reply(fixture))
-    render(<App />)
+    await openExample('tradeoffs')
     const home = await screen.findByRole('radio', { name: /Home/ })
     expect(screen.getByRole('heading', { name: /Which one gets protected first/ })).toBeInTheDocument()
     expect(home).toHaveAttribute('aria-checked', 'true')
@@ -60,7 +60,7 @@ describe('Goal collision lab', () => {
 
   it('updates the comparison when another goal is chosen and resets it', async () => {
     serve(() => reply(fixture))
-    render(<App />)
+    await openExample('tradeoffs')
     await screen.findByRole('radio', { name: /Home/ })
 
     fireEvent.click(screen.getByRole('radio', { name: /Children’s education/ }))
@@ -74,7 +74,7 @@ describe('Goal collision lab', () => {
 
   it('does not change the plan until the order is confirmed, and can undo it', async () => {
     const fetchMock = serve(() => reply(fixture))
-    render(<App />)
+    await openExample('tradeoffs')
     await screen.findByRole('radio', { name: /Home/ })
 
     fireEvent.click(screen.getByRole('button', { name: 'Use this order' }))
@@ -95,20 +95,20 @@ describe('Goal collision lab', () => {
 
   it('says the calculator is not ready when the endpoint is not built yet', async () => {
     serve(() => reply({ error: { code: 'not_implemented', message: 'not available yet' } }, 501))
-    render(<App />)
+    await openExample('tradeoffs')
     expect(await screen.findByRole('alert')).toHaveTextContent('not available yet')
   })
 
   it('shows an error with a retry when the service cannot be reached', async () => {
     serve(() => reply({ error: { code: 'boom', message: 'boom' } }, 500))
-    render(<App />)
+    await openExample('tradeoffs')
     expect(await screen.findByRole('alert')).toHaveTextContent('We could not reach the calculator')
     expect(screen.getByRole('button', { name: /Try again/ })).toBeInTheDocument()
   })
 
   it('reads in Hindi, including the household name', async () => {
     serve(() => reply(fixture))
-    render(<App />)
+    await openExample('tradeoffs')
     await screen.findByRole('radio', { name: /Home/ })
     fireEvent.click(screen.getByRole('button', { name: 'हिन्दी' }))
     expect(await screen.findByRole('heading', { name: /पहले किसे बचाएँ/ })).toBeInTheDocument()

@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useId, useMemo, useState } from 'react'
 import {
   Armchair,
   BookOpen,
@@ -8,7 +8,9 @@ import {
   Landmark,
   ShieldCheck,
   ShoppingBag,
+  Plus,
   ShoppingBasket,
+  Trash2,
   Wallet,
   type LucideIcon,
 } from 'lucide-react'
@@ -17,6 +19,7 @@ import { Card, CardTitle, PageHeading, StepProgress } from '../components/Cards'
 import { PrimaryButton, SecondaryButton } from '../components/Controls'
 import { MonthPicker, MoneyField, PriorityControls, Stepper } from '../components/Fields'
 import { Layout } from '../components/Layout'
+import { defaultGoalDate, MAX_GOALS } from '../lib/blank'
 import { addMoney, formatMoney, isGreater, subMoney, toPaise } from '../lib/money'
 import { monthLabelLong } from '../lib/months'
 import { householdName } from '../lib/household'
@@ -42,7 +45,7 @@ export function MoneyIn({ navigate }: PageProps) {
   const copy = text.income
 
   const label = (id: string, fallback: string) =>
-    id === 'arjun' ? copy.arjun : id === 'meera' ? copy.meera : fallback
+    id === 'arjun' ? copy.arjun : id === 'meera' ? copy.meera : id === 'income' ? copy.mine : fallback
   const hints = [copy.hintWork, copy.hintUsual]
 
   return (
@@ -76,7 +79,9 @@ export function MoneyIn({ navigate }: PageProps) {
             <p className="font-display text-[40px] leading-[1.15] font-semibold lg:text-[48px]">
               {formatMoney(totalIncome(plan))}
             </p>
-            <p className="text-muted">{copy.exampleNote(householdName(text, sample, plan))}</p>
+            {sample ? (
+              <p className="text-muted">{copy.exampleNote(householdName(text, sample, plan))}</p>
+            ) : null}
           </Card>
           <p>{copy.noBank}</p>
         </div>
@@ -166,7 +171,8 @@ function stepFor(amount: string): string {
 }
 
 export function Dreams({ navigate }: PageProps) {
-  const { text, language, plan, projection, setGoalAmount, setGoalDate, moveGoal } = useStore()
+  const { text, language, plan, projection, setGoalAmount, setGoalDate, moveGoal, removeGoal } =
+    useStore()
   const ordered = useMemo(
     () => (plan ? [...plan.goals].sort((a, b) => a.priority - b.priority) : []),
     [plan],
@@ -206,6 +212,17 @@ export function Dreams({ navigate }: PageProps) {
                 <CircleCheck size={24} aria-hidden="true" className="text-ontime" />
                 <Icon size={24} aria-hidden="true" />
                 <h2 className="flex-1 font-semibold">{goalName(text, goal)}</h2>
+                <button
+                  type="button"
+                  onClick={() => {
+                    removeGoal(goal.id)
+                    window.setTimeout(() => document.getElementById('add-goal')?.focus(), 0)
+                  }}
+                  aria-label={`${copy.remove(goalName(text, goal))} (${copy.priority(index + 1)})`}
+                  className="flex size-11 items-center justify-center rounded-xl text-muted hover:text-late"
+                >
+                  <Trash2 size={20} aria-hidden="true" />
+                </button>
               </div>
               <PriorityControls
                 rankText={copy.priority(index + 1)}
@@ -241,6 +258,8 @@ export function Dreams({ navigate }: PageProps) {
           )
         })}
       </div>
+      {ordered.length === 0 ? <p className="text-muted">{copy.noGoals}</p> : null}
+      <AddGoal />
       <Card>
         <CardTitle>{copy.sharedTitle(formatMoney(left))}</CardTitle>
         {need !== null ? (
@@ -252,8 +271,79 @@ export function Dreams({ navigate }: PageProps) {
         ) : null}
         <p className="text-muted">{copy.planStarts(monthLabelLong(plan.as_of, language))}</p>
       </Card>
-      <PrimaryButton onClick={() => navigate('plan')}>{copy.showPlan}</PrimaryButton>
+      <PrimaryButton disabled={ordered.length === 0} onClick={() => navigate('plan')}>
+        {copy.showPlan}
+      </PrimaryButton>
       <SecondaryButton onClick={() => navigate('money-out')}>{text.common.back}</SecondaryButton>
     </Layout>
+  )
+}
+
+const GOAL_KINDS = ['emergency_fund', 'home', 'education', 'retirement', 'loan_payoff'] as const
+
+function AddGoal() {
+  const { text, language, plan, addGoal } = useStore()
+  const copy = text.dreamsSetup
+  const [kind, setKind] = useState<(typeof GOAL_KINDS)[number]>('emergency_fund')
+  const [amount, setAmount] = useState('0.00')
+  const [date, setDate] = useState<string | null>(null)
+  const [tried, setTried] = useState(false)
+  const kindId = useId()
+  if (!plan) return null
+
+  const when = date ?? defaultGoalDate(plan.as_of)
+  const full = plan.goals.length >= MAX_GOALS
+  const missing = toPaise(amount) <= 0n
+
+  return (
+    <Card>
+      <h2 id="add-goal" tabIndex={-1} className="font-display text-[28px] leading-[1.15] font-semibold outline-none">
+        {copy.addTitle}
+      </h2>
+      {full ? (
+        <p className="text-muted">{copy.maxGoals}</p>
+      ) : (
+        <>
+          <div className="flex flex-col gap-2">
+            <label htmlFor={kindId}>{copy.kind}</label>
+            <select
+              id={kindId}
+              value={kind}
+              onChange={(event) => setKind(event.target.value as (typeof GOAL_KINDS)[number])}
+              className="min-h-14 rounded-2xl border border-line bg-cream px-4"
+            >
+              {GOAL_KINDS.map((value) => (
+                <option key={value} value={value}>
+                  {text.goalNames[value]}
+                </option>
+              ))}
+            </select>
+          </div>
+          <MoneyField icon={null} label={copy.amountLabel} value={amount} onChange={setAmount} />
+          {tried && missing ? (
+            <p role="alert" className="text-late">
+              {copy.needAmount}
+            </p>
+          ) : null}
+          <p>{copy.neededBy}</p>
+          <MonthPicker value={when} from={plan.as_of} label={copy.neededBy} language={language} onChange={setDate} />
+          <PrimaryButton
+            icon={Plus}
+            onClick={() => {
+              if (missing) {
+                setTried(true)
+                return
+              }
+              addGoal(kind, text.goalNames[kind], amount, when)
+              setAmount('0.00')
+              setDate(null)
+              setTried(false)
+            }}
+          >
+            {copy.add}
+          </PrimaryButton>
+        </>
+      )}
+    </Card>
   )
 }

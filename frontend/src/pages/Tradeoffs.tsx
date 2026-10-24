@@ -36,7 +36,7 @@ import type { PageProps } from './types'
 const EDIT_DELAY_MS = 200
 
 export function TradeoffsPage({ navigate }: PageProps) {
-  const { text, plan, situation, choice, projection, previousOrder, undoOrder } = useStore()
+  const { text, plan, situation, activeChoice: choice, projection, previousOrder, undoOrder } = useStore()
   const copy = text.tradeoffs
 
   const key = plan ? JSON.stringify([plan, situation]) : null
@@ -58,7 +58,7 @@ export function TradeoffsPage({ navigate }: PageProps) {
           </button>
         </div>
       ) : null}
-      {remote.error === 'not_implemented' && !remote.data ? (
+      {remote.error === 'not_implemented' ? (
         <Card>
           <p role="alert">{copy.unavailable}</p>
         </Card>
@@ -117,7 +117,14 @@ function Lab({ plan, result, choiceLabel, surplus, navigate }: LabProps) {
   const compared = Boolean(baseline && selected)
   const isSame = selected !== undefined && selected === baseline
 
-  if (!baseline) return null
+  if (!baseline) {
+    // The answer does not match the goals on screen, so show nothing made up.
+    return (
+      <Card>
+        <p role="alert">{text.common.tryAgain}</p>
+      </Card>
+    )
+  }
   const impacts = compareRows(plan, baseline, selected ?? baseline)
   const order = currentOrder(plan)
   const live = <span>{copy.live}</span>
@@ -173,7 +180,7 @@ function Lab({ plan, result, choiceLabel, surplus, navigate }: LabProps) {
       </section>
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
-        <Card>
+        <Card className="stage">
           <CardTitle>{copy.timelineTitle}</CardTitle>
           <p className="text-[15px] text-muted">{copy.timelineNote}</p>
           {compared ? (

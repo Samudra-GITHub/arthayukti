@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react'
 import type {
+  Goal,
   FixOption,
   FixResult,
   Plan,
@@ -18,8 +19,20 @@ export interface Store {
   text: Copy
   sample: SampleDetail | null
   sampleError: string | null
+  exampleLoading: boolean
+  /** Where the plan came from: the person's own numbers or the labelled example. */
+  source: 'own' | 'example' | null
+  startOwn: () => void
+  loadExample: () => Promise<boolean>
+  startOver: () => void
+  shockAmount: string
+  setShockAmount: (amount: string) => void
+  addGoal: (type: Goal['type'], label: string, amount: string, targetDate: string) => void
+  removeGoal: (goalId: string) => void
   plan: Plan | null
   choice: Choice
+  /** The situation actually being calculated. An expense with no amount yet is still 'normal'. */
+  activeChoice: Choice
   setChoice: (choice: Choice) => void
   fix: FixOption | null
   setFix: (fix: FixOption | null) => void
