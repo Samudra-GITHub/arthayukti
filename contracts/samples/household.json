@@ -1,0 +1,108 @@
+{
+  "id": "household",
+  "name": "Arjun and Meera (sample household)",
+  "description": "Fictional, synthetic household with four competing goals. Starting inputs only: they are calibrated against the engine in M1 and never tuned toward a particular outcome. All rates are illustrative.",
+  "plan": {
+    "name": "Arjun and Meera",
+    "as_of": "2026-11",
+    "currency": "INR",
+    "income_streams": [
+      { "id": "arjun", "label": "Arjun, salary", "monthly_net": "110000.00", "ends_after": null },
+      { "id": "meera", "label": "Meera, salary", "monthly_net": "80000.00", "ends_after": null }
+    ],
+    "expenses": [
+      { "id": "rent", "label": "Rent", "monthly": "28000.00" },
+      { "id": "household", "label": "Household and food", "monthly": "40000.00" },
+      { "id": "transport", "label": "Utilities and transport", "monthly": "17000.00" }
+    ],
+    "commitments": [
+      { "id": "car_loan", "label": "Car loan EMI", "monthly_payment": "14000.00", "remaining_months": 30 }
+    ],
+    "unassigned_savings": "0.00",
+    "goals": [
+      {
+        "id": "emergency",
+        "label": "Emergency fund (6 months of expenses)",
+        "type": "emergency_fund",
+        "target_amount_today": "510000.00",
+        "target_date": "2027-10",
+        "priority": 1,
+        "inflation_linked": true,
+        "inflation_rate_override": null,
+        "current_savings": "150000.00",
+        "flexibility": { "max_delay_months": 24, "min_target_pct": "0.80" }
+      },
+      {
+        "id": "home",
+        "label": "Home down payment",
+        "type": "home",
+        "target_amount_today": "1200000.00",
+        "target_date": "2030-10",
+        "priority": 2,
+        "inflation_linked": true,
+        "inflation_rate_override": null,
+        "current_savings": "300000.00",
+        "flexibility": { "max_delay_months": 24, "min_target_pct": "0.80" }
+      },
+      {
+        "id": "education",
+        "label": "Higher education",
+        "type": "education",
+        "target_amount_today": "800000.00",
+        "target_date": "2032-06",
+        "priority": 3,
+        "inflation_linked": true,
+        "inflation_rate_override": "0.080000",
+        "current_savings": "100000.00",
+        "flexibility": { "max_delay_months": 24, "min_target_pct": "0.80" }
+      },
+      {
+        "id": "retirement",
+        "label": "Retirement top-up",
+        "type": "retirement",
+        "target_amount_today": "2500000.00",
+        "target_date": "2046-11",
+        "priority": 4,
+        "inflation_linked": true,
+        "inflation_rate_override": null,
+        "current_savings": "0.00",
+        "flexibility": { "max_delay_months": 36, "min_target_pct": "0.80" }
+      }
+    ],
+    "assumptions": {
+      "general_inflation_annual": "0.060000",
+      "savings_return_annual": "0.060000",
+      "income_growth_annual": "0.000000",
+      "expense_growth_annual": "0.000000"
+    },
+    "fix_limits": { "extra_savings_cap_pct_of_income": "0.2000" }
+  },
+  "scenarios": [
+    {
+      "name": "Arjun loses his income for six months",
+      "events": [
+        {
+          "type": "income_change",
+          "stream_id": "arjun",
+          "from_month": "2027-05",
+          "to_month": "2027-10",
+          "multiplier": "0"
+        }
+      ],
+      "priority_order": null,
+      "assumption_overrides": null,
+      "extra_monthly_savings": "0.00",
+      "goal_overrides": []
+    },
+    {
+      "name": "Unexpected medical bill",
+      "events": [
+        { "type": "one_time_expense", "month": "2027-03", "amount": "150000.00", "label": "Medical bill" }
+      ],
+      "priority_order": null,
+      "assumption_overrides": null,
+      "extra_monthly_savings": "0.00",
+      "goal_overrides": []
+    }
+  ]
+}
