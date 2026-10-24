@@ -4,6 +4,208 @@
  */
 
 export interface paths {
+    "/api/v1/ai/consult": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ai Consult
+         * @description Read a typed question into suggested goals and constraints, then run the deterministic
+         *     rescue engine on the submitted plan. The reading step is keyword matching; every figure in
+         *     the answer comes from the engine.
+         */
+        post: operations["ai_consult_api_v1_ai_consult_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ai/parse-intent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ai Parse Intent
+         * @description Pick suggested goals and constraints out of a typed question. Suggestions only.
+         */
+        post: operations["ai_parse_intent_api_v1_ai_parse_intent_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/delete-account": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Account
+         * @description Completely wipe user account and all associated tenant data.
+         */
+        delete: operations["delete_account_api_v1_auth_delete_account_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/export-data": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export User Data
+         * @description Export of the personal data held for the signed-in user.
+         */
+        get: operations["export_user_data_api_v1_auth_export_data_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Login
+         * @description Authenticate with email and password and receive a signed JWT.
+         */
+        post: operations["login_api_v1_auth_login_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Logout
+         * @description End the session on the client. Tokens are stateless, so they expire on their own.
+         */
+        post: operations["logout_api_v1_auth_logout_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Current User Profile
+         * @description Fetch profile of current authenticated user.
+         */
+        get: operations["get_current_user_profile_api_v1_auth_me_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/password-reset/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirm Password Reset
+         * @description Set a new password with a valid, unused, unexpired reset token.
+         */
+        post: operations["confirm_password_reset_api_v1_auth_password_reset_confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/password-reset/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request Password Reset
+         * @description E-mail a single-use reset link. Unavailable until a mail transport is configured.
+         */
+        post: operations["request_password_reset_api_v1_auth_password_reset_request_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/signup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Signup
+         * @description Register a new user account with secure password hashing.
+         */
+        post: operations["signup_api_v1_auth_signup_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/compare": {
         parameters: {
             query?: never;
@@ -18,6 +220,143 @@ export interface paths {
          * @description Two or three scenarios side by side, measured against the first.
          */
         post: operations["compare_scenarios_api_v1_compare_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financials/accounts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Accounts
+         * @description List all accounts for the current user.
+         */
+        get: operations["list_accounts_api_v1_financials_accounts_get"];
+        put?: never;
+        /**
+         * Create Account
+         * @description Create a new financial account (savings, checking, deposit, brokerage, etc.).
+         */
+        post: operations["create_account_api_v1_financials_accounts_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financials/investments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Investments
+         * @description List all assets and investments for the user.
+         */
+        get: operations["list_investments_api_v1_financials_investments_get"];
+        put?: never;
+        /**
+         * Create Investment
+         * @description Record an asset or investment (stocks, mutual funds, gold, EPF, etc.).
+         */
+        post: operations["create_investment_api_v1_financials_investments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financials/liabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Liabilities
+         * @description List all liabilities for the user.
+         */
+        get: operations["list_liabilities_api_v1_financials_liabilities_get"];
+        put?: never;
+        /**
+         * Create Liability
+         * @description Record a loan, mortgage or credit liability.
+         */
+        post: operations["create_liability_api_v1_financials_liabilities_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financials/net-worth": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Net Worth
+         * @description Calculate comprehensive personal net worth with liquid and illiquid breakdowns.
+         */
+        get: operations["get_net_worth_api_v1_financials_net_worth_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financials/transactions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Transactions
+         * @description List transactions for the current user.
+         */
+        get: operations["list_transactions_api_v1_financials_transactions_get"];
+        put?: never;
+        /**
+         * Create Transaction
+         * @description Create an individual income/expense transaction.
+         */
+        post: operations["create_transaction_api_v1_financials_transactions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financials/transactions/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import Transactions Csv
+         * @description Import transactions from a CSV file. Rows that fail validation or repeat an existing
+         *     transaction are skipped and reported; nothing invalid is stored or silently corrected.
+         */
+        post: operations["import_transactions_csv_api_v1_financials_transactions_import_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -61,6 +400,211 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/insurance/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Insurance Dashboard
+         * @description Return aggregated insurance dashboard metrics across all policies.
+         */
+        get: operations["get_insurance_dashboard_api_v1_insurance_dashboard_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/insurance/escalations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Escalation
+         * @description Create a coverage escalation schedule for a verified policy.
+         */
+        post: operations["create_escalation_api_v1_insurance_escalations_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/insurance/escalations/{escalation_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Escalation
+         * @description Retrieve coverage escalation configuration.
+         */
+        get: operations["get_escalation_api_v1_insurance_escalations__escalation_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/insurance/escalations/{escalation_id}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Escalation History
+         * @description Get audit trail of all completed escalation events.
+         */
+        get: operations["get_escalation_history_api_v1_insurance_escalations__escalation_id__history_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/insurance/escalations/{escalation_id}/process-event": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Process Escalation Event
+         * @description Process an escalation increase event deterministically with idempotency protection.
+         */
+        post: operations["process_escalation_event_api_v1_insurance_escalations__escalation_id__process_event_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/insurance/policies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Policies
+         * @description List all insurance policies belonging to the current user.
+         */
+        get: operations["list_policies_api_v1_insurance_policies_get"];
+        put?: never;
+        /**
+         * Create Policy
+         * @description Create a new normalized insurance policy.
+         */
+        post: operations["create_policy_api_v1_insurance_policies_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/insurance/policies/{policy_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Policy
+         * @description Get insurance policy by ID with tenant isolation.
+         */
+        get: operations["get_policy_api_v1_insurance_policies__policy_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/insurance/reminders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Reminders
+         * @description List active insurance reminders and policy alerts.
+         */
+        get: operations["list_reminders_api_v1_insurance_reminders_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/insurance/reminders/{reminder_id}/ack": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Acknowledge Reminder
+         * @description Acknowledge and dismiss an insurance alert.
+         */
+        post: operations["acknowledge_reminder_api_v1_insurance_reminders__reminder_id__ack_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/market/quotes/{symbol}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Quote
+         * @description A stored market quote with its age. If no trusted source has supplied one, the answer is
+         *     status "unavailable" with no price.
+         */
+        get: operations["get_quote_api_v1_market_quotes__symbol__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/plans": {
         parameters: {
             query?: never;
@@ -68,10 +612,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List Plans */
+        /**
+         * List Plans
+         * @description List saved plans for the current tenant.
+         */
         get: operations["list_plans_api_v1_plans_get"];
         put?: never;
-        /** Create Plan */
+        /**
+         * Create Plan
+         * @description Save a financial plan.
+         */
         post: operations["create_plan_api_v1_plans_post"];
         delete?: never;
         options?: never;
@@ -86,9 +636,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get Plan */
+        /**
+         * Get Plan
+         * @description Load a specific saved plan by ID.
+         */
         get: operations["get_plan_api_v1_plans__plan_id__get"];
-        /** Update Plan */
+        /**
+         * Update Plan
+         * @description Update a saved plan.
+         */
         put: operations["update_plan_api_v1_plans__plan_id__put"];
         post?: never;
         delete?: never;
@@ -111,6 +667,26 @@ export interface paths {
          * @description Baseline, shock and reprioritisation: all are a plan plus an optional scenario.
          */
         post: operations["create_projection_api_v1_projections_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rescue/analyze": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Analyze And Rescue
+         * @description Run constraint-aware rescue analysis to solve competing multi-goal conflicts.
+         */
+        post: operations["analyze_and_rescue_api_v1_rescue_analyze_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -160,7 +736,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Create Tradeoffs */
+        /**
+         * Create Tradeoffs
+         * @description Trade-off matrix: re-run the engine prioritising each goal in turn.
+         */
         post: operations["create_tradeoffs_api_v1_tradeoffs_post"];
         delete?: never;
         options?: never;
@@ -172,6 +751,106 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AIAlternative */
+        AIAlternative: {
+            /** Alternative Id */
+            alternative_id: string;
+            /** Assumptions */
+            assumptions: string[];
+            /** Constraints Satisfied */
+            constraints_satisfied: string[];
+            /** Constraints Violated */
+            constraints_violated: string[];
+            /** Description */
+            description: string;
+            /** Is Feasible */
+            is_feasible: boolean;
+            /** Monthly Savings Change */
+            monthly_savings_change: string;
+            /** Strategy */
+            strategy: string;
+            /** Title */
+            title: string;
+            /** Total Shortfall Today */
+            total_shortfall_today: string;
+            /** Tradeoffs */
+            tradeoffs: string[];
+        };
+        /** AIConsultRequest */
+        AIConsultRequest: {
+            plan: components["schemas"]["Plan"];
+            scenario?: components["schemas"]["Scenario"] | null;
+            /** User Prompt */
+            user_prompt: string;
+        };
+        /** AIConsultResponse */
+        AIConsultResponse: {
+            /** Alternatives */
+            alternatives: components["schemas"]["AIAlternative"][];
+            /** Binding Constraint */
+            binding_constraint: string | null;
+            /** Calculation Run Id */
+            calculation_run_id: string;
+            intent: components["schemas"]["IntentSuggestions"];
+            /** Is Baseline Feasible */
+            is_baseline_feasible: boolean;
+            /** Missing Information */
+            missing_information: string[];
+            /** Ranking Criteria */
+            ranking_criteria: string;
+            /** Recommended Alternative Id */
+            recommended_alternative_id: string | null;
+            /** Unresolved Gap */
+            unresolved_gap: string | null;
+        };
+        /** AccountCreateRequest */
+        AccountCreateRequest: {
+            /** Account Name */
+            account_name: string;
+            /**
+             * Account Type
+             * @enum {string}
+             */
+            account_type: "savings" | "checking" | "fixed_deposit" | "brokerage" | "wallet" | "other";
+            /** Balance */
+            balance: string;
+            /**
+             * Currency
+             * @default INR
+             * @constant
+             */
+            currency: "INR";
+            /** Institution Name */
+            institution_name?: string | null;
+            /**
+             * Is Liquid
+             * @default true
+             */
+            is_liquid: boolean;
+            /** Notes */
+            notes?: string | null;
+        };
+        /** AccountResponse */
+        AccountResponse: {
+            /** Account Name */
+            account_name: string;
+            /** Account Type */
+            account_type: string;
+            /** Balance */
+            balance: string;
+            /** Created At */
+            created_at: string;
+            /** Currency */
+            currency: string;
+            /** Id */
+            id: string;
+            /** Institution Name */
+            institution_name: string | null;
+            /** Is Liquid */
+            is_liquid: boolean;
+            /** Notes */
+            notes: string | null;
+        };
         /** AssumptionOverrides */
         AssumptionOverrides: {
             /** Expense Growth Annual */
@@ -196,6 +875,44 @@ export interface components {
             income_growth_annual: string;
             /** Savings Return Annual */
             savings_return_annual: string;
+        };
+        /** AuthResponse */
+        AuthResponse: {
+            /** Access Token */
+            access_token: string;
+            /**
+             * Token Type
+             * @default bearer
+             */
+            token_type: string;
+            user: components["schemas"]["UserProfile"];
+        };
+        /** Body_import_transactions_csv_api_v1_financials_transactions_import_post */
+        Body_import_transactions_csv_api_v1_financials_transactions_import_post: {
+            /** File */
+            file: string;
+        };
+        /** CSVImportResponse */
+        CSVImportResponse: {
+            /**
+             * Duplicate Count
+             * @default 0
+             */
+            duplicate_count: number;
+            /**
+             * Errors
+             * @default []
+             */
+            errors: string[];
+            /**
+             * Errors Truncated
+             * @default false
+             */
+            errors_truncated: boolean;
+            /** Failed Count */
+            failed_count: number;
+            /** Imported Count */
+            imported_count: number;
         };
         /**
          * Commitment
@@ -279,8 +996,137 @@ export interface components {
         ErrorResponse: {
             error: components["schemas"]["ErrorBody"];
         };
+        /** EscalationCreateRequest */
+        EscalationCreateRequest: {
+            /** Age Limit */
+            age_limit?: number | null;
+            /** Custom Interval Months */
+            custom_interval_months?: number | null;
+            /**
+             * Escalation Frequency
+             * @default annual
+             * @enum {string}
+             */
+            escalation_frequency: "annual" | "every_5_years" | "policy_anniversary" | "custom";
+            /** Escalation Rate */
+            escalation_rate?: string | null;
+            /** Escalation Terms */
+            escalation_terms?: string | null;
+            /**
+             * Escalation Type
+             * @enum {string}
+             */
+            escalation_type: "none" | "fixed_percentage" | "fixed_amount" | "step_up" | "inflation_linked" | "life_event_enhancement" | "bonus_accrual";
+            /** First Escalation Date */
+            first_escalation_date?: string | null;
+            /** Fixed Escalation Amount */
+            fixed_escalation_amount?: string | null;
+            /** Maximum Cover Multiple */
+            maximum_cover_multiple?: string | null;
+            /** Maximum Increase Percentage */
+            maximum_increase_percentage?: string | null;
+            /** Maximum Total Cover */
+            maximum_total_cover?: string | null;
+            /**
+             * Medical Underwriting Required
+             * @default false
+             */
+            medical_underwriting_required: boolean;
+            /** Notes */
+            notes?: string | null;
+            /** Policy Id */
+            policy_id: string;
+            /** Premium Change Rule */
+            premium_change_rule?: string | null;
+            /**
+             * Premium Increases With Cover
+             * @default false
+             */
+            premium_increases_with_cover: boolean;
+        };
+        /** EscalationHistoryResponse */
+        EscalationHistoryResponse: {
+            /** Created At */
+            created_at: string;
+            /** Effective Date */
+            effective_date: string;
+            /** Escalation Id */
+            escalation_id: string;
+            /** Event Type */
+            event_type: string;
+            /** Id */
+            id: string;
+            /** Idempotency Key */
+            idempotency_key: string;
+            /** Increase Amount */
+            increase_amount: string;
+            /** Policy Id */
+            policy_id: string;
+            /** Premium After */
+            premium_after: string | null;
+            /** Premium Before */
+            premium_before: string | null;
+            /** Prior Cover */
+            prior_cover: string;
+            /** Resulting Cover */
+            resulting_cover: string;
+            /** Source */
+            source: string;
+            /** Underwriting Requirement */
+            underwriting_requirement: string | null;
+        };
+        /** EscalationResponse */
+        EscalationResponse: {
+            /** Age Limit */
+            age_limit: number | null;
+            /** Base Sum Assured */
+            base_sum_assured: string;
+            /** Created At */
+            created_at: string;
+            /** Current Effective Sum Assured */
+            current_effective_sum_assured: string;
+            /** Custom Interval Months */
+            custom_interval_months: number | null;
+            /** Escalation Frequency */
+            escalation_frequency: string;
+            /** Escalation Rate */
+            escalation_rate: string | null;
+            /** Escalation Status */
+            escalation_status: string;
+            /** Escalation Type */
+            escalation_type: string;
+            /** First Escalation Date */
+            first_escalation_date: string | null;
+            /** Fixed Escalation Amount */
+            fixed_escalation_amount: string | null;
+            /** Id */
+            id: string;
+            /** Maximum Cover Multiple */
+            maximum_cover_multiple: string | null;
+            /** Maximum Increase Percentage */
+            maximum_increase_percentage: string | null;
+            /** Maximum Total Cover */
+            maximum_total_cover: string | null;
+            /** Medical Underwriting Required */
+            medical_underwriting_required: boolean;
+            /** Next Escalation Date */
+            next_escalation_date: string | null;
+            /** Notes */
+            notes: string | null;
+            /** Policy Id */
+            policy_id: string;
+            /** Premium Increases With Cover */
+            premium_increases_with_cover: boolean;
+            /** Updated At */
+            updated_at: string;
+        };
         /** Expense */
         Expense: {
+            /**
+             * Essential
+             * @default true
+             */
+            essential: boolean;
             /** Id */
             id: string;
             /** Label */
@@ -301,6 +1147,56 @@ export interface components {
              * @enum {string}
              */
             type: "expense_change";
+        };
+        /** ExportAccount */
+        ExportAccount: {
+            /** Balance */
+            balance: string;
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Type */
+            type: string;
+        };
+        /** ExportPlan */
+        ExportPlan: {
+            /** As Of */
+            as_of: string;
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+        };
+        /** ExportPolicy */
+        ExportPolicy: {
+            /** Id */
+            id: string;
+            /** Number */
+            number: string;
+            /** Type */
+            type: string;
+        };
+        /** ExportResponse */
+        ExportResponse: {
+            /** Accounts */
+            accounts: components["schemas"]["ExportAccount"][];
+            /** Plans */
+            plans: components["schemas"]["ExportPlan"][];
+            /** Policies */
+            policies: components["schemas"]["ExportPolicy"][];
+            user: components["schemas"]["ExportUser"];
+        };
+        /** ExportUser */
+        ExportUser: {
+            /** Created At */
+            created_at: string;
+            /** Email */
+            email: string;
+            /** Full Name */
+            full_name: string;
+            /** Id */
+            id: string;
         };
         /** FixLimits */
         FixLimits: {
@@ -394,6 +1290,15 @@ export interface components {
              */
             type: "home" | "education" | "loan_payoff" | "emergency_fund" | "retirement" | "custom";
         };
+        /** GoalHint */
+        GoalHint: {
+            /** Label */
+            label: string;
+            /** Target Amount Today */
+            target_amount_today: string;
+            /** Type */
+            type: string;
+        };
         /** GoalOutcome */
         GoalOutcome: {
             /** Average Monthly Contribution */
@@ -476,6 +1381,200 @@ export interface components {
             /** Monthly Net */
             monthly_net: string;
         };
+        /** InsuranceDashboardSummary */
+        InsuranceDashboardSummary: {
+            /** Effective Health Sum Insured */
+            effective_health_sum_insured: string;
+            /** Health Ncb Total */
+            health_ncb_total: string;
+            /** Maximum Possible Cover */
+            maximum_possible_cover: string | null;
+            /** Next Increase Amount */
+            next_increase_amount: string | null;
+            /** Next Increase Date */
+            next_increase_date: string | null;
+            /** Total Base Cover */
+            total_base_cover: string;
+            /** Total Cover Growth */
+            total_cover_growth: string;
+            /** Total Effective Cover */
+            total_effective_cover: string;
+            /** Upcoming Alerts Count */
+            upcoming_alerts_count: number;
+        };
+        /** InsuranceReminderItem */
+        InsuranceReminderItem: {
+            /** Due Date */
+            due_date: string;
+            /** Id */
+            id: string;
+            /** Is Acknowledged */
+            is_acknowledged: boolean;
+            /** Message */
+            message: string;
+            /** Policy Id */
+            policy_id: string;
+            /** Reminder Type */
+            reminder_type: string;
+        };
+        /**
+         * IntentSuggestions
+         * @description Suggestions read out of a typed question by keyword rules. Not a calculation.
+         */
+        IntentSuggestions: {
+            /** Detected Constraints */
+            detected_constraints: string[];
+            /**
+             * Extraction Method
+             * @constant
+             */
+            extraction_method: "keyword_rules";
+            /** Identified Goals */
+            identified_goals: components["schemas"]["GoalHint"][];
+            /** Missing Critical Info */
+            missing_critical_info: string[];
+            /** Plain English Summary */
+            plain_english_summary: string;
+            /** Plain Hindi Summary */
+            plain_hindi_summary: string;
+        };
+        /** InvestmentCreateRequest */
+        InvestmentCreateRequest: {
+            /** Asset Name */
+            asset_name: string;
+            /**
+             * Asset Type
+             * @enum {string}
+             */
+            asset_type: "stock" | "mutual_fund" | "gold" | "real_estate" | "epf" | "ppf" | "crypto" | "other";
+            /** Current Value */
+            current_value: string;
+            /**
+             * Is Liquid
+             * @default false
+             */
+            is_liquid: boolean;
+            /** Last Valuation Date */
+            last_valuation_date?: string | null;
+            /** Purchase Price */
+            purchase_price: string;
+            /**
+             * Quantity
+             * @default 1.0000
+             */
+            quantity: string;
+            /** Symbol */
+            symbol?: string | null;
+        };
+        /** InvestmentResponse */
+        InvestmentResponse: {
+            /** Asset Name */
+            asset_name: string;
+            /** Asset Type */
+            asset_type: string;
+            /** Created At */
+            created_at: string;
+            /** Current Value */
+            current_value: string;
+            /** Id */
+            id: string;
+            /** Is Liquid */
+            is_liquid: boolean;
+            /** Last Valuation Date */
+            last_valuation_date: string | null;
+            /** Purchase Price */
+            purchase_price: string;
+            /** Quantity */
+            quantity: string;
+            /** Symbol */
+            symbol: string | null;
+        };
+        /** LiabilityCreateRequest */
+        LiabilityCreateRequest: {
+            /** Current Balance */
+            current_balance: string;
+            /** End Date */
+            end_date?: string | null;
+            /** Interest Rate */
+            interest_rate: string;
+            /** Liability Name */
+            liability_name: string;
+            /**
+             * Liability Type
+             * @enum {string}
+             */
+            liability_type: "home_loan" | "personal_loan" | "auto_loan" | "education_loan" | "credit_card" | "other";
+            /** Monthly Emi */
+            monthly_emi: string;
+            /** Principal Amount */
+            principal_amount: string;
+            /** Remaining Months */
+            remaining_months: number;
+            /** Start Date */
+            start_date?: string | null;
+        };
+        /** LiabilityResponse */
+        LiabilityResponse: {
+            /** Created At */
+            created_at: string;
+            /** Current Balance */
+            current_balance: string;
+            /** Id */
+            id: string;
+            /** Interest Rate */
+            interest_rate: string;
+            /** Liability Name */
+            liability_name: string;
+            /** Liability Type */
+            liability_type: string;
+            /** Monthly Emi */
+            monthly_emi: string;
+            /** Principal Amount */
+            principal_amount: string;
+            /** Remaining Months */
+            remaining_months: number;
+        };
+        /** LoginRequest */
+        LoginRequest: {
+            /** Email */
+            email: string;
+            /** Password */
+            password: string;
+        };
+        /**
+         * MarketQuoteResponse
+         * @description A stored quote with its freshness, or an explicit "unavailable". Never an invented price.
+         */
+        MarketQuoteResponse: {
+            /** Asset Type */
+            asset_type: string | null;
+            /** Currency */
+            currency: string | null;
+            /** Fetched At */
+            fetched_at: string | null;
+            /** Message */
+            message: string | null;
+            /** Metadata */
+            metadata: {
+                [key: string]: unknown;
+            };
+            /** Price */
+            price: string | null;
+            /** Source */
+            source: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "fresh" | "stale" | "unavailable";
+            /** Symbol */
+            symbol: string;
+        };
+        /** MessageResponse */
+        MessageResponse: {
+            /** Message */
+            message: string;
+        };
         /** MonthGoalRow */
         MonthGoalRow: {
             /** Balance */
@@ -516,6 +1615,19 @@ export interface components {
             /** Uncovered Deficit */
             uncovered_deficit: string;
         };
+        /** NetWorthResponse */
+        NetWorthResponse: {
+            /** Illiquid Assets */
+            illiquid_assets: string;
+            /** Liquid Assets */
+            liquid_assets: string;
+            /** Net Worth */
+            net_worth: string;
+            /** Total Assets */
+            total_assets: string;
+            /** Total Liabilities */
+            total_liabilities: string;
+        };
         /** OneTimeExpense */
         OneTimeExpense: {
             /** Amount */
@@ -543,6 +1655,23 @@ export interface components {
              * @enum {string}
              */
             type: "one_time_income";
+        };
+        /** ParseIntentRequest */
+        ParseIntentRequest: {
+            /** Prompt */
+            prompt: string;
+        };
+        /** PasswordResetConfirm */
+        PasswordResetConfirm: {
+            /** New Password */
+            new_password: string;
+            /** Token */
+            token: string;
+        };
+        /** PasswordResetRequest */
+        PasswordResetRequest: {
+            /** Email */
+            email: string;
         };
         /** Plan */
         Plan: {
@@ -599,6 +1728,97 @@ export interface components {
             /** Month */
             month?: string | null;
         };
+        /** PolicyCreateRequest */
+        PolicyCreateRequest: {
+            /** Base Sum Assured */
+            base_sum_assured: string;
+            /** Expiry Date */
+            expiry_date?: string | null;
+            /** Insurer Name */
+            insurer_name: string;
+            /** Plan Name */
+            plan_name: string;
+            /** Policy Details */
+            policy_details?: {
+                [key: string]: unknown;
+            } | null;
+            /** Policy Number */
+            policy_number: string;
+            /**
+             * Policy Type
+             * @enum {string}
+             */
+            policy_type: "term_life" | "health" | "ulip" | "endowment_money_back" | "motor" | "home";
+            /** Premium Amount */
+            premium_amount: string;
+            /**
+             * Premium Frequency
+             * @default annual
+             * @enum {string}
+             */
+            premium_frequency: "annual" | "monthly" | "quarterly";
+            /** Renewal Date */
+            renewal_date?: string | null;
+            /** Start Date */
+            start_date: string;
+            /**
+             * Status
+             * @default active
+             * @enum {string}
+             */
+            status: "active" | "lapsed" | "expired";
+        };
+        /** PolicyResponse */
+        PolicyResponse: {
+            /** Base Sum Assured */
+            base_sum_assured: string;
+            /** Created At */
+            created_at: string;
+            /** Current Effective Sum Assured */
+            current_effective_sum_assured: string;
+            /** Expiry Date */
+            expiry_date: string | null;
+            /** Id */
+            id: string;
+            /** Insurer Name */
+            insurer_name: string;
+            /** Plan Name */
+            plan_name: string;
+            /** Policy Details */
+            policy_details: {
+                [key: string]: unknown;
+            } | null;
+            /** Policy Number */
+            policy_number: string;
+            /** Policy Type */
+            policy_type: string;
+            /** Premium Amount */
+            premium_amount: string;
+            /** Premium Frequency */
+            premium_frequency: string;
+            /** Renewal Date */
+            renewal_date: string | null;
+            /** Start Date */
+            start_date: string;
+            /** Status */
+            status: string;
+            /** Updated At */
+            updated_at: string;
+        };
+        /** ProcessEscalationEventRequest */
+        ProcessEscalationEventRequest: {
+            /** Effective Date */
+            effective_date?: string | null;
+            /**
+             * Event Type
+             * @default scheduled_escalation
+             */
+            event_type: string;
+            /** Idempotency Key */
+            idempotency_key?: string | null;
+            /** Notes */
+            notes?: string | null;
+        };
         /** ProjectionRequest */
         ProjectionRequest: {
             /**
@@ -641,6 +1861,103 @@ export interface components {
             total_shortfall_today: string;
             /** Uncovered Deficit Months */
             uncovered_deficit_months: string[];
+        };
+        /** RescueAlternativeItem */
+        RescueAlternativeItem: {
+            /** Alternative Id */
+            alternative_id: string;
+            /** Assumptions */
+            assumptions: string[];
+            /** Constraints Satisfied */
+            constraints_satisfied: string[];
+            /** Constraints Violated */
+            constraints_violated: string[];
+            /** Description */
+            description: string;
+            /** Is Feasible */
+            is_feasible: boolean;
+            /** Monthly Savings Change */
+            monthly_savings_change: string;
+            result_summary: components["schemas"]["ProjectionSummary"];
+            scenario: components["schemas"]["Scenario"];
+            /** Strategy */
+            strategy: string;
+            /** Title */
+            title: string;
+            /** Total Shortfall Today */
+            total_shortfall_today: string;
+            /** Tradeoffs */
+            tradeoffs: string[];
+        };
+        /** RescueRequest */
+        RescueRequest: {
+            /**
+             * Allow Asset Sale
+             * @default false
+             */
+            allow_asset_sale: boolean;
+            /**
+             * Allow Discretionary Cut Pct
+             * @default 0.20
+             */
+            allow_discretionary_cut_pct: string;
+            /**
+             * Asset Sale Amount
+             * @default 0.00
+             */
+            asset_sale_amount: string;
+            /**
+             * Avoid New Debt
+             * @default true
+             */
+            avoid_new_debt: boolean;
+            /**
+             * Extra Monthly Budget
+             * @default 0.00
+             */
+            extra_monthly_budget: string;
+            /** Housing Mode */
+            housing_mode?: "rent_vs_buy" | null;
+            /** Housing Monthly Saving */
+            housing_monthly_saving?: string | null;
+            /**
+             * Max Delay Months
+             * @default 24
+             */
+            max_delay_months: number;
+            /**
+             * Min Emergency Reserve
+             * @default 0.00
+             */
+            min_emergency_reserve: string;
+            plan: components["schemas"]["Plan"];
+            scenario?: components["schemas"]["Scenario"] | null;
+            /** Transit Mode */
+            transit_mode?: "transit_vs_car" | null;
+            /** Transit Monthly Saving */
+            transit_monthly_saving?: string | null;
+        };
+        /** RescueResponse */
+        RescueResponse: {
+            /** Alternatives */
+            alternatives: components["schemas"]["RescueAlternativeItem"][];
+            /** Assumptions */
+            assumptions: string[];
+            baseline_summary: components["schemas"]["ProjectionSummary"];
+            /** Binding Constraint */
+            binding_constraint: string | null;
+            /** Is Baseline Feasible */
+            is_baseline_feasible: boolean;
+            /** Missing Information */
+            missing_information: string[];
+            /** Ranking Criteria */
+            ranking_criteria: string;
+            /** Recommended Alternative Id */
+            recommended_alternative_id: string | null;
+            /** Run Id */
+            run_id: string;
+            /** Unresolved Gap */
+            unresolved_gap: string | null;
         };
         /** SampleDetail */
         SampleDetail: {
@@ -686,6 +2003,18 @@ export interface components {
             /** Priority Order */
             priority_order?: string[] | null;
         };
+        /** SignupRequest */
+        SignupRequest: {
+            /** Email */
+            email: string;
+            /**
+             * Full Name
+             * @default
+             */
+            full_name: string;
+            /** Password */
+            password: string;
+        };
         /** TradeoffOutcome */
         TradeoffOutcome: {
             /** Delay Months */
@@ -730,6 +2059,63 @@ export interface components {
             /** Total Shortfall Today */
             total_shortfall_today: string;
         };
+        /** TransactionCreateRequest */
+        TransactionCreateRequest: {
+            /** Account Id */
+            account_id?: string | null;
+            /** Amount */
+            amount: string;
+            /** Category */
+            category: string;
+            /** Description */
+            description?: string | null;
+            /**
+             * Is Essential
+             * @default false
+             */
+            is_essential: boolean;
+            /** Transaction Date */
+            transaction_date: string;
+            /**
+             * Transaction Type
+             * @enum {string}
+             */
+            transaction_type: "credit" | "debit";
+        };
+        /** TransactionResponse */
+        TransactionResponse: {
+            /** Account Id */
+            account_id: string | null;
+            /** Amount */
+            amount: string;
+            /** Category */
+            category: string;
+            /** Created At */
+            created_at: string;
+            /** Description */
+            description: string | null;
+            /** Id */
+            id: string;
+            /** Is Essential */
+            is_essential: boolean;
+            /** Transaction Date */
+            transaction_date: string;
+            /** Transaction Type */
+            transaction_type: string;
+        };
+        /** UserProfile */
+        UserProfile: {
+            /** Created At */
+            created_at: string;
+            /** Email */
+            email: string;
+            /** Full Name */
+            full_name: string;
+            /** Id */
+            id: string;
+            /** Is Active */
+            is_active: boolean;
+        };
     };
     responses: never;
     parameters: never;
@@ -739,6 +2125,536 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    ai_consult_api_v1_ai_consult_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AIConsultRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIConsultResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    ai_parse_intent_api_v1_ai_parse_intent_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ParseIntentRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntentSuggestions"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_account_api_v1_auth_delete_account_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MessageResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    export_user_data_api_v1_auth_export_data_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExportResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    login_api_v1_auth_login_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    logout_api_v1_auth_logout_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MessageResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_current_user_profile_api_v1_auth_me_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserProfile"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    confirm_password_reset_api_v1_auth_password_reset_confirm_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PasswordResetConfirm"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MessageResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    request_password_reset_api_v1_auth_password_reset_request_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PasswordResetRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MessageResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    signup_api_v1_auth_signup_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SignupRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     compare_scenarios_api_v1_compare_post: {
         parameters: {
             query?: never;
@@ -763,6 +2679,586 @@ export interface operations {
             };
             /** @description The request is invalid. */
             422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_accounts_api_v1_financials_accounts_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountResponse"][];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_account_api_v1_financials_accounts_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AccountCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_investments_api_v1_financials_investments_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvestmentResponse"][];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_investment_api_v1_financials_investments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InvestmentCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvestmentResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_liabilities_api_v1_financials_liabilities_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LiabilityResponse"][];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_liability_api_v1_financials_liabilities_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LiabilityCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LiabilityResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_net_worth_api_v1_financials_net_worth_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NetWorthResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_transactions_api_v1_financials_transactions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TransactionResponse"][];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_transaction_api_v1_financials_transactions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TransactionCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TransactionResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    import_transactions_csv_api_v1_financials_transactions_import_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_import_transactions_csv_api_v1_financials_transactions_import_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CSVImportResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -825,6 +3321,630 @@ export interface operations {
             };
         };
     };
+    get_insurance_dashboard_api_v1_insurance_dashboard_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InsuranceDashboardSummary"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_escalation_api_v1_insurance_escalations_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EscalationCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EscalationResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_escalation_api_v1_insurance_escalations__escalation_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                escalation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EscalationResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_escalation_history_api_v1_insurance_escalations__escalation_id__history_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                escalation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EscalationHistoryResponse"][];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    process_escalation_event_api_v1_insurance_escalations__escalation_id__process_event_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                escalation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProcessEscalationEventRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EscalationHistoryResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_policies_api_v1_insurance_policies_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PolicyResponse"][];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_policy_api_v1_insurance_policies_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PolicyCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PolicyResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_policy_api_v1_insurance_policies__policy_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                policy_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PolicyResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_reminders_api_v1_insurance_reminders_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InsuranceReminderItem"][];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    acknowledge_reminder_api_v1_insurance_reminders__reminder_id__ack_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reminder_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_quote_api_v1_market_quotes__symbol__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                symbol: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarketQuoteResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not available yet in this milestone. */
+            501: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     list_plans_api_v1_plans_get: {
         parameters: {
             query?: never;
@@ -843,6 +3963,24 @@ export interface operations {
                     "application/json": components["schemas"]["PlanSummary"][];
                 };
             };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description The request is invalid. */
             422: {
                 headers: {
@@ -852,8 +3990,8 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Not available yet in this milestone. */
-            501: {
+            /** @description Too many attempts. Try again later. */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -885,6 +4023,24 @@ export interface operations {
                     "application/json": components["schemas"]["PlanRecord"];
                 };
             };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description The request is invalid. */
             422: {
                 headers: {
@@ -894,8 +4050,8 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Not available yet in this milestone. */
-            501: {
+            /** @description Too many attempts. Try again later. */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -925,6 +4081,24 @@ export interface operations {
                     "application/json": components["schemas"]["PlanRecord"];
                 };
             };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description The request is invalid. */
             422: {
                 headers: {
@@ -934,8 +4108,8 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Not available yet in this milestone. */
-            501: {
+            /** @description Too many attempts. Try again later. */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -969,6 +4143,24 @@ export interface operations {
                     "application/json": components["schemas"]["PlanRecord"];
                 };
             };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description The request is invalid. */
             422: {
                 headers: {
@@ -978,8 +4170,8 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Not available yet in this milestone. */
-            501: {
+            /** @description Too many attempts. Try again later. */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1013,6 +4205,66 @@ export interface operations {
             };
             /** @description The request is invalid. */
             422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    analyze_and_rescue_api_v1_rescue_analyze_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RescueRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RescueResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1106,15 +4358,6 @@ export interface operations {
             };
             /** @description The request is invalid. */
             422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Not available yet in this milestone. */
-            501: {
                 headers: {
                     [name: string]: unknown;
                 };

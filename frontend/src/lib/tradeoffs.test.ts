@@ -12,7 +12,8 @@ import {
   suggestedGoal,
 } from './tradeoffs'
 
-const plan = stretched.plan as Plan
+// The sample file predates the optional `essential` flag on expenses.
+const plan = stretched.plan as unknown as Plan
 const result = fixture as TradeoffResult
 
 describe('trade-off helpers', () => {
