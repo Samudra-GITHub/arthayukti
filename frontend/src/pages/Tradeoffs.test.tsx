@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import stretched from '../../../contracts/samples/family_stretched.json'
 import App from '../App'
@@ -22,6 +22,16 @@ function serve(tradeoffs: () => Response) {
   return fetchMock
 }
 
+function lastPriorities(fetchMock: ReturnType<typeof serve>, path: string) {
+  const calls = fetchMock.mock.calls.filter(([url]) => String(url).endsWith(path))
+  const init = calls.at(-1)?.[1]
+  expect(init).toBeDefined()
+  const body = JSON.parse(String(init?.body))
+  return Object.fromEntries(
+    body.plan.goals.map((goal: { id: string; priority: number }) => [goal.id, goal.priority]),
+  )
+}
+
 beforeEach(() => {
   window.location.hash = '/tradeoffs'
   window.localStorage.clear()
@@ -32,40 +42,55 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-describe('Trade-offs screen', () => {
-  it('shows one card per goal with what each order does to every goal', async () => {
+describe('Goal collision lab', () => {
+  it('opens on a goal that waits today and shows what changes for every goal', async () => {
     serve(() => reply(fixture))
     render(<App />)
-    expect(await screen.findByRole('heading', { name: 'Put Home first' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Put Emergency money first' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Put Children’s education first' })).toBeInTheDocument()
+    const home = await screen.findByRole('radio', { name: /Home/ })
+    expect(screen.getByRole('heading', { name: /Which one gets protected first/ })).toBeInTheDocument()
+    expect(home).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getAllByRole('radio')).toHaveLength(3)
 
-    const homeFirst = screen.getByRole('heading', { name: 'Put Home first' }).closest('section')!
-    expect(within(homeFirst).getByText('Emergency money waits 3 months. Children’s education waits 29 months.')).toBeInTheDocument()
-    expect(within(homeFirst).getAllByText('Now: On time')).toHaveLength(2)
-    expect(within(homeFirst).queryByText('Least total delay')).toBeNull()
-
-    const current = screen.getByRole('heading', { name: 'Put Emergency money first' }).closest('section')!
-    expect(within(current).getByText('Your current order')).toBeInTheDocument()
-    expect(within(current).getByText('Least total delay')).toBeInTheDocument()
-    expect(within(current).queryByRole('button', { name: 'Use this order' })).toBeNull()
+    expect(screen.getAllByText(/Now: On time/).length).toBe(2)
+    expect(screen.getByText(/If first: 29 months late/)).toBeInTheDocument()
+    expect(screen.getAllByText(/Newly late/).length).toBeGreaterThan(0)
+    expect(screen.getByText(/Putting Home first: Home comes on time\./)).toBeInTheDocument()
+    expect(screen.getByText(/Sample household • illustrative/)).toBeInTheDocument()
   })
 
-  it('applies a chosen order to the plan and opens My plan', async () => {
+  it('updates the comparison when another goal is chosen and resets it', async () => {
+    serve(() => reply(fixture))
+    render(<App />)
+    await screen.findByRole('radio', { name: /Home/ })
+
+    fireEvent.click(screen.getByRole('radio', { name: /Children’s education/ }))
+    expect(screen.getByRole('radio', { name: /Children’s education/ })).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByText(/Putting Children’s education first: No goal changes\./)).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Reset comparison' }))
+    expect(screen.getByText('Choose a goal to see what changes.')).toBeInTheDocument()
+    expect(screen.getAllByRole('radio').every((radio) => radio.getAttribute('aria-checked') === 'false')).toBe(true)
+  })
+
+  it('does not change the plan until the order is confirmed, and can undo it', async () => {
     const fetchMock = serve(() => reply(fixture))
     render(<App />)
-    const homeFirst = (await screen.findByRole('heading', { name: 'Put Home first' })).closest('section')!
-    fireEvent.click(within(homeFirst).getByRole('button', { name: 'Use this order' }))
-    expect(window.location.hash).toBe('#/plan')
+    await screen.findByRole('radio', { name: /Home/ })
 
-    await waitFor(() => {
-      const projections = fetchMock.mock.calls.filter(([url]) => String(url).endsWith('/projections'))
-      const init = projections.at(-1)?.[1]
-      expect(init).toBeDefined()
-      const body = JSON.parse(String(init?.body))
-      const priorities = Object.fromEntries(body.plan.goals.map((goal: { id: string; priority: number }) => [goal.id, goal.priority]))
-      expect(priorities).toEqual({ home: 1, emergency: 2, education: 3 })
-    })
+    fireEvent.click(screen.getByRole('button', { name: 'Use this order' }))
+    expect(screen.getByRole('alertdialog')).toHaveTextContent('Change your priorities to Home')
+    fireEvent.click(screen.getByRole('button', { name: 'Not now' }))
+    expect(screen.queryByRole('alertdialog')).toBeNull()
+    expect(window.location.hash).toBe('#/tradeoffs')
+    expect(lastPriorities(fetchMock, '/tradeoffs')).toEqual({ emergency: 1, education: 2, home: 3 })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Use this order' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Yes, use this order' }))
+    expect(window.location.hash).toBe('#/plan')
+    await waitFor(() => expect(lastPriorities(fetchMock, '/projections')).toEqual({ home: 1, emergency: 2, education: 3 }))
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Undo' }))
+    await waitFor(() => expect(lastPriorities(fetchMock, '/projections')).toEqual({ emergency: 1, education: 2, home: 3 }))
   })
 
   it('says the calculator is not ready when the endpoint is not built yet', async () => {
@@ -74,11 +99,20 @@ describe('Trade-offs screen', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('not available yet')
   })
 
-  it('reads in Hindi', async () => {
+  it('shows an error with a retry when the service cannot be reached', async () => {
+    serve(() => reply({ error: { code: 'boom', message: 'boom' } }, 500))
+    render(<App />)
+    expect(await screen.findByRole('alert')).toHaveTextContent('We could not reach the calculator')
+    expect(screen.getByRole('button', { name: /Try again/ })).toBeInTheDocument()
+  })
+
+  it('reads in Hindi, including the household name', async () => {
     serve(() => reply(fixture))
     render(<App />)
-    await screen.findByRole('heading', { name: 'Put Home first' })
+    await screen.findByRole('radio', { name: /Home/ })
     fireEvent.click(screen.getByRole('button', { name: 'हिन्दी' }))
-    expect(await screen.findByRole('heading', { name: 'घर को पहले रखें' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: /पहले किसे बचाएँ/ })).toBeInTheDocument()
+    expect(screen.getAllByText('रवि और सुनीता').length).toBeGreaterThan(0)
+    expect(screen.getByRole('radio', { name: /घर/ })).toBeInTheDocument()
   })
 })

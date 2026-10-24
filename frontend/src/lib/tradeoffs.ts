@@ -1,5 +1,6 @@
 import type { Goal, Plan, TradeoffOutcome, TradeoffRow } from '../api/types'
 import type { Copy } from '../i18n/copy'
+import { addMonths } from './months'
 import { share, subMoney } from './money'
 import type { Tone } from './outcome'
 
@@ -51,4 +52,64 @@ export function leastDelayRows(rows: TradeoffRow[]): Set<string> {
   return winners.length === rows.length
     ? new Set()
     : new Set(winners.map((row) => row.prioritised_goal_id))
+}
+
+export type ImpactKind = 'brought_on_time' | 'newly_late' | 'longer' | 'shorter' | 'unchanged'
+
+export interface GoalImpact {
+  goalId: string
+  kind: ImpactKind
+  before: TradeoffOutcome
+  after: TradeoffOutcome
+  /** Change in months late. Null when either side is not reachable, so no number is made up. */
+  deltaMonths: number | null
+}
+
+export function outcomeFor(row: TradeoffRow, goalId: string): TradeoffOutcome | undefined {
+  return row.outcomes.find((outcome) => outcome.goal_id === goalId)
+}
+
+/** Sorts what changes between two orders, in the plan's current goal order. */
+export function compareRows(plan: Plan, before: TradeoffRow, after: TradeoffRow): GoalImpact[] {
+  return currentOrder(plan).flatMap((goalId) => {
+    const was = outcomeFor(before, goalId)
+    const now = outcomeFor(after, goalId)
+    if (!was || !now) return []
+    const wasLate = was.status !== 'on_track'
+    const nowLate = now.status !== 'on_track'
+    const wasMonths = lateMonths(was)
+    const nowMonths = lateMonths(now)
+    let kind: ImpactKind = 'unchanged'
+    let deltaMonths: number | null = null
+    if (wasLate && !nowLate) kind = 'brought_on_time'
+    else if (!wasLate && nowLate) kind = 'newly_late'
+    else if (wasLate && nowLate) {
+      if (wasMonths !== null && nowMonths !== null) {
+        deltaMonths = nowMonths - wasMonths
+        kind = deltaMonths > 0 ? 'longer' : deltaMonths < 0 ? 'shorter' : 'unchanged'
+      } else if (was.status !== now.status) {
+        kind = now.status === 'not_achievable' ? 'longer' : 'shorter'
+      }
+    }
+    return [{ goalId, kind, before: was, after: now, deltaMonths }]
+  })
+}
+
+/** The month a goal is reached: its target date plus the delay the engine reported. */
+export function reachedMonth(goal: Goal, outcome: TradeoffOutcome): string | null {
+  if (outcome.status === 'on_track') return goal.target_date
+  const months = lateMonths(outcome)
+  return months === null ? null : addMonths(goal.target_date, months)
+}
+
+/** Starts the screen on a goal that waits today, so a first look already shows a change. */
+export function suggestedGoal(plan: Plan, baseline: TradeoffRow | undefined): string | null {
+  const order = currentOrder(plan)
+  const late = baseline
+    ? order.find((id) => {
+        const outcome = outcomeFor(baseline, id)
+        return outcome !== undefined && outcome.status !== 'on_track'
+      })
+    : undefined
+  return late ?? order.at(-1) ?? null
 }

@@ -37,6 +37,9 @@ export interface Store {
   moveGoal: (goalId: string, direction: 'up' | 'down') => void
   /** Makes the first goal in the list priority 1, the next priority 2, and so on. */
   applyOrder: (goalIds: string[]) => void
+  /** The order before the last applied one, so it can be undone; null when there is none. */
+  previousOrder: string[] | null
+  undoOrder: () => void
   resetPlan: () => void
 }
 

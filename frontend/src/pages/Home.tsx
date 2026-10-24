@@ -3,11 +3,12 @@ import illustration from '../assets/family-illustration.jpg'
 import { PageHeading } from '../components/Cards'
 import { PrimaryButton } from '../components/Controls'
 import { Layout } from '../components/Layout'
+import { householdName } from '../lib/household'
 import type { PageProps } from './types'
 import { useStore } from '../state/useStore'
 
 export function Home({ navigate }: PageProps) {
-  const { text } = useStore()
+  const { text, sample, plan } = useStore()
   const { home } = text
 
   const previews = [
@@ -28,7 +29,7 @@ export function Home({ navigate }: PageProps) {
         <div className="flex flex-col gap-6">
           <p className="flex items-center gap-2 text-[20px]">
             <Users size={24} aria-hidden="true" />
-            {home.forFamily}
+            {home.forFamily(householdName(text, sample, plan))}
           </p>
           <h2 className="font-display text-[34px] leading-[1.15] font-semibold sm:text-[40px] lg:text-[48px]">
             {home.heroTitle}

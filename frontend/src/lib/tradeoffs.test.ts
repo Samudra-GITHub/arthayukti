@@ -2,7 +2,15 @@ import { describe, expect, it } from 'vitest'
 import stretched from '../../../contracts/samples/family_stretched.json'
 import type { Plan, TradeoffResult } from '../api/types'
 import fixture from '../test/tradeoffs.fixture.json'
-import { currentOrder, isCurrentOrder, leastDelayRows, outcomeJarLevel } from './tradeoffs'
+import {
+  compareRows,
+  currentOrder,
+  isCurrentOrder,
+  leastDelayRows,
+  outcomeJarLevel,
+  reachedMonth,
+  suggestedGoal,
+} from './tradeoffs'
 
 const plan = stretched.plan as Plan
 const result = fixture as TradeoffResult
@@ -36,5 +44,30 @@ describe('trade-off helpers', () => {
     const goal = plan.goals.find((item) => item.id === 'home')
     expect(outcomeJarLevel(home, goal)).toBe(0.875)
     expect(outcomeJarLevel(result.rows[2].outcomes[2], goal)).toBe(1)
+  })
+
+  it('sorts what changes when home goes first', () => {
+    const impacts = compareRows(plan, result.rows[0], result.rows[2])
+    const kinds = Object.fromEntries(impacts.map((impact) => [impact.goalId, impact.kind]))
+    expect(kinds).toEqual({ emergency: 'newly_late', education: 'newly_late', home: 'brought_on_time' })
+  })
+
+  it('reports a change in delay only when both sides give a number', () => {
+    const later = { ...result.rows[2], outcomes: result.rows[2].outcomes.map((o) => (o.goal_id === 'home' ? { ...o, status: 'delayed' as const, delay_months: 9 } : o)) }
+    const [, , home] = compareRows(plan, result.rows[0], later)
+    expect(home).toMatchObject({ goalId: 'home', kind: 'longer', deltaMonths: 4 })
+    const gone = { ...later, outcomes: later.outcomes.map((o) => (o.goal_id === 'home' ? { ...o, status: 'not_achievable' as const, delay_months: null } : o)) }
+    expect(compareRows(plan, result.rows[0], gone)[2]).toMatchObject({ kind: 'longer', deltaMonths: null })
+  })
+
+  it('places a goal at its target plus the engine delay', () => {
+    const home = plan.goals.find((goal) => goal.id === 'home')!
+    expect(reachedMonth(home, result.rows[0].outcomes[2])).toBe('2032-05')
+    expect(reachedMonth(home, result.rows[2].outcomes[2])).toBe('2031-12')
+  })
+
+  it('starts on the first goal that waits today', () => {
+    expect(suggestedGoal(plan, result.rows[0])).toBe('home')
+    expect(suggestedGoal(plan, undefined)).toBe('home')
   })
 })

@@ -6,7 +6,8 @@ export interface Copy {
   speechLang: string
   nav: { myPlan: string; whatIf: string; compare: string; tradeoffs: string }
   listen: string
-  family: string
+  households: Record<string, string>
+  shell: { sample: string; assumptions: string }
   footer: { example: string; scope: string; legal: string }
   common: {
     back: string
@@ -22,7 +23,7 @@ export interface Copy {
   home: {
     title: string
     subtitle: string
-    forFamily: string
+    forFamily: (name: string) => string
     heroTitle: string
     heroBody: string
     start: string
@@ -39,7 +40,7 @@ export interface Copy {
     hintWork: string
     hintUsual: string
     together: string
-    exampleNote: string
+    exampleNote: (name: string) => string
     noBank: string
     next: string
   }
@@ -103,6 +104,9 @@ export interface Copy {
     noGrowth: string
     whatIf: string
     change: string
+    lab: string
+    labBody: string
+    assumptions: string
   }
   verdict: {
     allOnTime: string
@@ -195,17 +199,68 @@ export interface Copy {
   }
   tradeoffs: {
     title: string
-    subtitle: (after: string) => string
-    note: string
-    rowTitle: (goal: string) => string
-    current: string
-    leastDelay: string
-    allOnTime: string
-    waits: (goal: string, months: number | null) => string
-    was: (status: string) => string
-    orderLine: (goals: string) => string
-    useOrder: string
+    subtitle: string
+    sample: string
+    live: string
+    leftEachMonth: (amount: string) => string
+    goalCount: (count: number) => string
+    situation: (name: string) => string
+    pickTitle: string
+    rank: (rank: number) => string
+    firstNow: string
+    pickPrompt: string
+    sameAsNow: string
+    timelineTitle: string
+    timelineNote: string
+    legendTarget: string
+    legendNow: string
+    legendIfFirst: string
+    laneNow: (status: string) => string
+    laneIfFirst: (status: string) => string
+    movedLater: string
+    movedEarlier: string
+    impactTitle: string
+    broughtOnTime: string
+    newlyLate: string
+    longer: string
+    shorter: string
+    unchanged: string
+    nothing: string
+    byMonths: (months: number) => string
+    totalsTitle: string
+    totalsNow: string
+    totalsIfFirst: string
+    goalsLate: string
+    totalDelay: string
+    shortfall: string
+    same: string
+    months: (count: number) => string
+    receiptTitle: string
+    receiptOpening: (goal: string) => string
+    receiptOnTime: (goals: string) => string
+    receiptNewlyLate: (goals: string) => string
+    receiptLonger: (goals: string) => string
+    receiptShorter: (goals: string) => string
+    receiptNoChange: string
+    howTitle: string
+    howSteps: string[]
+    howOrderNow: (order: string) => string
+    howOrderIfFirst: (order: string) => string
+    assumptionsTitle: string
+    asOf: (month: string) => string
+    inflation: (rate: string) => string
+    returns: (rate: string) => string
+    noGrowthNote: string
+    use: string
+    confirmTitle: (order: string) => string
+    confirmBody: string
+    confirm: string
+    cancel: string
+    reset: string
+    repair: string
     backToPlan: string
+    undoNote: string
+    undo: string
     unavailable: string
   }
 }
@@ -215,7 +270,8 @@ const en: Copy = {
   speechLang: 'en-IN',
   nav: { myPlan: 'My plan', whatIf: 'What if', compare: 'Compare', tradeoffs: 'Who goes first' },
   listen: 'Listen',
-  family: 'Arjun & Meera',
+  households: { household: 'Arjun & Meera', family_stretched: 'Ravi & Sunita' },
+  shell: { sample: 'Sample household', assumptions: 'Assumptions' },
   footer: {
     example: 'An example, with no interest or growth assumed.',
     scope: 'A helper for your decisions. It does not predict markets or replace your bank or adviser.',
@@ -235,7 +291,7 @@ const en: Copy = {
   home: {
     title: 'A little planning. A brighter tomorrow.',
     subtitle: 'Your family. Your money. Your dreams.',
-    forFamily: 'For Arjun & Meera',
+    forFamily: (name) => `For ${name}`,
     heroTitle: 'Make room for what matters.',
     heroBody: 'See what comes in, what goes out, and how your dreams fill up.',
     start: 'Start',
@@ -252,7 +308,7 @@ const en: Copy = {
     hintWork: 'Salary, work or business',
     hintUsual: 'Use a usual month, not your best month.',
     together: 'Together, each month',
-    exampleNote: 'An example for Arjun & Meera. You can change any amount.',
+    exampleNote: (name) => `An example for ${name}. You can change any amount.`,
     noBank: 'No bank details needed. Just the monthly amount.',
     next: 'Next: money out',
   },
@@ -324,6 +380,9 @@ const en: Copy = {
     noGrowth: 'Dates use your saved money and monthly amounts, with no growth added.',
     whatIf: 'What if life changes?',
     change: 'Change my amounts',
+    lab: 'Which goal gets protected first?',
+    labBody: 'See what happens to every goal when a different one goes first, before you change anything.',
+    assumptions: 'Dates use no growth or inflation unless the plan says so. Open a comparison to see the assumptions used.',
   },
   verdict: {
     allOnTime: 'You’re on time.',
@@ -425,23 +484,75 @@ const en: Copy = {
     lateBy: (months) => (months === 1 ? '1 month late' : `${months} months late`),
   },
   tradeoffs: {
-    title: 'What if a different dream goes first?',
-    subtitle: (after) => `${after} • every order, side by side`,
-    note: 'Each card runs your plan again with that dream first. Nothing changes until you choose an order.',
-    rowTitle: (goal) => `Put ${goal} first`,
-    current: 'Your current order',
-    leastDelay: 'Least total delay',
-    allOnTime: 'Every dream stays on time.',
-    waits: (goal, months) =>
-      months === null
-        ? `${goal} is out of reach.`
-        : months === 1
-          ? `${goal} waits 1 month.`
-          : `${goal} waits ${months} months.`,
-    was: (status) => `Now: ${status}`,
-    orderLine: (goals) => `Order: ${goals}`,
-    useOrder: 'Use this order',
+    title: 'Every goal matters. Which one gets protected first?',
+    subtitle: 'Try an order and see what happens to every goal. Nothing changes until you choose to use it.',
+    sample: 'Sample household • illustrative',
+    live: 'Worked out by the ArthaYukti engine',
+    leftEachMonth: (amount) => `${amount} left each month for goals`,
+    goalCount: (count) => `${count} goals`,
+    situation: (name) => `Situation: ${name}`,
+    pickTitle: 'Put this goal first',
+    rank: (rank) => `Now #${rank}`,
+    firstNow: 'First now',
+    pickPrompt: 'Choose a goal to see what changes.',
+    sameAsNow: 'This is the order you have now, so nothing changes.',
+    timelineTitle: 'Goal ripple timeline',
+    timelineNote:
+      'Each line is one goal. Markers show when the goal is reached today and when it would be reached with the chosen goal first.',
+    legendTarget: 'Target date',
+    legendNow: 'Now',
+    legendIfFirst: 'If first',
+    laneNow: (status) => `Now: ${status}`,
+    laneIfFirst: (status) => `If first: ${status}`,
+    movedLater: 'Moves later',
+    movedEarlier: 'Moves earlier',
+    impactTitle: 'What changes',
+    broughtOnTime: 'Brought on time',
+    newlyLate: 'Newly late',
+    longer: 'Waits longer',
+    shorter: 'Waits less',
+    unchanged: 'No change',
+    nothing: 'None',
+    byMonths: (months) => (months === 1 ? 'by 1 month' : `by ${months} months`),
+    totalsTitle: 'Totals from the engine',
+    totalsNow: 'Now',
+    totalsIfFirst: 'If first',
+    goalsLate: 'Goals late',
+    totalDelay: 'Total delay',
+    shortfall: 'Short at deadlines (today’s money)',
+    same: 'Same',
+    months: (count) => (count === 1 ? '1 month' : `${count} months`),
+    receiptTitle: 'In plain words',
+    receiptOpening: (goal) => `Putting ${goal} first:`,
+    receiptOnTime: (goals) => `${goals} comes on time.`,
+    receiptNewlyLate: (goals) => `Newly late: ${goals}.`,
+    receiptLonger: (goals) => `Waits longer: ${goals}.`,
+    receiptShorter: (goals) => `Waits less: ${goals}.`,
+    receiptNoChange: 'No goal changes.',
+    howTitle: 'How this was calculated',
+    howSteps: [
+      'The chosen goal moves to the front. The other goals keep their order.',
+      'Each month, the money left after spending goes to goals in that order, so each goal is ready by its target date if the money allows.',
+      'Whatever a goal cannot get in time becomes its delay and its shortfall.',
+      'The engine runs the whole plan again for every order. Nothing here is estimated on this screen.',
+    ],
+    howOrderNow: (order) => `Order now: ${order}`,
+    howOrderIfFirst: (order) => `Order if first: ${order}`,
+    assumptionsTitle: 'Assumptions used',
+    asOf: (month) => `Planning starts ${month}`,
+    inflation: (rate) => `Inflation: ${rate} a year`,
+    returns: (rate) => `Return on savings: ${rate} a year`,
+    noGrowthNote: 'Amounts are in rupees. Delays are in months.',
+    use: 'Use this order',
+    confirmTitle: (order) => `Change your priorities to ${order}?`,
+    confirmBody: 'You can undo this from My plan.',
+    confirm: 'Yes, use this order',
+    cancel: 'Not now',
+    reset: 'Reset comparison',
+    repair: 'Find the smallest repair',
     backToPlan: 'Back to my plan',
+    undoNote: 'Your priority order was changed.',
+    undo: 'Undo',
     unavailable: 'The order calculator is not available yet. Please try again later.',
   },
 }
@@ -451,7 +562,8 @@ const hi: Copy = {
   speechLang: 'hi-IN',
   nav: { myPlan: 'मेरी योजना', whatIf: 'अगर ऐसा हो', compare: 'तुलना करें', tradeoffs: 'किसे पहले?' },
   listen: 'सुनें',
-  family: 'अर्जुन और मीरा',
+  households: { household: 'अर्जुन और मीरा', family_stretched: 'रवि और सुनीता' },
+  shell: { sample: 'नमूना परिवार', assumptions: 'मान्यताएँ' },
   footer: {
     example: 'बिना ब्याज या बढ़त का उदाहरण।',
     scope: 'यह आपके फ़ैसलों में मदद करता है। यह बाज़ार का अनुमान नहीं लगाता और आपके बैंक या सलाहकार की जगह नहीं लेता।',
@@ -471,7 +583,7 @@ const hi: Copy = {
   home: {
     title: 'थोड़ी योजना, बेहतर कल।',
     subtitle: 'आपका परिवार। आपका पैसा। आपके सपने।',
-    forFamily: 'अर्जुन और मीरा के लिए',
+    forFamily: (name) => `${name} के लिए`,
     heroTitle: 'जो ज़रूरी है, उसके लिए जगह बनाइए।',
     heroBody: 'देखिए कितना आता है, कितना जाता है, और आपके सपने कैसे भरते हैं।',
     start: 'शुरू करें',
@@ -488,7 +600,7 @@ const hi: Copy = {
     hintWork: 'नौकरी, काम या दुकान',
     hintUsual: 'आम महीना लें, सबसे अच्छा महीना नहीं।',
     together: 'दोनों मिलाकर, हर महीने',
-    exampleNote: 'यह अर्जुन और मीरा का उदाहरण है। आप कोई भी रकम बदल सकते हैं।',
+    exampleNote: (name) => `यह ${name} का उदाहरण है। आप कोई भी रकम बदल सकते हैं।`,
     noBank: 'बैंक की जानकारी नहीं चाहिए। बस महीने की रकम।',
     next: 'आगे: खर्च',
   },
@@ -560,6 +672,9 @@ const hi: Copy = {
     noGrowth: 'तारीखें आपकी बचत और हर महीने की रकम पर आधारित हैं। ब्याज नहीं जोड़ा गया है।',
     whatIf: 'अगर कुछ बदल जाए?',
     change: 'रकम बदलें',
+    lab: 'पहले किस लक्ष्य को बचाएँ?',
+    labBody: 'कुछ बदलने से पहले देखें कि कोई दूसरा लक्ष्य पहले आने पर हर लक्ष्य का क्या होता है।',
+    assumptions: 'जब तक योजना न कहे, तारीखों में बढ़त या महँगाई नहीं जोड़ी गई है। इस्तेमाल की गई मान्यताएँ तुलना में देखें।',
   },
   verdict: {
     allOnTime: 'सपने समय पर पूरे होंगे।',
@@ -661,19 +776,75 @@ const hi: Copy = {
     lateBy: (months) => `${months} महीने देर`,
   },
   tradeoffs: {
-    title: 'अगर कोई दूसरा सपना पहले आए?',
-    subtitle: (after) => `${after} • हर क्रम साथ-साथ`,
-    note: 'हर कार्ड आपकी योजना को उस सपने को पहले रखकर फिर से चलाता है। आप क्रम चुनें, तब तक कुछ नहीं बदलता।',
-    rowTitle: (goal) => `${goal} को पहले रखें`,
-    current: 'आपका मौजूदा क्रम',
-    leastDelay: 'कुल देरी सबसे कम',
-    allOnTime: 'हर सपना समय पर रहता है।',
-    waits: (goal, months) =>
-      months === null ? `${goal} पहुँच से बाहर है।` : `${goal} ${months} महीने रुकता है।`,
-    was: (status) => `अभी: ${status}`,
-    orderLine: (goals) => `क्रम: ${goals}`,
-    useOrder: 'यह क्रम चुनें',
+    title: 'हर लक्ष्य ज़रूरी है। पहले किसे बचाएँ?',
+    subtitle: 'कोई क्रम आज़माएँ और देखें हर लक्ष्य पर क्या असर पड़ता है। आप चुनें, तब तक कुछ नहीं बदलता।',
+    sample: 'नमूना परिवार • उदाहरण',
+    live: 'ArthaYukti इंजन ने निकाला',
+    leftEachMonth: (amount) => `हर महीने लक्ष्यों के लिए ${amount} बचते हैं`,
+    goalCount: (count) => `${count} लक्ष्य`,
+    situation: (name) => `स्थिति: ${name}`,
+    pickTitle: 'इस लक्ष्य को पहले रखें',
+    rank: (rank) => `अभी #${rank}`,
+    firstNow: 'अभी पहला',
+    pickPrompt: 'देखने के लिए कोई लक्ष्य चुनें।',
+    sameAsNow: 'यही आपका मौजूदा क्रम है, इसलिए कुछ नहीं बदलता।',
+    timelineTitle: 'लक्ष्यों का असर: समयरेखा',
+    timelineNote:
+      'हर रेखा एक लक्ष्य है। निशान बताते हैं कि लक्ष्य आज कब पूरा होगा और चुने हुए लक्ष्य को पहले रखने पर कब।',
+    legendTarget: 'तय तारीख',
+    legendNow: 'अभी',
+    legendIfFirst: 'पहले रखने पर',
+    laneNow: (status) => `अभी: ${status}`,
+    laneIfFirst: (status) => `पहले रखने पर: ${status}`,
+    movedLater: 'देर से',
+    movedEarlier: 'जल्दी',
+    impactTitle: 'क्या बदलता है',
+    broughtOnTime: 'समय पर आया',
+    newlyLate: 'नई देरी',
+    longer: 'ज़्यादा इंतज़ार',
+    shorter: 'कम इंतज़ार',
+    unchanged: 'कोई बदलाव नहीं',
+    nothing: 'कोई नहीं',
+    byMonths: (months) => `${months} महीने`,
+    totalsTitle: 'इंजन के कुल आँकड़े',
+    totalsNow: 'अभी',
+    totalsIfFirst: 'पहले रखने पर',
+    goalsLate: 'देर वाले लक्ष्य',
+    totalDelay: 'कुल देरी',
+    shortfall: 'तय तारीख पर कमी (आज के पैसे में)',
+    same: 'बराबर',
+    months: (count) => `${count} महीने`,
+    receiptTitle: 'सीधी भाषा में',
+    receiptOpening: (goal) => `${goal} को पहले रखने पर:`,
+    receiptOnTime: (goals) => `${goals} समय पर आ जाता है।`,
+    receiptNewlyLate: (goals) => `नई देरी: ${goals}।`,
+    receiptLonger: (goals) => `ज़्यादा इंतज़ार: ${goals}।`,
+    receiptShorter: (goals) => `कम इंतज़ार: ${goals}।`,
+    receiptNoChange: 'किसी लक्ष्य में बदलाव नहीं।',
+    howTitle: 'यह कैसे निकाला गया',
+    howSteps: [
+      'चुना हुआ लक्ष्य सबसे आगे आता है। बाकी लक्ष्य अपने क्रम में रहते हैं।',
+      'हर महीने खर्च के बाद बचा पैसा इसी क्रम में लक्ष्यों को जाता है, ताकि पैसा हो तो हर लक्ष्य तय तारीख तक तैयार हो।',
+      'जो लक्ष्य समय पर नहीं पा सकता, वही उसकी देरी और कमी बनती है।',
+      'इंजन हर क्रम के लिए पूरी योजना फिर से चलाता है। इस स्क्रीन पर कुछ भी अंदाज़े से नहीं निकाला गया।',
+    ],
+    howOrderNow: (order) => `अभी का क्रम: ${order}`,
+    howOrderIfFirst: (order) => `पहले रखने पर क्रम: ${order}`,
+    assumptionsTitle: 'इस्तेमाल की गई मान्यताएँ',
+    asOf: (month) => `योजना ${month} से शुरू`,
+    inflation: (rate) => `महँगाई: ${rate} सालाना`,
+    returns: (rate) => `बचत पर कमाई: ${rate} सालाना`,
+    noGrowthNote: 'रकम रुपयों में है। देरी महीनों में है।',
+    use: 'यह क्रम चुनें',
+    confirmTitle: (order) => `प्राथमिकता बदलकर ${order} करें?`,
+    confirmBody: 'आप इसे मेरी योजना से वापस कर सकते हैं।',
+    confirm: 'हाँ, यह क्रम चुनें',
+    cancel: 'अभी नहीं',
+    reset: 'तुलना हटाएँ',
+    repair: 'सबसे छोटा उपाय खोजें',
     backToPlan: 'मेरी योजना पर वापस',
+    undoNote: 'आपकी प्राथमिकता का क्रम बदला गया।',
+    undo: 'वापस करें',
     unavailable: 'क्रम वाला कैलकुलेटर अभी उपलब्ध नहीं है। कृपया बाद में फिर कोशिश करें।',
   },
 }

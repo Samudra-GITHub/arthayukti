@@ -19,6 +19,7 @@ import { MonthPicker, MoneyField, PriorityControls, Stepper } from '../component
 import { Layout } from '../components/Layout'
 import { addMoney, formatMoney, isGreater, subMoney, toPaise } from '../lib/money'
 import { monthLabelLong } from '../lib/months'
+import { householdName } from '../lib/household'
 import { goalName } from '../lib/outcome'
 import { useStore } from '../state/useStore'
 import type { PageProps } from './types'
@@ -36,7 +37,7 @@ function totalSpending(plan: Plan): string {
 }
 
 export function MoneyIn({ navigate }: PageProps) {
-  const { text, plan, setIncome } = useStore()
+  const { text, sample, plan, setIncome } = useStore()
   if (!plan) return null
   const copy = text.income
 
@@ -75,7 +76,7 @@ export function MoneyIn({ navigate }: PageProps) {
             <p className="font-display text-[40px] leading-[1.15] font-semibold lg:text-[48px]">
               {formatMoney(totalIncome(plan))}
             </p>
-            <p className="text-muted">{copy.exampleNote}</p>
+            <p className="text-muted">{copy.exampleNote(householdName(text, sample, plan))}</p>
           </Card>
           <p>{copy.noBank}</p>
         </div>

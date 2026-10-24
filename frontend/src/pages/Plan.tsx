@@ -8,12 +8,13 @@ import { Await } from '../components/Status'
 import { addMoney, atLeastZero, formatMoney } from '../lib/money'
 import { monthLabelLong } from '../lib/months'
 import { usualRow } from '../lib/outcome'
+import { householdName } from '../lib/household'
 import { describeVerdict } from '../lib/verdict'
 import { useStore } from '../state/useStore'
 import type { PageProps } from './types'
 
 export function PlanPage({ navigate }: PageProps) {
-  const { text, language, plan, projection, choice, setChoice } = useStore()
+  const { text, language, sample, plan, projection, choice, setChoice, previousOrder, undoOrder } = useStore()
 
   // "My plan" always shows the plan as it is, before any what-if.
   useEffect(() => {
@@ -32,8 +33,16 @@ export function PlanPage({ navigate }: PageProps) {
     >
       <PageHeading
         title={copy.title}
-        subtitle={plan ? copy.subtitle(text.family, monthLabelLong(plan.as_of, language)) : undefined}
+        subtitle={plan ? copy.subtitle(householdName(text, sample, plan), monthLabelLong(plan.as_of, language)) : undefined}
       />
+      {previousOrder ? (
+        <div role="status" className="flex flex-wrap items-center gap-3 rounded-2xl bg-sand px-4 py-3">
+          <span className="flex-1">{text.tradeoffs.undoNote}</span>
+          <button type="button" onClick={undoOrder} className="min-h-11 rounded-xl border border-ink px-4 font-semibold">
+            {text.tradeoffs.undo}
+          </button>
+        </div>
+      ) : null}
       <Await remote={projection}>
         {(result) => {
           if (!plan || !verdict) return null
@@ -64,7 +73,15 @@ export function PlanPage({ navigate }: PageProps) {
                     <p>{copy.oneMonthBody}</p>
                     <p className="text-muted">{copy.noGrowth}</p>
                   </Card>
-                  <PrimaryButton onClick={() => navigate('what-if')}>{copy.whatIf}</PrimaryButton>
+                  <Card>
+                    <CardTitle>{copy.lab}</CardTitle>
+                    <p>{copy.labBody}</p>
+                    <PrimaryButton onClick={() => navigate('tradeoffs')}>{text.nav.tradeoffs}</PrimaryButton>
+                    <p className="text-[15px] text-muted">{copy.assumptions}</p>
+                  </Card>
+                  <SecondaryButton icon="forward" onClick={() => navigate('what-if')}>
+                    {copy.whatIf}
+                  </SecondaryButton>
                   <SecondaryButton icon="forward" onClick={() => navigate('money-in')}>
                     {copy.change}
                   </SecondaryButton>

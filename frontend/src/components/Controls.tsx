@@ -10,7 +10,7 @@ export function LanguageControl() {
       onClick={() => setLanguage(value)}
       aria-pressed={language === value}
       lang={value}
-      className={`min-h-14 rounded-xl px-3 font-semibold ${
+      className={`min-h-10 rounded-lg px-3 text-[16px] font-semibold ${
         language === value ? 'bg-paper' : 'bg-sand'
       }`}
     >
@@ -18,7 +18,7 @@ export function LanguageControl() {
     </button>
   )
   return (
-    <div className="flex min-h-16 items-start rounded-2xl bg-sand p-1" role="group">
+    <div className="flex items-center rounded-xl bg-sand p-1" role="group">
       {option('en', 'English')}
       {option('hi', 'हिन्दी')}
     </div>
@@ -41,9 +41,9 @@ export function ListenButton({ speak }: { speak: string }) {
     <button
       type="button"
       onClick={onClick}
-      className="flex min-h-16 items-center gap-2 rounded-2xl border border-line px-3"
+      className="flex min-h-12 items-center gap-2 rounded-xl border border-line px-3 text-[16px]"
     >
-      <Volume2 size={24} aria-hidden="true" />
+      <Volume2 size={20} aria-hidden="true" />
       <span>{text.listen}</span>
     </button>
   )

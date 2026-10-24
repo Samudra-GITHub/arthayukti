@@ -3,17 +3,17 @@
 @import '@fontsource-variable/noto-sans-devanagari';
 
 @theme {
-  --color-cream: #fff8ec;
-  --color-paper: #fffdfa;
-  --color-sand: #f4e8d5;
-  --color-line: #ded4c3;
-  --color-ink: #1f2a5a;
-  --color-muted: #62677a;
-  --color-turmeric: #f2a32b;
-  --color-ontime: #1e9e6a;
-  --color-late: #d9573b;
-  --color-sage: #eaf4e9;
-  --color-blush: #fcede4;
+  --color-cream: #fbf6ec;
+  --color-paper: #fffefb;
+  --color-sand: #f0e7d6;
+  --color-line: #e4dac8;
+  --color-ink: #14213d;
+  --color-muted: #586075;
+  --color-turmeric: #e8901c;
+  --color-ontime: #0f8a5f;
+  --color-late: #c4452d;
+  --color-sage: #e3f2ea;
+  --color-blush: #fbebe5;
   --color-bar: #9cced5;
 
   --font-display: 'Baloo 2 Variable', 'Noto Sans Devanagari Variable', system-ui, sans-serif;
@@ -51,5 +51,25 @@
   :focus-visible {
     outline: 3px solid var(--color-turmeric);
     outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .ripple-move {
+    transition:
+      left 600ms cubic-bezier(0.22, 1, 0.36, 1),
+      width 600ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 300ms ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

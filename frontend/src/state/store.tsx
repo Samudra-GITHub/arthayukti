@@ -3,6 +3,7 @@ import { api } from '../api/client'
 import type { FixOption, Plan, SampleDetail } from '../api/types'
 import { copy } from '../i18n/copy'
 import type { Language } from '../lib/months'
+import { currentOrder } from '../lib/tradeoffs'
 import { scenarioFor, withFix, type Choice } from '../lib/scenarios'
 import { StoreContext, type Store } from './useStore'
 import { useRemote } from './useRemote'
@@ -27,6 +28,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [plan, setPlan] = useState<Plan | null>(null)
   const [choice, setChoiceState] = useState<Choice>('normal')
   const [fix, setFix] = useState<FixOption | null>(null)
+  const [previousOrder, setPreviousOrder] = useState<string[] | null>(null)
 
   useEffect(() => {
     document.documentElement.lang = copy[language].htmlLang
@@ -158,20 +160,34 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     [update],
   )
 
-  const applyOrder = useCallback(
+  const rank = useCallback(
     (goalIds: string[]) =>
       update((current) => ({
         ...current,
         goals: current.goals.map((goal) => {
-          const rank = goalIds.indexOf(goal.id)
-          return rank < 0 ? goal : { ...goal, priority: rank + 1 }
+          const position = goalIds.indexOf(goal.id)
+          return position < 0 ? goal : { ...goal, priority: position + 1 }
         }),
       })),
     [update],
   )
 
+  const applyOrder = useCallback(
+    (goalIds: string[]) => {
+      if (plan) setPreviousOrder(currentOrder(plan))
+      rank(goalIds)
+    },
+    [plan, rank],
+  )
+
+  const undoOrder = useCallback(() => {
+    if (previousOrder) rank(previousOrder)
+    setPreviousOrder(null)
+  }, [previousOrder, rank])
+
   const resetPlan = useCallback(() => {
     if (sample) setPlan(sample.plan)
+    setPreviousOrder(null)
     setChoiceState('normal')
     setFix(null)
   }, [sample])
@@ -198,6 +214,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setGoalDate,
     moveGoal,
     applyOrder,
+    previousOrder,
+    undoOrder,
     resetPlan,
   }
 
