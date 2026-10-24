@@ -5,7 +5,7 @@ import type { Tone } from '../lib/outcome'
 export function Card({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <section
-      className={`flex flex-col gap-4 rounded-3xl border border-line bg-paper p-6 shadow-card ${className ?? ''}`}
+      className={`glass flex flex-col gap-4 rounded-3xl p-6 ${className ?? ''}`}
     >
       {children}
     </section>
@@ -88,7 +88,7 @@ function Tile({
 }) {
   return (
     <div
-      className={`flex flex-col gap-2 rounded-2xl p-6 ${dark ? 'bg-ink text-cream' : 'bg-paper'}`}
+      className={`flex flex-col gap-2 rounded-2xl p-6 ${dark ? 'bg-brand text-white' : 'bg-paper'}`}
     >
       {icon}
       <p className={dark ? '' : 'text-muted'}>{label}</p>

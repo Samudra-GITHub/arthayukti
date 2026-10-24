@@ -1,18 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 
-export type Route =
-  | 'home'
-  | 'money-in'
-  | 'money-out'
-  | 'dreams'
-  | 'plan'
-  | 'what-if'
-  | 'fixes'
-  | 'compare'
-  | 'tradeoffs'
-
-const ROUTES: Route[] = [
+export const ROUTES = [
+  // Open to everyone
   'home',
+  'login',
+  'signup',
+  'forgot-password',
+  'reset-password',
+  // The step-by-step screens that also work without an account
   'money-in',
   'money-out',
   'dreams',
@@ -21,10 +16,60 @@ const ROUTES: Route[] = [
   'fixes',
   'compare',
   'tradeoffs',
+  // Signed-in application
+  'onboarding',
+  'dashboard',
+  'profile',
+  'finances',
+  'goals',
+  'rescue',
+  'assets',
+  'debts',
+  'insurance',
+  'taxes',
+  'outlook-household',
+  'outlook-investment',
+  'outlook-debt',
+  'outlook-expenditure',
+  'outlook-custom',
+  'outlook-feasibility',
+  'outlook-scenarios',
+  'advisor',
+  'import',
+  'alerts',
+  'settings',
+] as const
+
+export type Route = (typeof ROUTES)[number]
+
+/** Routes that only make sense for a signed-in person. */
+export const PRIVATE_ROUTES: Route[] = [
+  'onboarding',
+  'dashboard',
+  'profile',
+  'finances',
+  'goals',
+  'rescue',
+  'assets',
+  'debts',
+  'insurance',
+  'taxes',
+  'outlook-household',
+  'outlook-investment',
+  'outlook-debt',
+  'outlook-expenditure',
+  'outlook-custom',
+  'outlook-feasibility',
+  'outlook-scenarios',
+  'advisor',
+  'import',
+  'alerts',
+  'settings',
 ]
 
 export function parseRoute(hash: string): Route {
-  const name = hash.replace(/^#\/?/, '')
+  // A query string (as in the reset link) is not part of the route name.
+  const name = hash.replace(/^#\/?/, '').split('?')[0]
   return ROUTES.find((route) => route === name) ?? 'home'
 }
 

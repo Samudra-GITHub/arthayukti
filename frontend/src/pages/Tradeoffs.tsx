@@ -252,7 +252,7 @@ function Lab({ plan, result, choiceLabel, surplus, navigate }: LabProps) {
 
       <div className="flex flex-wrap items-start gap-3">
         {selected && !isSame && !confirming ? (
-          <button type="button" onClick={() => setConfirming(true)} className="min-h-12 rounded-2xl bg-ink px-6 font-semibold text-cream">
+          <button type="button" onClick={() => setConfirming(true)} className="min-h-12 rounded-2xl bg-brand px-6 font-semibold text-white">
             {copy.use}
           </button>
         ) : null}
@@ -285,7 +285,7 @@ function Lab({ plan, result, choiceLabel, surplus, navigate }: LabProps) {
                 applyOrder(selected.priority_order)
                 navigate('plan')
               }}
-              className="min-h-12 rounded-2xl bg-ink px-6 font-semibold text-cream"
+              className="min-h-12 rounded-2xl bg-brand px-6 font-semibold text-white"
             >
               {copy.confirm}
             </button>

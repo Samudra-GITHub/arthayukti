@@ -2,7 +2,10 @@ import type { ReactNode } from 'react'
 import { ArrowDownUp, Columns2, Target, Zap, type LucideIcon } from 'lucide-react'
 import type { Route } from '../lib/route'
 import { householdName } from '../lib/household'
+import { useAuth } from '../state/useAuth'
+import { useShellCopy } from '../state/useShellCopy'
 import { useStore } from '../state/useStore'
+import { AppShell } from './AppShell'
 import { LanguageControl, ListenButton } from './Controls'
 import { Wordmark } from './Wordmark'
 
@@ -26,6 +29,16 @@ const NAV: { route: Route; key: NavKey; icon: LucideIcon; covers: Route[] }[] = 
 export function Layout({ route, navigate, speak, children }: LayoutProps) {
   const { text, sample, plan } = useStore()
   const name = householdName(text, sample, plan)
+  const auth = useAuth()
+  const shell = useShellCopy()
+
+  if (auth.status === 'authenticated') {
+    return (
+      <AppShell route={route} navigate={navigate} speak={speak}>
+        {children}
+      </AppShell>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-cream">
@@ -45,7 +58,7 @@ export function Layout({ route, navigate, speak, children }: LayoutProps) {
                     onClick={() => navigate(item.route)}
                     aria-current={active ? 'page' : undefined}
                     className={`min-h-11 rounded-full px-4 text-[15px] whitespace-nowrap transition-colors motion-reduce:transition-none ${
-                      active ? 'bg-ink font-semibold text-cream' : 'text-muted hover:text-ink'
+                      active ? 'bg-brand font-semibold text-white' : 'text-muted hover:text-ink'
                     }`}
                   >
                     {text.nav[item.key]}
@@ -57,6 +70,12 @@ export function Layout({ route, navigate, speak, children }: LayoutProps) {
             <span className="flex-1" />
           )}
           <div className="flex items-center gap-2">
+            <button type="button" onClick={() => navigate('login')} className="min-h-11 rounded-full px-4 text-[15px] font-semibold text-ink hover:bg-sand">
+              {shell.auth.signInLink}
+            </button>
+            <button type="button" onClick={() => navigate('signup')} className="min-h-11 rounded-full bg-brand px-4 text-[15px] font-semibold text-white">
+              {shell.auth.createAccount}
+            </button>
             <LanguageControl />
             <ListenButton speak={speak} />
           </div>

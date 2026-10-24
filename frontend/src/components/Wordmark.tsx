@@ -1,12 +1,13 @@
 /** The ArthaYukti mark: a lantern glow with ripples spreading from it, and the wordmark. */
-export function Wordmark({ size = 'md' }: { size?: 'md' | 'lg' }) {
+export function Wordmark({ size = 'md' }: { size?: 'md' | 'lg' | 'mark' }) {
   const big = size === 'lg'
+  if (size === 'mark') return <RippleMark className="size-8" />
   return (
     <span className="flex items-center gap-2">
       <RippleMark className={big ? 'size-10' : 'size-7'} />
       <span
-        className={`font-display leading-none font-semibold tracking-tight text-ink ${
-          big ? 'text-[34px]' : 'text-[24px]'
+        className={`font-display leading-none font-bold tracking-tight text-ink ${
+          big ? 'text-[30px]' : 'text-[22px]'
         }`}
       >
         ArthaYukti

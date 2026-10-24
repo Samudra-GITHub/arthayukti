@@ -69,7 +69,7 @@ export function PrimaryButton({ children, onClick, disabled, icon = 'forward', c
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`flex min-h-16 w-full items-center justify-center gap-4 rounded-2xl bg-ink px-6 py-4 text-[20px] font-semibold text-cream disabled:opacity-60 ${className ?? ''}`}
+      className={`flex min-h-16 w-full items-center justify-center gap-4 rounded-2xl bg-brand px-6 py-4 text-[20px] font-semibold text-white disabled:opacity-60 ${className ?? ''}`}
     >
       <span className="flex-1 text-center">{children}</span>
       <ButtonIcon icon={icon} accent />

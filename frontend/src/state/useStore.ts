@@ -13,7 +13,21 @@ import type { Language } from '../lib/months'
 import type { Choice } from '../lib/scenarios'
 import type { Remote } from './useRemote'
 
+export type AccountState = 'idle' | 'loading' | 'ready' | 'error'
+
 export interface Store {
+  /** For a signed-in person: whether their saved plan has been looked up yet. */
+  accountState: AccountState
+  /** The id of the saved plan being edited, or null when it has never been saved. */
+  planId: string | null
+  /** True when the plan on screen differs from what is saved. */
+  dirty: boolean
+  saving: boolean
+  saveError: string | null
+  /** Saves the plan on screen, or `next` when a plan has just been built and not yet shown. */
+  savePlan: (next?: Plan) => Promise<boolean>
+  /** Puts a plan built elsewhere (the onboarding wizard) on screen as the person's own. */
+  replacePlan: (plan: Plan) => void
   language: Language
   setLanguage: (language: Language) => void
   text: Copy

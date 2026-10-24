@@ -1,7 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ApiFailure } from '../api/client'
 
 export interface Remote<T> {
+  data: T | null
+  error: string | null
+  loading: boolean
+  /** Asks again, for the same inputs. */
+  reload: () => void
+}
+
+interface Answer<T> {
   data: T | null
   error: string | null
   loading: boolean
@@ -13,7 +21,8 @@ export function useRemote<T>(
   load: (signal: AbortSignal) => Promise<T>,
   delayMs = 0,
 ): Remote<T> {
-  const [state, setState] = useState<Remote<T>>({ data: null, error: null, loading: key !== null })
+  const [state, setState] = useState<Answer<T>>({ data: null, error: null, loading: key !== null })
+  const [attempt, setAttempt] = useState(0)
   const loader = useRef(load)
 
   // When there is nothing to request any more, drop the earlier answer so it cannot show
@@ -46,7 +55,8 @@ export function useRemote<T>(
       window.clearTimeout(timer)
       controller.abort()
     }
-  }, [key, delayMs])
+  }, [key, delayMs, attempt])
 
-  return state
+  const reload = useCallback(() => setAttempt((current) => current + 1), [])
+  return { ...state, reload }
 }

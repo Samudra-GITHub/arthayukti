@@ -6,7 +6,8 @@ import type { Language } from '../lib/months'
 import { blankPlan, hasGoals, MAX_GOALS, newGoal } from '../lib/blank'
 import { currentOrder } from '../lib/tradeoffs'
 import { ownScenario, scenarioFor, withFix, type Choice } from '../lib/scenarios'
-import { StoreContext, type Store } from './useStore'
+import { useAuth } from './useAuth'
+import { StoreContext, type AccountState, type Store } from './useStore'
 import { useRemote } from './useRemote'
 
 const LANGUAGE_KEY = 'arthayukti.language'
@@ -33,6 +34,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [choice, setChoiceState] = useState<Choice>('normal')
   const [fix, setFix] = useState<FixOption | null>(null)
   const [previousOrder, setPreviousOrder] = useState<string[] | null>(null)
+  const auth = useAuth()
+  const [accountState, setAccountState] = useState<AccountState>('idle')
+  const [planId, setPlanId] = useState<string | null>(null)
+  const [savedJson, setSavedJson] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   useEffect(() => {
     document.documentElement.lang = copy[language].htmlLang
@@ -79,6 +86,75 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setShockAmount('')
     setPreviousOrder(null)
   }, [])
+
+  // A signed-in person's own saved plan replaces anything shown before sign-in.
+  const [previousAuth, setPreviousAuth] = useState(auth.status)
+  if (auth.status !== previousAuth) {
+    setPreviousAuth(auth.status)
+    if (auth.status !== 'authenticated') {
+      setAccountState('idle')
+      setPlanId(null)
+      setSavedJson(null)
+      setSaveError(null)
+      startOver()
+    }
+  }
+
+  useEffect(() => {
+    if (auth.status !== 'authenticated' || accountState !== 'idle') return
+    const controller = new AbortController()
+    ;(async () => {
+      try {
+        const summaries = await api.plans(controller.signal)
+        if (summaries.length === 0) {
+          setSample(null)
+          setPlan(null)
+          setSource(null)
+          setAccountState('ready')
+          return
+        }
+        const record = await api.plan(summaries[0].id, controller.signal)
+        setSample(null)
+        setPlan(record.plan)
+        setSource('own')
+        setPlanId(record.id)
+        setSavedJson(JSON.stringify(record.plan))
+        setAccountState('ready')
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return
+        setAccountState('error')
+      }
+    })()
+    return () => controller.abort()
+  }, [auth.status, accountState])
+
+  const replacePlan = useCallback((next: Plan) => {
+    setSample(null)
+    setPlan(next)
+    setSource('own')
+    setChoiceState('normal')
+    setFix(null)
+  }, [])
+
+  const savePlan = useCallback(async (next?: Plan) => {
+    const toSave = next ?? plan
+    if (!toSave || auth.status !== 'authenticated') return false
+    setSaving(true)
+    setSaveError(null)
+    try {
+      const record = planId ? await api.updatePlan(planId, toSave) : await api.createPlan(toSave)
+      setPlanId(record.id)
+      setSavedJson(JSON.stringify(record.plan))
+      return true
+    } catch {
+      setSaveError('failed')
+      return false
+    } finally {
+      setSaving(false)
+    }
+  }, [plan, planId, auth.status])
+
+  const dirty = plan !== null && auth.status === 'authenticated' && JSON.stringify(plan) !== savedJson
 
   const setLanguage = useCallback((next: Language) => {
     setLanguageState(next)
@@ -251,6 +327,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [sample, source])
 
   const value: Store = {
+    accountState: auth.status === 'authenticated' && accountState === 'idle' ? 'loading' : accountState,
+    planId,
+    dirty,
+    saving,
+    saveError,
+    savePlan,
+    replacePlan,
     language,
     setLanguage,
     text: copy[language],

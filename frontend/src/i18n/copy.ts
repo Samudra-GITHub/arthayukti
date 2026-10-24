@@ -9,6 +9,23 @@ export interface Copy {
   households: Record<string, string>
   shell: { sample: string; assumptions: string; mine: string; unsaved: string }
   needGoals: { title: string; body: string; action: string }
+  reset: {
+    title: string
+    subtitle: string
+    newPassword: string
+    repeat: string
+    rules: string
+    tooShort: string
+    needsLetterAndDigit: string
+    mismatch: string
+    submit: string
+    done: string
+    doneBody: string
+    invalidLink: string
+    rejected: string
+    noLink: string
+    home: string
+  }
   footer: { example: string; scope: string; legal: string }
   common: {
     back: string
@@ -303,6 +320,23 @@ const en: Copy = {
     assumptions: 'Assumptions',
     mine: 'My household',
     unsaved: 'Not saved • this visit only',
+  },
+  reset: {
+    title: 'Choose a new password.',
+    subtitle: 'This page opens from the link in your reset e-mail.',
+    newPassword: 'New password',
+    repeat: 'Type it again',
+    rules: 'At least 10 characters, with at least one letter and one number.',
+    tooShort: 'The password needs at least 10 characters.',
+    needsLetterAndDigit: 'The password needs at least one letter and one number.',
+    mismatch: 'The two passwords are not the same.',
+    submit: 'Save new password',
+    done: 'Your password is changed.',
+    doneBody: 'The reset link has been used and cannot be used again.',
+    invalidLink: 'This reset link is not valid any more. It may have expired or already been used. Ask for a new one.',
+    rejected: 'That password was not accepted. Use at least 10 characters with a letter and a number.',
+    noLink: 'This page needs the link from your reset e-mail. Open that link again.',
+    home: 'Back to start',
   },
   needGoals: {
     title: 'Add a goal first.',
@@ -637,6 +671,23 @@ const hi: Copy = {
     assumptions: 'मान्यताएँ',
     mine: 'मेरा परिवार',
     unsaved: 'सेव नहीं • सिर्फ़ इस बार के लिए',
+  },
+  reset: {
+    title: 'नया पासवर्ड चुनें।',
+    subtitle: 'यह पेज आपके रीसेट ई-मेल के लिंक से खुलता है।',
+    newPassword: 'नया पासवर्ड',
+    repeat: 'फिर से लिखें',
+    rules: 'कम से कम 10 अक्षर, जिसमें कम से कम एक अक्षर और एक अंक हो।',
+    tooShort: 'पासवर्ड में कम से कम 10 अक्षर होने चाहिए।',
+    needsLetterAndDigit: 'पासवर्ड में कम से कम एक अक्षर और एक अंक होना चाहिए।',
+    mismatch: 'दोनों पासवर्ड एक जैसे नहीं हैं।',
+    submit: 'नया पासवर्ड सेव करें',
+    done: 'आपका पासवर्ड बदल गया है।',
+    doneBody: 'रीसेट लिंक इस्तेमाल हो चुका है और दोबारा इस्तेमाल नहीं होगा।',
+    invalidLink: 'यह रीसेट लिंक अब मान्य नहीं है। यह पुराना हो गया होगा या इस्तेमाल हो चुका होगा। नया लिंक माँगें।',
+    rejected: 'यह पासवर्ड स्वीकार नहीं हुआ। कम से कम 10 अक्षर, एक अक्षर और एक अंक रखें।',
+    noLink: 'इस पेज के लिए आपके रीसेट ई-मेल का लिंक चाहिए। वही लिंक फिर खोलें।',
+    home: 'शुरुआत पर वापस',
   },
   needGoals: {
     title: 'पहले एक लक्ष्य जोड़ें।',

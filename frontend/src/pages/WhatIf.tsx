@@ -79,7 +79,7 @@ export function WhatIfPage({ navigate }: PageProps) {
               aria-pressed={selected}
               onClick={() => setChoice(value)}
               className={`flex min-h-20 items-center gap-4 rounded-2xl border p-4 text-left font-semibold ${
-                selected ? 'border-ink bg-ink text-cream' : 'border-line bg-paper'
+                selected ? 'border-ink bg-brand text-white' : 'border-line bg-paper'
               }`}
             >
               <Icon size={24} aria-hidden="true" className="shrink-0" />
