@@ -19,6 +19,7 @@ from app.api import (
     rescue,
     samples,
 )
+from app.api.deps import OPTIONAL_AUTH_PATHS
 from app.config import settings
 from app.db.init_db import seed_demo_user_if_enabled
 from app.errors import ErrorBody, ErrorResponse, register_error_handlers
@@ -70,6 +71,17 @@ def create_app() -> FastAPI:
         return response
 
     register_error_handlers(app)
+
+    generate_openapi = app.openapi
+
+    def openapi_with_optional_auth():
+        schema = generate_openapi()
+        for path in OPTIONAL_AUTH_PATHS:
+            for operation in schema["paths"].get(path, {}).values():
+                operation["security"] = [{"HTTPBearer": []}, {}]
+        return schema
+
+    app.openapi = openapi_with_optional_auth
 
     for module in (
         health,

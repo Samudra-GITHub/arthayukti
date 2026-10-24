@@ -96,10 +96,21 @@ def create_transaction(
 ) -> TransactionResponse:
     """Create an individual income/expense transaction."""
     owner = user
+    account = None
+    if req.account_id:
+        account = (
+            db.query(FinancialAccount)
+            .filter(FinancialAccount.id == req.account_id, FinancialAccount.user_id == owner.id)
+            .first()
+        )
+        if account is None:
+            # The same answer for an account that does not exist and one that is someone else's.
+            raise ApiError(404, "not_found", "No such account.")
+
     tx = FinancialTransaction(
         id=str(uuid.uuid4()),
         user_id=owner.id,
-        account_id=req.account_id,
+        account_id=account.id if account else None,
         transaction_date=req.transaction_date,
         amount=req.amount,
         transaction_type=req.transaction_type,
@@ -109,18 +120,11 @@ def create_transaction(
     )
     db.add(tx)
 
-    # Adjust account balance if linked
-    if req.account_id:
-        acc = (
-            db.query(FinancialAccount)
-            .filter(FinancialAccount.id == req.account_id, FinancialAccount.user_id == owner.id)
-            .first()
-        )
-        if acc:
-            if req.transaction_type == "credit":
-                acc.balance += req.amount
-            else:
-                acc.balance -= req.amount
+    if account is not None:
+        if req.transaction_type == "credit":
+            account.balance += req.amount
+        else:
+            account.balance -= req.amount
 
     db.commit()
     db.refresh(tx)

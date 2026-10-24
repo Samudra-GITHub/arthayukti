@@ -1,4 +1,5 @@
 import hashlib
+import logging
 import secrets
 import uuid
 from datetime import UTC, datetime, timedelta
@@ -38,6 +39,8 @@ from app.security import (
     hash_password,
     verify_password,
 )
+
+logger = logging.getLogger("arthayukti")
 
 router = APIRouter(prefix="/auth", tags=["auth"], responses=AUTH_RESPONSES)
 
@@ -164,7 +167,20 @@ def request_password_reset(
             )
         )
         db.commit()
-        mail.send_password_reset(user.email, token)
+        try:
+            mail.send_password_reset(user.email, token)
+        except Exception as error:
+            # Same answer as for an unknown address, so an outage does not reveal who is
+            # registered. The token was never delivered, so it is retired at once. Only the
+            # error type is logged: never the token or the address.
+            logger.warning("Password reset e-mail not sent (%s).", type(error).__name__)
+            for pending in (
+                db.query(PasswordReset)
+                .filter(PasswordReset.user_id == user.id, PasswordReset.used.is_(False))
+                .all()
+            ):
+                pending.used = True
+            db.commit()
     # The same answer whether or not the address is registered.
     return MessageResponse(
         message="If that address is registered, a reset link has been sent to it."

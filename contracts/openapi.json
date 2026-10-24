@@ -6965,7 +6965,8 @@
         "security": [
           {
             "HTTPBearer": []
-          }
+          },
+          {}
         ],
         "summary": "Analyze And Rescue",
         "tags": [

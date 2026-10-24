@@ -647,3 +647,86 @@ def test_openapi_declares_bearer_auth_and_error_shapes():
             assert content != {"type": "object", "additionalProperties": True} or not content, (
                 f"{method.upper()} {path} returns an untyped object"
             )
+
+
+# ---- findings from the post-commit verification --------------------------------------------
+
+
+def test_a_transaction_can_only_reference_the_callers_own_account():
+    owner, other = authed_client(tag="txowner"), authed_client(tag="txother")
+    account = owner.post(
+        "/api/v1/financials/accounts",
+        json={"account_name": "Owner vault", "account_type": "savings", "balance": "500.00"},
+    ).json()
+    body = {
+        "transaction_date": "2027-01-01",
+        "amount": "100.00",
+        "transaction_type": "credit",
+        "category": "x",
+    }
+
+    foreign = other.post(
+        "/api/v1/financials/transactions", json={**body, "account_id": account["id"]}
+    )
+    missing = other.post(
+        "/api/v1/financials/transactions", json={**body, "account_id": "no-such-id"}
+    )
+    assert foreign.status_code == missing.status_code == 404
+    assert foreign.json() == missing.json()  # no way to tell "not yours" from "does not exist"
+
+    balances = [a["balance"] for a in owner.get("/api/v1/financials/accounts").json()]
+    assert balances == ["500.00"]
+    assert owner.get("/api/v1/financials/transactions").json() == []
+    assert other.get("/api/v1/financials/transactions").json() == []  # nothing was stored
+
+    own = owner.post("/api/v1/financials/transactions", json={**body, "account_id": account["id"]})
+    assert own.status_code == 201 and own.json()["account_id"] == account["id"]
+    assert [a["balance"] for a in owner.get("/api/v1/financials/accounts").json()] == ["600.00"]
+
+    unlinked = other.post("/api/v1/financials/transactions", json=body)
+    assert unlinked.status_code == 201 and unlinked.json()["account_id"] is None
+
+
+def test_a_mail_failure_gives_the_same_answer_and_leaves_no_usable_token(monkeypatch, caplog):
+    email = new_user(tag="outage")["X-Test-Email"]
+
+    def smtp_down(to_email: str, token: str) -> None:
+        raise OSError("smtp down")
+
+    monkeypatch.setattr(mail, "send_password_reset", smtp_down)
+    caplog.set_level("DEBUG")
+    known = client.post("/api/v1/auth/password-reset/request", json={"email": email})
+    unknown = client.post(
+        "/api/v1/auth/password-reset/request", json={"email": "ghost-outage@example.test"}
+    )
+    assert known.status_code == unknown.status_code == 200
+    assert known.json() == unknown.json()
+
+    db = SessionLocal()
+    try:
+        user = db.query(User).filter(User.email == email).one()
+        pending = (
+            db.query(PasswordReset)
+            .filter(PasswordReset.user_id == user.id, PasswordReset.used.is_(False))
+            .count()
+        )
+        assert pending == 0  # the undelivered token cannot be used
+    finally:
+        db.close()
+    assert "OSError" in caplog.text  # the failure is logged...
+    assert email not in caplog.text  # ...without the address
+
+
+def test_the_contract_says_the_token_is_optional_on_the_rescue_route_only():
+    spec = app.openapi()
+    rescue = spec["paths"]["/api/v1/rescue/analyze"]["post"]
+    assert rescue["security"] == [{"HTTPBearer": []}, {}]
+    required = {
+        (method.upper(), path)
+        for path, ops in spec["paths"].items()
+        for method, op in ops.items()
+        if op.get("security") == [{"HTTPBearer": []}]
+    }
+    assert required == set(PROTECTED)  # every other secured operation really requires sign-in
+    plan = client.get("/api/v1/samples/tiny_delayed_goal").json()["plan"]
+    assert client.post("/api/v1/rescue/analyze", json={"plan": plan}).status_code == 200

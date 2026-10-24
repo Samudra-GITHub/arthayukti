@@ -13,6 +13,11 @@ bearer_scheme = HTTPBearer(
 )
 
 
+# Public routes that also accept a token (to record who ran a calculation). The OpenAPI document
+# must say the token is optional for these, not required.
+OPTIONAL_AUTH_PATHS = {"/api/v1/rescue/analyze"}
+
+
 def _unauthorized(message: str) -> HTTPException:
     return HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
