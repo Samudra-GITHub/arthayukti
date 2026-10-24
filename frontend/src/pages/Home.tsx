@@ -13,7 +13,7 @@ export function Home({ navigate }: PageProps) {
 
   return (
     <Layout route="home" navigate={navigate} speak={`${home.tagline} ${home.hook}`}>
-      <section className="stage relative overflow-hidden rounded-[32px] px-6 py-10 sm:px-10 sm:py-14 lg:px-14 lg:py-20">
+      <section className="stage relative overflow-hidden rounded-[19px] px-6 py-10 sm:px-10 sm:py-14 lg:px-14 lg:py-20">
         <Ripples />
         <div className="relative flex max-w-[620px] flex-col gap-6">
           <p className="text-[15px] font-semibold tracking-wide text-glow uppercase">
@@ -108,7 +108,7 @@ export function Home({ navigate }: PageProps) {
         </h2>
         <ul className="flex flex-wrap gap-2">
           {home.soon.map((item) => (
-            <li key={item} className="rounded-full border border-dashed border-line px-3 py-1 text-[14px] text-muted">
+            <li key={item} className="rounded-xl border border-dashed border-line px-3 py-1 text-[14px] text-muted">
               {item}
             </li>
           ))}

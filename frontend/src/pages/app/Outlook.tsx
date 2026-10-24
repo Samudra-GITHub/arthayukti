@@ -59,7 +59,7 @@ function SurplusBars({ rows, label }: { rows: MonthRow[]; label: string }) {
             width={width * 0.7}
             y={value >= 0 ? 20 - height : 20}
             height={height}
-            rx="0.4"
+            rx="0.25"
             fill={value >= 0 ? 'var(--color-ontime)' : 'var(--color-late)'}
           />
         )

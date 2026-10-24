@@ -9,7 +9,7 @@ import { useExtrasCopy } from '../../state/useExtrasCopy'
 import { useModulesCopy } from '../../state/useModulesCopy'
 import { useStore } from '../../state/useStore'
 
-const submitClass = 'min-h-12 self-start rounded-full bg-brand px-6 font-semibold text-white disabled:opacity-60'
+const submitClass = 'min-h-12 self-start rounded-xl bg-brand px-6 font-semibold text-white disabled:opacity-60'
 
 /** A whole percentage from 0 to 100 as the engine's two-decimal fraction, or null. */
 function wholePercentToFraction(text: string): string | null {
@@ -39,8 +39,8 @@ function Option({ item, recommended }: { item: RescueAlternativeItem; recommende
     <li className={`flex flex-col gap-3 rounded-2xl border p-4 ${recommended ? 'border-brand bg-sage/60' : 'border-line bg-white/60'}`}>
       <div className="flex flex-wrap items-center gap-2">
         <h3 className="font-display text-[18px] font-bold">{item.title}</h3>
-        {recommended ? <span className="rounded-full bg-brand px-3 py-1 text-[13px] font-semibold text-white">{t.recommended}</span> : null}
-        <span className={`rounded-full px-3 py-1 text-[13px] font-semibold ${item.is_feasible ? 'bg-sage text-ontime' : 'bg-blush text-late'}`}>{item.is_feasible ? t.feasible : t.notFeasible}</span>
+        {recommended ? <span className="rounded-xl bg-brand px-3 py-1 text-[13px] font-semibold text-white">{t.recommended}</span> : null}
+        <span className={`rounded-xl px-3 py-1 text-[13px] font-semibold ${item.is_feasible ? 'bg-sage text-ontime' : 'bg-blush text-late'}`}>{item.is_feasible ? t.feasible : t.notFeasible}</span>
       </div>
       <p>{item.description}</p>
       <div className="grid gap-3 sm:grid-cols-3">

@@ -42,7 +42,7 @@ export function QuoteLookup() {
         <div className="min-w-[220px] flex-1">
           <TextField label={t.symbol} hint={t.hint} value={symbol} onChange={setSymbol} maxLength={30} error={bad ? t.badSymbol : null} />
         </div>
-        <button type="submit" disabled={look.busy} className="min-h-12 rounded-full bg-brand px-6 font-semibold text-white disabled:opacity-60">
+        <button type="submit" disabled={look.busy} className="min-h-12 rounded-xl bg-brand px-6 font-semibold text-white disabled:opacity-60">
           {look.busy ? t.looking : t.look}
         </button>
       </form>
@@ -51,7 +51,7 @@ export function QuoteLookup() {
         <div role="status" className="flex flex-col gap-3 rounded-2xl bg-white/60 p-4">
           <p className="flex flex-wrap items-center gap-2 font-semibold">
             <span className="font-figures">{quote.symbol}</span>
-            <span className={`rounded-full px-3 py-1 text-[13px] ${quote.status === 'fresh' ? 'bg-sage text-ontime' : quote.status === 'stale' ? 'bg-sand' : 'bg-blush text-late'}`}>{label}</span>
+            <span className={`rounded-xl px-3 py-1 text-[13px] ${quote.status === 'fresh' ? 'bg-sage text-ontime' : quote.status === 'stale' ? 'bg-sand' : 'bg-blush text-late'}`}>{label}</span>
           </p>
           {quote.price ? (
             <div className="grid gap-3 sm:grid-cols-3">

@@ -21,7 +21,7 @@ type Range = '12' | '24' | 'all'
 const link = 'text-[14px] font-semibold underline'
 
 function Pill({ tone, children }: { tone: 'good' | 'late'; children: string }) {
-  return <span className={`inline-block rounded-full px-3 py-1 text-[13px] font-semibold ${tone === 'late' ? 'bg-blush text-late' : 'bg-sage text-ontime'}`}>{children}</span>
+  return <span className={`inline-block rounded-xl px-3 py-1 text-[13px] font-semibold ${tone === 'late' ? 'bg-blush text-late' : 'bg-sage text-ontime'}`}>{children}</span>
 }
 
 /** Money left each month and the total set aside, both read from the engine's month-by-month rows. */
@@ -40,14 +40,14 @@ function Charts({ result }: { result: ProjectionResult }) {
         id="dash-cashflow"
         title={d.barsTitle}
         aside={
-          <div role="group" aria-label={d.ranges.label} className="flex gap-1 rounded-full bg-white/60 p-1 text-[14px]">
+          <div role="group" aria-label={d.ranges.label} className="flex gap-1 rounded-xl bg-white/60 p-1 text-[14px]">
             {(['12', '24', 'all'] as const).map((value) => (
               <button
                 key={value}
                 type="button"
                 aria-pressed={range === value}
                 onClick={() => setRange(value)}
-                className={`min-h-9 rounded-full px-4 ${range === value ? 'bg-brand font-semibold text-white' : 'text-muted hover:text-ink'}`}
+                className={`min-h-9 rounded-xl px-4 ${range === value ? 'bg-brand font-semibold text-white' : 'text-muted hover:text-ink'}`}
               >
                 {value === '12' ? d.ranges.year : value === '24' ? d.ranges.two : d.ranges.all}
               </button>
@@ -80,7 +80,7 @@ export function DashboardPage({ navigate }: PageProps) {
       <Panel>
         <h2 className="font-display text-[24px] font-bold">{d.setupTitle}</h2>
         <p className="text-muted">{d.setupBody}</p>
-        <button type="button" onClick={() => navigate('onboarding')} className="min-h-12 self-start rounded-full bg-brand px-6 font-semibold text-white">
+        <button type="button" onClick={() => navigate('onboarding')} className="min-h-12 self-start rounded-xl bg-brand px-6 font-semibold text-white">
           {m.common.startSetup}
         </button>
       </Panel>
@@ -100,7 +100,7 @@ export function DashboardPage({ navigate }: PageProps) {
       <nav aria-label={d.jump} className="flex flex-wrap items-center gap-2 text-[14px]">
         <span className="text-muted">{d.jump}:</span>
         {SECTIONS.map((id) => (
-          <a key={id} href={`#dash-${id}`} className="glass rounded-full px-3 py-1 hover:bg-white">
+          <a key={id} href={`#dash-${id}`} className="glass rounded-xl px-3 py-1 hover:bg-white">
             {d.sections[id]}
           </a>
         ))}

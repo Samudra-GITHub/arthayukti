@@ -28,14 +28,14 @@ export function HatchedBars({ points, summary }: { points: Point[]; summary: str
           return (
             <div key={point.label} className="relative flex h-full flex-1 items-end" onMouseEnter={() => setActive(index)} onMouseLeave={() => setActive(null)}>
               {solid ? (
-                <span className="font-figures absolute -top-9 left-1/2 z-10 -translate-x-1/2 rounded-full bg-ink px-3 py-1 text-[13px] whitespace-nowrap text-white shadow-lg" aria-hidden="true">
+                <span className="font-figures absolute -top-9 left-1/2 z-10 -translate-x-1/2 rounded-xl bg-ink px-3 py-1 text-[13px] whitespace-nowrap text-white shadow-lg" aria-hidden="true">
                   {formatMoney(point.value)}
                 </span>
               ) : null}
               <div
                 aria-hidden="true"
                 style={{ height: `${height}%` }}
-                className={`hatch w-full rounded-full ${negative ? 'bg-late/70' : solid ? 'bg-brand' : 'bg-brand-soft'}`}
+                className={`hatch w-full rounded-lg ${negative ? 'bg-late/70' : solid ? 'bg-brand' : 'bg-brand-soft'}`}
               />
             </div>
           )

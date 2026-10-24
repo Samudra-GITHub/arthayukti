@@ -217,7 +217,7 @@ export function OnboardingPage({ navigate }: PageProps) {
   return (
     <div className="min-h-screen p-2 sm:p-4">
       <div className="mx-auto grid max-w-[1500px] gap-3 sm:gap-4 lg:grid-cols-[320px_1fr]">
-      <aside className="stage relative flex flex-col gap-6 overflow-hidden rounded-[32px] px-6 py-6 lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)] lg:px-8 lg:py-10">
+      <aside className="stage relative flex flex-col gap-6 overflow-hidden rounded-[19px] px-6 py-6 lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)] lg:px-8 lg:py-10">
         <Wordmark size="lg" />
         <ol className="hidden flex-col gap-2 lg:flex" aria-label={c.stepOf(step + 1, STEPS.length)}>
           {STEPS.map((id, index) => (
@@ -239,7 +239,7 @@ export function OnboardingPage({ navigate }: PageProps) {
         </div>
       </aside>
 
-      <main className="glass flex flex-col rounded-[32px] px-5 py-6 sm:px-10 lg:px-14 lg:py-10">
+      <main className="glass flex flex-col rounded-[19px] px-5 py-6 sm:px-10 lg:px-14 lg:py-10">
         <div className="mb-6 flex items-center justify-between gap-3">
           <p className="text-[14px] text-muted">{c.stepOf(step + 1, STEPS.length)}</p>
           <LanguageControl />
@@ -269,7 +269,7 @@ export function OnboardingPage({ navigate }: PageProps) {
           ) : null}
 
           {last ? null : (
-            <div className="glass-bar sticky bottom-2 mt-auto flex flex-wrap items-center gap-3 rounded-full px-4 py-3 sm:px-6">
+            <div className="glass-bar sticky bottom-2 mt-auto flex flex-wrap items-center gap-3 rounded-2xl px-4 py-3 sm:px-6">
               {step > 0 ? (
                 <button type="button" onClick={() => go(step - 1)} className="min-h-12 rounded-xl border border-line bg-paper px-5 font-semibold">
                   {c.back}
@@ -282,11 +282,11 @@ export function OnboardingPage({ navigate }: PageProps) {
                 </button>
               ) : null}
               {current === 'review' ? (
-                <button type="button" disabled={saving} onClick={() => void commit(true)} className="min-h-12 rounded-full bg-brand px-6 font-semibold text-white disabled:opacity-60">
+                <button type="button" disabled={saving} onClick={() => void commit(true)} className="min-h-12 rounded-xl bg-brand px-6 font-semibold text-white disabled:opacity-60">
                   {saving ? c.review.building : c.review.build}
                 </button>
               ) : (
-                <button type="button" onClick={advance} className="min-h-12 rounded-full bg-brand px-6 font-semibold text-white">
+                <button type="button" onClick={advance} className="min-h-12 rounded-xl bg-brand px-6 font-semibold text-white">
                   {current === 'welcome' ? c.welcome.start : c.next}
                 </button>
               )}
@@ -339,14 +339,14 @@ function ReviewStep({ draft, c, go }: { draft: Draft; c: OnboardingCopy; go: (id
           {([[t.income, totals.income], [t.essential, totals.essential], [t.discretionary, totals.discretionary], [t.loans, totals.loanPayments]] as const).map(([label, value]) => (
             <div key={label}>
               <dt className="text-[14px] text-muted">
-                {label} <span className="rounded-full bg-sand px-2 text-[12px]">{t.entered}</span>
+                {label} <span className="rounded-xl bg-sand px-2 text-[12px]">{t.entered}</span>
               </dt>
               <dd className="font-figures text-[20px] font-semibold">{formatMoney(value)}</dd>
             </div>
           ))}
           <div className="sm:col-span-2">
             <dt className={`text-[14px] font-semibold ${deficit ? 'text-late' : 'text-ontime'}`}>
-              {deficit ? t.deficit : t.surplus} <span className="rounded-full bg-sand px-2 text-[12px] font-normal text-ink">{t.estimate}</span>
+              {deficit ? t.deficit : t.surplus} <span className="rounded-xl bg-sand px-2 text-[12px] font-normal text-ink">{t.estimate}</span>
             </dt>
             <dd className="font-figures text-[26px] font-semibold">{formatMoney(deficit ? totals.surplus.replace('-', '') : totals.surplus)}</dd>
           </div>
@@ -374,7 +374,7 @@ function ReviewStep({ draft, c, go }: { draft: Draft; c: OnboardingCopy; go: (id
           </ol>
         )}
         <p className="mt-3 text-[13px] text-muted">
-          {c.goals.inflation}: {draft.inflationPercent}% <span className="rounded-full bg-sand px-2 text-[12px] text-ink">{draft.inflationPercent === '5' ? t.defaultValue : t.entered}</span>
+          {c.goals.inflation}: {draft.inflationPercent}% <span className="rounded-xl bg-sand px-2 text-[12px] text-ink">{draft.inflationPercent === '5' ? t.defaultValue : t.entered}</span>
         </p>
       </div>
       <div className="grid gap-3 rounded-2xl border border-line bg-paper p-4 text-[15px] sm:grid-cols-2">
@@ -463,7 +463,7 @@ function OutlookStep({ c, onDone }: { c: OnboardingCopy; onDone: () => void }) {
             <h3 className="font-semibold">{t.next}</h3>
             <p className="text-muted">{t.nextBody}</p>
           </div>
-          <button type="button" onClick={onDone} className="min-h-12 self-start rounded-full bg-brand px-6 font-semibold text-white">
+          <button type="button" onClick={onDone} className="min-h-12 self-start rounded-xl bg-brand px-6 font-semibold text-white">
             {t.toDashboard}
           </button>
         </>

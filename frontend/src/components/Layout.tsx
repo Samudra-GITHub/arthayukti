@@ -57,7 +57,7 @@ export function Layout({ route, navigate, speak, children }: LayoutProps) {
                     type="button"
                     onClick={() => navigate(item.route)}
                     aria-current={active ? 'page' : undefined}
-                    className={`min-h-11 rounded-full px-4 text-[15px] whitespace-nowrap transition-colors motion-reduce:transition-none ${
+                    className={`min-h-11 rounded-xl px-4 text-[15px] whitespace-nowrap transition-colors motion-reduce:transition-none ${
                       active ? 'bg-brand font-semibold text-white' : 'text-muted hover:text-ink'
                     }`}
                   >
@@ -70,10 +70,10 @@ export function Layout({ route, navigate, speak, children }: LayoutProps) {
             <span className="flex-1" />
           )}
           <div className="flex items-center gap-2">
-            <button type="button" onClick={() => navigate('login')} className="min-h-11 rounded-full px-4 text-[15px] font-semibold text-ink hover:bg-sand">
+            <button type="button" onClick={() => navigate('login')} className="min-h-11 rounded-xl px-4 text-[15px] font-semibold text-ink hover:bg-sand">
               {shell.auth.signInLink}
             </button>
-            <button type="button" onClick={() => navigate('signup')} className="min-h-11 rounded-full bg-brand px-4 text-[15px] font-semibold text-white">
+            <button type="button" onClick={() => navigate('signup')} className="min-h-11 rounded-xl bg-brand px-4 text-[15px] font-semibold text-white">
               {shell.auth.createAccount}
             </button>
             <LanguageControl />
@@ -83,7 +83,7 @@ export function Layout({ route, navigate, speak, children }: LayoutProps) {
         {name ? (
           <div className="mx-auto mt-2 flex max-w-[1180px] items-center gap-2 text-[14px] text-muted">
             <span className="font-semibold text-ink">{name}</span>
-            <span className="rounded-full border border-night-line px-2 py-0.5">
+            <span className="rounded-xl border border-night-line px-2 py-0.5">
               {sample ? text.shell.sample : text.shell.unsaved}
             </span>
           </div>

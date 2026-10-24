@@ -5,6 +5,15 @@
 @import '@fontsource-variable/noto-sans-devanagari';
 
 @theme {
+  /* Corner radii, 40% smaller than the Tailwind defaults. Every rounded-* class follows these. */
+  --radius-xs: 0.075rem;
+  --radius-sm: 0.15rem;
+  --radius-md: 0.225rem;
+  --radius-lg: 0.3rem;
+  --radius-xl: 0.45rem;
+  --radius-2xl: 0.6rem;
+  --radius-3xl: 0.9rem;
+  --radius-4xl: 1.2rem;
   /* A soft grey-green canvas. Surfaces are translucent white so the canvas shows through (glass). */
   --color-cream: #e9ede9;
   --color-paper: rgb(255 255 255 / 0.62);
@@ -142,7 +151,7 @@
 .orbit-slab {
   position: absolute;
   inset: 18% 14%;
-  border-radius: 22%;
+  border-radius: 13%;
   border: 1px solid color-mix(in srgb, var(--color-mint) 45%, transparent);
   background: color-mix(in srgb, var(--color-mint) 9%, transparent);
   transition:

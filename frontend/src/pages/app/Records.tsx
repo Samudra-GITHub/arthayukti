@@ -12,7 +12,7 @@ import { CoverGrowth, PolicyDetail } from './Cover'
 import { QuoteLookup } from './Market'
 
 const options = <T extends string>(labels: Record<string, string>) => Object.entries(labels).map(([value, label]) => ({ value: value as T, label }))
-const submitClass = 'min-h-12 self-start rounded-full bg-brand px-6 font-semibold text-white disabled:opacity-60'
+const submitClass = 'min-h-12 self-start rounded-xl bg-brand px-6 font-semibold text-white disabled:opacity-60'
 
 function Form({ onSubmit, children }: { onSubmit: () => void; children: React.ReactNode }) {
   return (

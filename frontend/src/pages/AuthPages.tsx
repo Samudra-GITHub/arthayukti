@@ -14,7 +14,7 @@ function SubmitButton({ busy, children }: { busy: boolean; children: string }) {
     <button
       type="submit"
       disabled={busy}
-      className="min-h-14 w-full rounded-full bg-brand px-6 text-[17px] font-semibold text-white transition-opacity disabled:opacity-60 motion-reduce:transition-none"
+      className="min-h-14 w-full rounded-xl bg-brand px-6 text-[17px] font-semibold text-white transition-opacity disabled:opacity-60 motion-reduce:transition-none"
     >
       {children}
     </button>

@@ -19,7 +19,7 @@ export function AuthFrame({ children, revealed = 2, sceneOnMobile = false }: Aut
   return (
     <div className="min-h-screen p-2 sm:p-4">
       <div className="mx-auto grid min-h-[calc(100vh-1rem)] max-w-[1400px] gap-3 sm:min-h-[calc(100vh-2rem)] sm:gap-4 lg:grid-cols-[1.05fr_1fr]">
-        <aside className="stage relative flex flex-col justify-between gap-8 overflow-hidden rounded-[32px] px-6 py-7 lg:px-12 lg:py-10">
+        <aside className="stage relative flex flex-col justify-between gap-8 overflow-hidden rounded-[19px] px-6 py-7 lg:px-12 lg:py-10">
           <div aria-hidden="true" className="hatch pointer-events-none absolute inset-0 opacity-30" />
           <Wordmark size="lg" />
           <div className="relative z-10 hidden max-w-[520px] flex-col gap-5 lg:flex">
@@ -42,7 +42,7 @@ export function AuthFrame({ children, revealed = 2, sceneOnMobile = false }: Aut
           />
           <p className="relative z-10 text-[15px] text-muted lg:hidden">{tagline}</p>
         </aside>
-        <main className="glass flex flex-col rounded-[32px] px-5 py-6 sm:px-8 lg:px-12 lg:py-8">
+        <main className="glass flex flex-col rounded-[19px] px-5 py-6 sm:px-8 lg:px-12 lg:py-8">
           <div className="mb-4 flex justify-end">
             <LanguageControl />
           </div>

@@ -11,7 +11,7 @@ import { useModulesCopy } from '../../state/useModulesCopy'
 import { useRemote } from '../../state/useRemote'
 
 const options = <T extends string>(labels: Record<string, string>) => Object.entries(labels).map(([value, label]) => ({ value: value as T, label }))
-const submitClass = 'min-h-12 self-start rounded-full bg-brand px-6 font-semibold text-white disabled:opacity-60'
+const submitClass = 'min-h-12 self-start rounded-xl bg-brand px-6 font-semibold text-white disabled:opacity-60'
 
 /** One policy read back from the server, so what is shown is what is stored. */
 export function PolicyDetail({ policies }: { policies: PolicyResponse[] }) {
@@ -143,7 +143,7 @@ export function CoverGrowth({ policies, onChanged }: { policies: PolicyResponse[
             <Stat label={x.now} value={formatMoney(rule.current_effective_sum_assured)} />
             <Stat label={x.first} value={rule.next_escalation_date ?? '–'} />
           </div>
-          <button type="button" disabled={apply.busy} onClick={() => void step(rule)} className="min-h-11 self-start rounded-full border border-brand px-5 font-semibold text-brand disabled:opacity-60">
+          <button type="button" disabled={apply.busy} onClick={() => void step(rule)} className="min-h-11 self-start rounded-xl border border-brand px-5 font-semibold text-brand disabled:opacity-60">
             {apply.busy ? x.applying : x.apply}
           </button>
           {apply.failure ? <FormError>{x.failed}</FormError> : null}

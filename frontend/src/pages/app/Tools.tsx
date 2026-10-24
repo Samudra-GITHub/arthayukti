@@ -101,7 +101,7 @@ function TransactionForm({ onSaved }: { onSaved: () => void }) {
             {t.saved}
           </p>
         ) : null}
-        <button type="submit" disabled={save.busy} className="min-h-12 self-start rounded-full bg-brand px-6 font-semibold text-white disabled:opacity-60">
+        <button type="submit" disabled={save.busy} className="min-h-12 self-start rounded-xl bg-brand px-6 font-semibold text-white disabled:opacity-60">
           {save.busy ? t.saving : t.save}
         </button>
       </form>
@@ -156,7 +156,7 @@ export function ImportPage() {
         </label>
         {problem ? <FormError>{problem}</FormError> : null}
         {upload.failure ? <FormError>{m.common.saveFailed}</FormError> : null}
-        <button type="button" disabled={!file || upload.busy} onClick={() => void send()} className="min-h-12 self-start rounded-full bg-brand px-6 font-semibold text-white disabled:opacity-60">
+        <button type="button" disabled={!file || upload.busy} onClick={() => void send()} className="min-h-12 self-start rounded-xl bg-brand px-6 font-semibold text-white disabled:opacity-60">
           {upload.busy ? t.uploading : t.upload}
         </button>
         {result ? (
@@ -272,7 +272,7 @@ export function SettingsPage() {
       <Panel title={t.language}>
         <div className="flex gap-2" role="group" aria-label={t.language}>
           {(['en', 'hi'] as const).map((value) => (
-            <button key={value} type="button" aria-pressed={language === value} onClick={() => setLanguage(value)} className={`min-h-11 rounded-full border px-4 font-semibold ${language === value ? 'border-ink bg-brand text-white' : 'border-line bg-paper'}`}>
+            <button key={value} type="button" aria-pressed={language === value} onClick={() => setLanguage(value)} className={`min-h-11 rounded-xl border px-4 font-semibold ${language === value ? 'border-ink bg-brand text-white' : 'border-line bg-paper'}`}>
               {value === 'en' ? 'English' : 'हिन्दी'}
             </button>
           ))}
@@ -286,7 +286,7 @@ export function SettingsPage() {
           {exporting.busy ? t.exporting : t.export}
         </button>
         {exporting.failure ? <FormError>{t.exportFailed}</FormError> : null}
-        <button type="button" onClick={() => void auth.logout()} className="min-h-12 self-start rounded-full bg-brand px-5 font-semibold text-white">
+        <button type="button" onClick={() => void auth.logout()} className="min-h-12 self-start rounded-xl bg-brand px-5 font-semibold text-white">
           {t.signOut}
         </button>
       </Panel>
@@ -386,7 +386,7 @@ export function AdvisorPage() {
         type="button"
         disabled={question.trim() === '' || read.busy}
         onClick={() => void read.run(async () => setAnswer(await api.parseIntent(question.trim())))}
-        className="min-h-12 self-start rounded-full bg-brand px-6 font-semibold text-white disabled:opacity-60"
+        className="min-h-12 self-start rounded-xl bg-brand px-6 font-semibold text-white disabled:opacity-60"
       >
         {read.busy ? t.reading : t.read}
       </button>
@@ -395,7 +395,7 @@ export function AdvisorPage() {
           type="button"
           disabled={question.trim() === '' || !plan || analyse.busy}
           onClick={() => plan && void analyse.run(async () => setAnalysis(await api.consult(plan, scenario, question.trim())))}
-          className="min-h-12 rounded-full border border-brand px-6 font-semibold text-brand disabled:opacity-60"
+          className="min-h-12 rounded-xl border border-brand px-6 font-semibold text-brand disabled:opacity-60"
         >
           {analyse.busy ? x.advisor.analysing : x.advisor.analyse}
         </button>
@@ -449,7 +449,7 @@ export function AdvisorPage() {
             <li key={item.alternative_id} className={`flex flex-col gap-2 rounded-2xl border p-4 ${item.alternative_id === analysis.recommended_alternative_id ? 'border-brand bg-sage/60' : 'border-line bg-white/60'}`}>
               <p className="font-semibold">
                 {item.title}
-                {item.alternative_id === analysis.recommended_alternative_id ? <span className="ml-2 rounded-full bg-brand px-3 py-1 text-[13px] text-white">{x.rescue.recommended}</span> : null}
+                {item.alternative_id === analysis.recommended_alternative_id ? <span className="ml-2 rounded-xl bg-brand px-3 py-1 text-[13px] text-white">{x.rescue.recommended}</span> : null}
               </p>
               <p>{item.description}</p>
               <p className="font-figures text-[15px]">

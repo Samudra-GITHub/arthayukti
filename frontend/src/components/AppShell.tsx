@@ -98,7 +98,7 @@ export function AppShell({ route, navigate: goTo, speak, children }: ShellProps)
             onClick={() => navigate(item.route)}
             aria-current={active ? 'page' : undefined}
             title={compact ? c.nav[item.key] : undefined}
-            className={`flex min-h-11 items-center gap-3 rounded-full text-left text-[15px] transition-colors motion-reduce:transition-none ${
+            className={`flex min-h-11 items-center gap-3 rounded-xl text-left text-[15px] transition-colors motion-reduce:transition-none ${
               compact ? 'size-11 justify-center' : 'w-full px-3'
             } ${active ? 'bg-brand font-semibold text-white shadow-[0_8px_18px_-8px_var(--color-brand)]' : 'text-ink hover:bg-white/80'}`}
           >
@@ -118,7 +118,7 @@ export function AppShell({ route, navigate: goTo, speak, children }: ShellProps)
               onClick={() => setOutlookOpen((value) => !value)}
               aria-expanded={outlookOpen}
               title={compact ? c.nav.outlook : undefined}
-              className={`flex min-h-11 items-center gap-3 rounded-full text-left text-[15px] ${compact ? 'size-11 justify-center' : 'w-full px-3'} ${
+              className={`flex min-h-11 items-center gap-3 rounded-xl text-left text-[15px] ${compact ? 'size-11 justify-center' : 'w-full px-3'} ${
                 outlookActive ? 'bg-brand font-semibold text-white' : 'text-ink hover:bg-white/80'
               }`}
             >
@@ -134,7 +134,7 @@ export function AppShell({ route, navigate: goTo, speak, children }: ShellProps)
                       type="button"
                       onClick={() => navigate(item.route)}
                       aria-current={route === item.route ? 'page' : undefined}
-                      className={`min-h-10 w-full rounded-full px-4 text-left text-[14px] ${route === item.route ? 'bg-brand font-semibold text-white' : 'text-ink hover:bg-sand'}`}
+                      className={`min-h-10 w-full rounded-xl px-4 text-left text-[14px] ${route === item.route ? 'bg-brand font-semibold text-white' : 'text-ink hover:bg-sand'}`}
                     >
                       {c.nav.outlookItems[item.key]}
                     </button>
@@ -154,15 +154,15 @@ export function AppShell({ route, navigate: goTo, speak, children }: ShellProps)
       <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-3 focus:py-2 focus:text-cream">
         {c.header.skip}
       </a>
-      <div className="mx-auto max-w-[1560px] rounded-[36px] border border-white/60 bg-white/25 p-2 shadow-[0_30px_80px_-40px_rgb(14_59_41/0.5)] sm:p-4">
-        <header className="glass-bar sticky top-2 z-30 flex items-center gap-3 rounded-full px-3 py-2 sm:px-5">
+      <div className="mx-auto max-w-[1560px] rounded-[22px] border border-white/60 bg-white/25 p-2 shadow-[0_30px_80px_-40px_rgb(14_59_41/0.5)] sm:p-4">
+        <header className="glass-bar sticky top-2 z-30 flex items-center gap-3 rounded-2xl px-3 py-2 sm:px-5">
           <button type="button" onClick={() => setDrawer(true)} aria-label={c.header.menu} className={`${circle} border border-line bg-white/70 lg:hidden`}>
             <Menu size={20} aria-hidden="true" />
           </button>
           <button type="button" onClick={() => navigate('dashboard')} aria-label="ArthaYukti" className="mr-2">
             <Wordmark />
           </button>
-          <nav aria-label={c.header.primary} className="mx-auto hidden items-center gap-1 rounded-full bg-white/60 p-1 lg:flex">
+          <nav aria-label={c.header.primary} className="mx-auto hidden items-center gap-1 rounded-xl bg-white/60 p-1 lg:flex">
             {TOP_LINKS.map((item) => {
               const active = route === item.route || (item.key === 'outlook' && outlookActive) || (item.key === 'goals' && ['dreams', 'plan', 'what-if', 'fixes', 'compare', 'tradeoffs'].includes(route))
               return (
@@ -171,7 +171,7 @@ export function AppShell({ route, navigate: goTo, speak, children }: ShellProps)
                   type="button"
                   onClick={() => navigate(item.route)}
                   aria-current={active ? 'page' : undefined}
-                  className={`min-h-10 rounded-full px-5 text-[15px] transition-colors motion-reduce:transition-none ${active ? 'bg-white font-semibold shadow-sm' : 'text-muted hover:text-ink'}`}
+                  className={`min-h-10 rounded-xl px-5 text-[15px] transition-colors motion-reduce:transition-none ${active ? 'bg-white font-semibold shadow-sm' : 'text-muted hover:text-ink'}`}
                 >
                   {c.nav[item.key]}
                 </button>
@@ -245,7 +245,7 @@ export function AppShell({ route, navigate: goTo, speak, children }: ShellProps)
         </header>
 
         {drawer ? <button type="button" aria-label={c.header.menu} onClick={() => setDrawer(false)} className="fixed inset-0 z-40 bg-night/40 backdrop-blur-sm lg:hidden" /> : null}
-        <aside className={`glass-bar fixed inset-y-3 left-3 z-50 w-[280px] overflow-y-auto rounded-[28px] p-4 transition-transform motion-reduce:transition-none lg:hidden ${drawer ? 'translate-x-0' : '-translate-x-[120%]'}`}>
+        <aside className={`glass-bar fixed inset-y-3 left-3 z-50 w-[280px] overflow-y-auto rounded-[17px] p-4 transition-transform motion-reduce:transition-none lg:hidden ${drawer ? 'translate-x-0' : '-translate-x-[120%]'}`}>
           <div className="mb-3 flex items-center justify-between">
             <Wordmark />
             <button type="button" onClick={() => setDrawer(false)} aria-label={c.header.menu} className={`${circle} bg-white/70`}>
@@ -257,7 +257,7 @@ export function AppShell({ route, navigate: goTo, speak, children }: ShellProps)
 
         <div className="mt-4 flex items-start gap-4 sm:mt-5 sm:gap-5">
           <aside
-            className={`glass-bar sticky top-24 hidden shrink-0 flex-col items-center gap-3 rounded-[32px] py-4 lg:flex ${collapsed ? 'w-[68px]' : 'w-[250px] items-stretch px-3'}`}
+            className={`glass-bar sticky top-24 hidden shrink-0 flex-col items-center gap-3 rounded-[19px] py-4 lg:flex ${collapsed ? 'w-[68px]' : 'w-[250px] items-stretch px-3'}`}
           >
             {navList(collapsed)}
             <button
@@ -283,12 +283,12 @@ export function AppShell({ route, navigate: goTo, speak, children }: ShellProps)
               </p>
 
               {plan ? (
-                <label className="glass flex items-center gap-2 rounded-full py-1 pr-2 pl-4 text-[14px]">
+                <label className="glass flex items-center gap-2 rounded-xl py-1 pr-2 pl-4 text-[14px]">
                   <span className="text-muted">{c.header.scenario}</span>
                   <select
                     value={choice}
                     onChange={(event) => setChoice(event.target.value as Choice)}
-                    className="min-h-9 rounded-full bg-white/70 px-3 text-[14px] font-semibold"
+                    className="min-h-9 rounded-xl bg-white/70 px-3 text-[14px] font-semibold"
                   >
                     {(['normal', 'no_income', 'expense'] as const).map((value) => (
                       <option key={value} value={value}>
@@ -300,7 +300,7 @@ export function AppShell({ route, navigate: goTo, speak, children }: ShellProps)
               ) : null}
 
               {auth.status === 'authenticated' && plan ? (
-                <div className="glass flex items-center gap-2 rounded-full py-1 pr-1 pl-4 text-[14px]" role="status">
+                <div className="glass flex items-center gap-2 rounded-xl py-1 pr-1 pl-4 text-[14px]" role="status">
                   {saving ? (
                     <span className="text-muted">{c.header.saving}</span>
                   ) : saveError ? (
@@ -311,7 +311,7 @@ export function AppShell({ route, navigate: goTo, speak, children }: ShellProps)
                     <span className="text-muted">{c.header.saved}</span>
                   )}
                   {dirty ? (
-                    <button type="button" disabled={saving} onClick={() => void savePlan()} className="min-h-9 rounded-full bg-brand px-4 font-semibold text-white disabled:opacity-60">
+                    <button type="button" disabled={saving} onClick={() => void savePlan()} className="min-h-9 rounded-xl bg-brand px-4 font-semibold text-white disabled:opacity-60">
                       {c.header.save}
                     </button>
                   ) : null}
