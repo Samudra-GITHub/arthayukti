@@ -730,3 +730,21 @@ def test_the_contract_says_the_token_is_optional_on_the_rescue_route_only():
     assert required == set(PROTECTED)  # every other secured operation really requires sign-in
     plan = client.get("/api/v1/samples/tiny_delayed_goal").json()["plan"]
     assert client.post("/api/v1/rescue/analyze", json={"plan": plan}).status_code == 200
+
+
+# ---- deployment settings -----------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("given", "expected"),
+    [
+        ("postgres://u:p@host:5432/db", "postgresql+psycopg://u:p@host:5432/db"),
+        ("postgresql://u:p@host/db", "postgresql+psycopg://u:p@host/db"),
+        ("postgresql+psycopg://u:p@host/db", "postgresql+psycopg://u:p@host/db"),
+        ("sqlite:///./x.db", "sqlite:///./x.db"),
+        ("", "sqlite:///./arthayukti.db"),
+        ("   ", "sqlite:///./arthayukti.db"),
+    ],
+)
+def test_database_urls_are_normalised(given, expected):
+    assert Settings(_env_file=None, DATABASE_URL=given).DATABASE_URL == expected

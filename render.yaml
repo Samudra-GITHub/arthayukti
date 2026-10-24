@@ -18,6 +18,13 @@ services:
         value: production
       - key: SECRET_KEY
         generateValue: true
+      # A managed PostgreSQL address (postgres:// or postgresql:// both work). Leave it empty to use
+      # SQLite, whose file on Render's free plan is erased on every restart.
+      - key: DATABASE_URL
+        sync: false
+      # The Vercel site's address, used in password-reset e-mails (no trailing slash).
+      - key: FRONTEND_BASE_URL
+        sync: false
       # The Vercel site's address, for example https://arthayukti.vercel.app (no trailing slash).
       - key: ALLOWED_ORIGINS
         sync: false

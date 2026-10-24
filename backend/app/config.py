@@ -3,7 +3,7 @@ import secrets
 from pathlib import Path
 from typing import Literal
 
-from pydantic import model_validator
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BASE_DIR = Path(__file__).resolve().parents[2]
@@ -57,6 +57,19 @@ class Settings(BaseSettings):
     # Financial Engine Settings
     DEFAULT_GOAL_INFLATION: str = "0.05"
     MODEL_VERSION: str = "v1.3-constraint-aware"
+
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def _normalise_database_url(cls, value: object) -> object:
+        """Accept what hosts hand out. An empty value means the local SQLite default, and the
+        `postgres://` / `postgresql://` forms are pointed at the psycopg 3 driver."""
+        if not isinstance(value, str) or not value.strip():
+            return "sqlite:///./arthayukti.db"
+        url = value.strip()
+        for prefix in ("postgres://", "postgresql://"):
+            if url.startswith(prefix):
+                return "postgresql+psycopg://" + url[len(prefix) :]
+        return url
 
     @model_validator(mode="after")
     def _require_signing_secret(self) -> "Settings":
