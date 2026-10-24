@@ -54,6 +54,8 @@ export interface AccountDraft {
   kind: AccountCreateRequest['account_type']
   balance: string
   liquid: boolean
+  /** Kept as the emergency fund. Counted once, towards the emergency goal only. */
+  reserve: boolean
 }
 
 export interface InvestmentDraft {
@@ -203,6 +205,16 @@ export function buildPlan(draft: Draft, name: string): { plan: Plan | null; prob
 
   const base = blankPlan(draft.asOf, name || 'My household')
   const ordered = [...draft.goals].sort((a, b) => a.tier - b.tier) // stable: keeps the order within a tier
+  // Balances the person marked as their emergency fund go to the first emergency goal, once, up to its
+  // target. An amount typed on that goal itself wins, so the same money is never counted twice.
+  const reserved = draft.accounts.filter((row) => row.reserve && filled(row.balance)).reduce((sum, row) => sum + toPaise(row.balance), 0n)
+  const emergency = ordered.find((goal) => goal.kind === 'emergency_fund' && !filled(goal.saved))
+  const emergencyShare = (goal: GoalDraft): string => {
+    if (filled(goal.saved)) return goal.saved
+    if (goal !== emergency || reserved <= 0n) return '0.00'
+    const target = toPaise(goal.amount || '0.00')
+    return fromPaise(reserved < target ? reserved : target)
+  }
   const plan: Plan = {
     ...base,
     income_streams:
@@ -243,7 +255,7 @@ export function buildPlan(draft: Draft, name: string): { plan: Plan | null; prob
       priority: index + 1,
       inflation_linked: goal.basis === 'today',
       inflation_rate_override: null,
-      current_savings: filled(goal.saved) ? goal.saved : '0.00',
+      current_savings: emergencyShare(goal),
     })),
     assumptions: { ...base.assumptions, general_inflation_annual: rate },
   }

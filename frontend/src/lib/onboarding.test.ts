@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { monthlyEquivalent } from './frequency'
-import { buildPlan, emptyDraft, goalIssues, percentToRate, preview, type GoalDraft } from './onboarding'
+import { buildPlan, emptyDraft, goalIssues, percentToRate, preview, type AccountDraft, type GoalDraft } from './onboarding'
 
 const goal = (over: Partial<GoalDraft>): GoalDraft => ({ id: 'g', kind: 'other', label: 'Goal', amount: '100000.00', date: '2029-01', basis: 'today', tier: 3, saved: '', ...over })
 
@@ -123,5 +123,40 @@ describe('goal checks', () => {
     expect(goalIssues(goal({ date: '2026-12' }), '2027-01')).toContain('past')
     expect(goalIssues(goal({ amount: '0.00' }), '2027-01')).toContain('amount')
     expect(goalIssues(goal({}), '2027-01')).toEqual([])
+  })
+})
+
+describe('savings kept as the emergency fund', () => {
+  const account = (over: Partial<AccountDraft>): AccountDraft => ({ id: 'a', name: 'Savings', kind: 'savings', balance: '400000', liquid: true, reserve: true, ...over })
+  const draftWith = (accounts: AccountDraft[], goals: GoalDraft[]) => {
+    const draft = emptyDraft('2027-01')
+    draft.accounts = accounts
+    draft.goals = goals
+    return draft
+  }
+  const emergency = (over: Partial<GoalDraft> = {}) => goal({ id: 'e', kind: 'emergency_fund', label: 'Emergency', amount: '600000.00', tier: 1, ...over })
+  const savingsOf = (draft: ReturnType<typeof draftWith>) => Object.fromEntries((buildPlan(draft, 'A').plan?.goals ?? []).map((g) => [g.label, g.current_savings]))
+
+  it('counts ticked balances towards the emergency goal', () => {
+    expect(savingsOf(draftWith([account({})], [emergency(), goal({ id: 'c', label: 'Car' })]))).toEqual({ Emergency: '400000.00', Car: '0.00' })
+  })
+
+  it('never counts more than the goal needs, and adds several balances exactly', () => {
+    expect(savingsOf(draftWith([account({ balance: '500000.50' }), account({ id: 'b', balance: '200000.25' })], [emergency()])).Emergency).toBe('600000.00')
+    expect(savingsOf(draftWith([account({ balance: '100000.10' }), account({ id: 'b', balance: '50000.20' })], [emergency()])).Emergency).toBe('150000.30')
+  })
+
+  it('leaves unticked balances out, and ignores them when there is no emergency goal', () => {
+    expect(savingsOf(draftWith([account({ reserve: false })], [emergency()])).Emergency).toBe('0.00')
+    expect(savingsOf(draftWith([account({})], [goal({ id: 'c', label: 'Car' })])).Car).toBe('0.00')
+  })
+
+  it('does not count the same money twice when an amount is typed on the goal itself', () => {
+    expect(savingsOf(draftWith([account({})], [emergency({ saved: '50000' })])).Emergency).toBe('50000')
+  })
+
+  it('gives the money to one emergency goal only', () => {
+    const plan = savingsOf(draftWith([account({})], [emergency({ id: 'e1', label: 'E1' }), emergency({ id: 'e2', label: 'E2' })]))
+    expect([plan.E1, plan.E2].sort()).toEqual(['0.00', '400000.00'])
   })
 })

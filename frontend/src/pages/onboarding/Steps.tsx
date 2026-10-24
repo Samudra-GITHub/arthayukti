@@ -227,7 +227,7 @@ export function CashStep({ draft, setDraft, tried, c }: StepProps) {
         confirmRemove={c.addRemove.confirm}
         confirmYes={c.addRemove.yes}
         confirmNo={c.addRemove.no}
-        onAdd={() => setDraft((d) => ({ ...d, accounts: [...d.accounts, { id: uid('acc'), name: '', kind: 'savings', balance: '', liquid: true } satisfies AccountDraft] }))}
+        onAdd={() => setDraft((d) => ({ ...d, accounts: [...d.accounts, { id: uid('acc'), name: '', kind: 'savings', balance: '', liquid: true, reserve: true } satisfies AccountDraft] }))}
         onRemove={(id) => setDraft((d) => ({ ...d, accounts: d.accounts.filter((row) => row.id !== id) }))}
         renderItem={(row) => {
           const set = (change: Partial<AccountDraft>) => setDraft((d) => ({ ...d, accounts: patch(d.accounts, row.id, change) }))
@@ -239,6 +239,8 @@ export function CashStep({ draft, setDraft, tried, c }: StepProps) {
               <div className="flex flex-col justify-end gap-1">
                 <CheckField label={t.liquid} checked={row.liquid} onChange={(liquid) => set({ liquid })} />
                 <p className="text-[13px] text-muted">{t.liquidHint}</p>
+                <CheckField label={t.reserve} checked={row.reserve} onChange={(reserve) => set({ reserve })} />
+                <p className="text-[13px] text-muted">{t.reserveHint}</p>
               </div>
             </div>
           )

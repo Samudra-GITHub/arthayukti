@@ -107,7 +107,7 @@ export function DashboardPage({ navigate }: PageProps) {
       </nav>
 
       <div className="grid gap-5 lg:grid-cols-12">
-        <section id="dash-summary" aria-labelledby="dash-summary-title" className="hatch relative flex scroll-mt-24 flex-col justify-between gap-6 overflow-hidden rounded-3xl bg-brand p-6 text-white shadow-[0_24px_50px_-24px_var(--color-brand)] lg:col-span-5">
+        <section id="dash-summary" aria-labelledby="dash-summary-title" className="hatch relative flex min-w-0 scroll-mt-24 flex-col justify-between gap-6 overflow-hidden rounded-3xl bg-brand p-6 text-white shadow-[0_24px_50px_-24px_var(--color-brand)] lg:col-span-5">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 id="dash-summary-title" className="font-display text-[20px] font-bold tracking-tight">
               {d.sections.summary}
@@ -142,7 +142,7 @@ export function DashboardPage({ navigate }: PageProps) {
           </Loaded>
         </section>
 
-        <div className="flex flex-col gap-5 lg:col-span-7">
+        <div className="flex min-w-0 flex-col gap-5 lg:col-span-7">
           {result ? (
             <Charts result={result} />
           ) : (
@@ -154,7 +154,7 @@ export function DashboardPage({ navigate }: PageProps) {
       </div>
 
       <div className="grid gap-5 lg:grid-cols-12">
-        <div className="flex flex-col gap-5 lg:col-span-8">
+        <div className="flex min-w-0 flex-col gap-5 lg:col-span-8">
           <Panel title={d.sections.cashflow} aside={<span className="text-[13px] text-muted">{m.common.fromEngine}</span>}>
             {row ? (
               <div className="grid gap-4 sm:grid-cols-4">
@@ -226,7 +226,7 @@ export function DashboardPage({ navigate }: PageProps) {
           <Loaded remote={projection}>{(r) => <MonthlyBars plan={plan} result={r} />}</Loaded>
         </div>
 
-        <div className="flex flex-col gap-5 lg:col-span-4">
+        <div className="flex min-w-0 flex-col gap-5 lg:col-span-4">
           <Panel id="dash-debt" title={d.sections.debt} aside={<button type="button" onClick={() => navigate('debts')} className={link}>{m.common.open}</button>}>
             <Loaded remote={loans}>
               {(list) =>

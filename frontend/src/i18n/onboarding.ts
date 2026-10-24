@@ -18,7 +18,7 @@ export interface OnboardingCopy {
   welcome: { title: string; body: string; willAsk: string[]; whyTitle: string; whyBody: string; notYetTitle: string; notYetBody: string; start: string }
   income: { title: string; why: string; source: string; sourcePlaceholder: string; amount: string; frequency: string; ends: string; endsHint: string; include: string; add: string; empty: string; removeItem: string; total: string; constant: string; none: string; limit: string }
   expenses: { title: string; why: string; name: string; namePlaceholder: string; amount: string; frequency: string; essential: string; essentialHint: string; include: string; add: string; empty: string; removeItem: string; note: string; limit: string; presets: { label: string; essential: boolean }[]; usePresets: string; totals: { income: string; essential: string; discretionary: string; loans: string; surplus: string; deficit: string; note: string } }
-  cash: { title: string; why: string; account: string; accountName: string; kind: string; balance: string; liquid: string; liquidHint: string; add: string; empty: string; removeItem: string; kinds: Record<string, string>; emergencyTitle: string; months: string; monthsHint: string; target: string; targetNote: string; savedSoFar: string; accessTitle: string; access: string[]; needsExpenses: string }
+  cash: { title: string; why: string; account: string; accountName: string; kind: string; balance: string; liquid: string; liquidHint: string; reserve: string; reserveHint: string; add: string; empty: string; removeItem: string; kinds: Record<string, string>; emergencyTitle: string; months: string; monthsHint: string; target: string; targetNote: string; savedSoFar: string; accessTitle: string; access: string[]; needsExpenses: string }
   assets: { title: string; why: string; name: string; kind: string; value: string; cost: string; date: string; liquid: string; liquidHint: string; add: string; empty: string; removeItem: string; more: string; kinds: Record<string, string>; returnsNote: string; saleNote: string }
   debts: { title: string; why: string; name: string; kind: string; balance: string; rate: string; rateHint: string; payment: string; months: string; monthsHint: string; add: string; empty: string; removeItem: string; kinds: Record<string, string>; unknownNote: string; total: string; notCounted: string }
   goals: { title: string; why: string; kind: string; name: string; amount: string; date: string; basis: string; today: string; future: string; basisHint: string; tier: string; saved: string; add: string; empty: string; removeItem: string; kinds: Record<GoalKind, string>; tiers: Record<Tier, string>; tierHint: string; up: string; down: string; inflation: string; inflationHint: string; adjusted: string; engineNote: string; limit: string; useEmergency: string }
@@ -133,6 +133,8 @@ export const onboardingCopy: Record<'en' | 'hi', OnboardingCopy> = {
       balance: 'Balance',
       liquid: 'Can be used immediately',
       liquidHint: 'Untick for money that takes time or costs money to withdraw.',
+      reserve: 'Keep this as my emergency fund',
+      reserveHint: 'Counted once, towards your emergency goal only, up to its target. Untick to keep it out of the plan.',
       add: 'Add a balance',
       empty: 'No balances added yet.',
       removeItem: 'balance',
@@ -363,6 +365,8 @@ export const onboardingCopy: Record<'en' | 'hi', OnboardingCopy> = {
       balance: 'रकम',
       liquid: 'तुरंत इस्तेमाल हो सकती है',
       liquidHint: 'जिस पैसे को निकालने में समय या खर्च लगे, उसके लिए यह हटाएँ।',
+      reserve: 'इसे मेरी आपातकालीन निधि मानें',
+      reserveHint: 'सिर्फ़ आपके आपातकालीन लक्ष्य में, उसके लक्ष्य तक, एक बार गिना जाता है। योजना से बाहर रखने के लिए हटाएँ।',
       add: 'एक रकम जोड़ें',
       empty: 'अभी कोई रकम नहीं जोड़ी।',
       removeItem: 'रकम',

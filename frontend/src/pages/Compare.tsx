@@ -43,13 +43,18 @@ export function ComparePage({ navigate }: PageProps) {
   const after =
     choice === 'no_income' ? text.whatIf.noIncome : choice === 'expense' ? text.whatIf.expense : text.whatIf.normal
 
-  if (plan && !chosen && !fixes.loading) {
+  if (plan && !chosen) {
+    // Wait for the answer before saying anything: no answer yet is not the same as "nothing to fix".
     return (
       <Layout route="compare" navigate={navigate} speak={copy.title}>
         <PageHeading title={copy.title} subtitle={copy.subtitle(after)} />
-        <Card>
-          <p>{text.fixes.nothingToFixBody}</p>
-        </Card>
+        <Await remote={fixes}>
+          {(result) => (
+            <Card>
+              <p>{result.needs_fix ? text.fixes.noSingle : text.fixes.nothingToFixBody}</p>
+            </Card>
+          )}
+        </Await>
         <SecondaryButton onClick={() => navigate('what-if')}>{text.whatIf.backToPlan}</SecondaryButton>
       </Layout>
     )
