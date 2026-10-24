@@ -23,6 +23,7 @@ import { defaultGoalDate, MAX_GOALS } from '../lib/blank'
 import { addMoney, formatMoney, isGreater, subMoney, toPaise } from '../lib/money'
 import { monthLabelLong } from '../lib/months'
 import { householdName } from '../lib/household'
+import { Select } from '../components/Select'
 import { goalName } from '../lib/outcome'
 import { useStore } from '../state/useStore'
 import type { PageProps } from './types'
@@ -306,18 +307,13 @@ function AddGoal() {
         <>
           <div className="flex flex-col gap-2">
             <label htmlFor={kindId}>{copy.kind}</label>
-            <select
+            <Select
               id={kindId}
               value={kind}
-              onChange={(event) => setKind(event.target.value as (typeof GOAL_KINDS)[number])}
+              onChange={setKind}
+              options={GOAL_KINDS.map((value) => ({ value, label: text.goalNames[value] }))}
               className="min-h-14 rounded-2xl border border-line bg-cream px-4"
-            >
-              {GOAL_KINDS.map((value) => (
-                <option key={value} value={value}>
-                  {text.goalNames[value]}
-                </option>
-              ))}
-            </select>
+            />
           </div>
           <MoneyField icon={null} label={copy.amountLabel} value={amount} onChange={setAmount} />
           {tried && missing ? (

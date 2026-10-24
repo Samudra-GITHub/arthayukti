@@ -1,5 +1,6 @@
 import { useId, type ReactNode } from 'react'
-import { ArrowDown, ArrowUp, CalendarDays, ChevronDown, Minus, Plus } from 'lucide-react'
+import { ArrowDown, ArrowUp, CalendarDays, Minus, Plus } from 'lucide-react'
+import { Select } from './Select'
 import { monthLabel, monthRange, monthToIndex, type Language } from '../lib/months'
 import { formatMoney, parseRupeeInput } from '../lib/money'
 
@@ -80,22 +81,18 @@ export function MonthPicker({ value, from, label, language, onChange }: MonthPic
   const months = monthRange(from, MONTH_CHOICES)
   if (!months.includes(value) && monthToIndex(value) >= monthToIndex(from)) months.push(value)
   return (
-    <label className="relative flex min-h-16 items-center gap-4 rounded-2xl border border-line bg-cream p-4 focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-turmeric">
+    <div className="flex min-h-16 items-center gap-4 rounded-2xl border border-line bg-cream p-4 focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-turmeric">
       <CalendarDays size={24} aria-hidden="true" />
-      <select
-        aria-label={label}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="min-w-0 flex-1 appearance-none bg-transparent font-semibold focus:outline-none"
-      >
-        {months.map((month) => (
-          <option key={month} value={month}>
-            {monthLabel(month, language)}
-          </option>
-        ))}
-      </select>
-      <ChevronDown size={24} aria-hidden="true" className="pointer-events-none" />
-    </label>
+      <div className="min-w-0 flex-1">
+        <Select
+          aria-label={label}
+          value={value}
+          onChange={onChange}
+          options={months.map((month) => ({ value: month, label: monthLabel(month, language) }))}
+          className="min-h-8 font-semibold"
+        />
+      </div>
+    </div>
   )
 }
 

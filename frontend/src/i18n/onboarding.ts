@@ -14,9 +14,9 @@ export interface OnboardingCopy {
   examplePrefix: string
   addRemove: { remove: (what: string) => string; confirm: string; yes: string; no: string }
   frequency: Record<Frequency, string>
-  errors: { label: string; amount: string; date: string; past: string; range: string; needGoal: string; limits: string; badInflation: string; endPast: string }
+  errors: { label: string; amount: string; date: string; past: string; range: string; needGoal: string; limits: string; badInflation: string; endPast: string; growth: string }
   welcome: { title: string; body: string; willAsk: string[]; whyTitle: string; whyBody: string; notYetTitle: string; notYetBody: string; start: string }
-  income: { title: string; why: string; source: string; sourcePlaceholder: string; amount: string; frequency: string; ends: string; endsHint: string; include: string; add: string; empty: string; removeItem: string; total: string; constant: string; none: string; limit: string }
+  income: { title: string; why: string; source: string; sourcePlaceholder: string; amount: string; frequency: string; ends: string; endsHint: string; growth: string; growthHint: string; include: string; add: string; empty: string; removeItem: string; total: string; constant: string; none: string; limit: string }
   expenses: { title: string; why: string; name: string; namePlaceholder: string; amount: string; frequency: string; essential: string; essentialHint: string; include: string; add: string; empty: string; removeItem: string; note: string; limit: string; presets: { label: string; essential: boolean }[]; usePresets: string; totals: { income: string; essential: string; discretionary: string; loans: string; surplus: string; deficit: string; note: string } }
   cash: { title: string; why: string; account: string; accountName: string; kind: string; balance: string; liquid: string; liquidHint: string; reserve: string; reserveHint: string; add: string; empty: string; removeItem: string; kinds: Record<string, string>; emergencyTitle: string; months: string; monthsHint: string; target: string; targetNote: string; savedSoFar: string; accessTitle: string; access: string[]; needsExpenses: string }
   assets: { title: string; why: string; name: string; kind: string; value: string; cost: string; date: string; liquid: string; liquidHint: string; add: string; empty: string; removeItem: string; more: string; kinds: Record<string, string>; returnsNote: string; saleNote: string }
@@ -66,7 +66,8 @@ export const onboardingCopy: Record<'en' | 'hi', OnboardingCopy> = {
       needGoal: 'Add at least one goal to build your outlook.',
       limits: 'The planner can hold only a limited number of items of this kind. Remove one to add another.',
       badInflation: 'Enter a yearly rate between 0 and 30.',
-      endPast: 'The end month cannot be before this month.',
+      endPast: 'The last year cannot be in the past.',
+      growth: 'Enter a percentage from 0 to 30, or leave it empty.',
     },
     welcome: {
       title: 'Let us understand your financial world.',
@@ -85,16 +86,18 @@ export const onboardingCopy: Record<'en' | 'hi', OnboardingCopy> = {
       sourcePlaceholder: 'Salary, business, rent, pension…',
       amount: 'Amount',
       frequency: 'How often',
-      ends: 'Last month received',
-      endsHint: 'Leave empty if it has no end date.',
+      ends: 'Last year received',
+      endsHint: 'Optional. Income continues through December of this year.',
+      growth: 'Yearly increase (%)',
+      growthHint: 'Optional. Leave empty for no automatic increase.',
       include: 'Include in my plan',
       add: 'Add another source',
       empty: 'No income added yet.',
       removeItem: 'income source',
       total: 'Together, each month',
-      constant: 'Income is held constant over the plan. No growth is assumed unless you add it later.',
+      constant: 'Income starts this year and stays the same unless you give it a yearly increase. You can add planned raises later in Income & expenses.',
       none: 'If you have no regular income, you can continue. The plan will then show no income.',
-      limit: 'The planner holds up to 4 income sources.',
+      limit: 'Add as many sources as you need.',
     },
     expenses: {
       title: 'Money going out',
@@ -298,7 +301,8 @@ export const onboardingCopy: Record<'en' | 'hi', OnboardingCopy> = {
       needGoal: 'अपना अनुमान बनाने के लिए कम से कम एक लक्ष्य जोड़ें।',
       limits: 'योजना इस तरह की सीमित चीज़ें ही रख सकती है। नई जोड़ने के लिए एक हटाएँ।',
       badInflation: '0 से 30 के बीच सालाना दर भरें।',
-      endPast: 'अंतिम महीना इस महीने से पहले नहीं हो सकता।',
+      endPast: 'अंतिम वर्ष बीत चुका वर्ष नहीं हो सकता।',
+      growth: '0 से 30 के बीच प्रतिशत लिखें, या खाली छोड़ें।',
     },
     welcome: {
       title: 'आइए आपकी आर्थिक दुनिया समझें।',
@@ -317,8 +321,10 @@ export const onboardingCopy: Record<'en' | 'hi', OnboardingCopy> = {
       sourcePlaceholder: 'वेतन, कारोबार, किराया, पेंशन…',
       amount: 'रकम',
       frequency: 'कितनी बार',
-      ends: 'आख़िरी बार मिलने का महीना',
-      endsHint: 'अगर कोई अंतिम तारीख़ नहीं है तो खाली छोड़ें।',
+      ends: 'आख़िरी बार मिलने का वर्ष',
+      endsHint: 'वैकल्पिक। आमदनी इस वर्ष के दिसंबर तक चलती है।',
+      growth: 'सालाना बढ़ोतरी (%)',
+      growthHint: 'वैकल्पिक। अपने-आप बढ़ोतरी न चाहें तो खाली छोड़ें।',
       include: 'मेरी योजना में शामिल करें',
       add: 'एक और स्रोत जोड़ें',
       empty: 'अभी कोई आमदनी नहीं जोड़ी।',
@@ -326,7 +332,7 @@ export const onboardingCopy: Record<'en' | 'hi', OnboardingCopy> = {
       total: 'कुल, हर महीने',
       constant: 'योजना में आमदनी स्थिर मानी जाती है। जब तक आप न जोड़ें, कोई बढ़त नहीं मानी जाती।',
       none: 'अगर कोई नियमित आमदनी नहीं है तो आगे बढ़ सकते हैं। तब योजना में आमदनी शून्य दिखेगी।',
-      limit: 'योजना में 4 तक आमदनी के स्रोत रखे जा सकते हैं।',
+      limit: 'जितने चाहें उतने स्रोत जोड़ें।',
     },
     expenses: {
       title: 'जाने वाला पैसा',

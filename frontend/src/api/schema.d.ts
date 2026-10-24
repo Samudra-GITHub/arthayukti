@@ -206,6 +206,123 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/calculators/compare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Compare
+         * @description Side-by-side totals. Each entry is valued alone: alternatives are never added to one another.
+         */
+        post: operations["compare_api_v1_calculators_compare_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/calculators/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Export Csv
+         * @description The same result as /run, as CSV (UTF-8 with a byte-order mark so Excel reads the columns).
+         */
+        post: operations["export_csv_api_v1_calculators_export_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/calculators/maturity-check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Maturity Check
+         * @description Investments that mature before the common date and still need an explicit after-maturity decision.
+         */
+        post: operations["maturity_check_api_v1_calculators_maturity_check_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/calculators/run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Run Calculator
+         * @description Value every investment (and the compiled selection) in one pass.
+         */
+        post: operations["run_calculator_api_v1_calculators_run_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/calculators/scenarios": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Scenarios */
+        get: operations["list_scenarios_api_v1_calculators_scenarios_get"];
+        put?: never;
+        /** Create Scenario */
+        post: operations["create_scenario_api_v1_calculators_scenarios_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/calculators/scenarios/{scenario_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Scenario */
+        get: operations["get_scenario_api_v1_calculators_scenarios__scenario_id__get"];
+        /** Update Scenario */
+        put: operations["update_scenario_api_v1_calculators_scenarios__scenario_id__put"];
+        post?: never;
+        /** Delete Scenario */
+        delete: operations["delete_scenario_api_v1_calculators_scenarios__scenario_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/compare": {
         parameters: {
             query?: never;
@@ -621,7 +738,7 @@ export interface paths {
         get: operations["get_household_profile_api_v1_household_profile_get"];
         /**
          * Update Household Profile
-         * @description Save household composition, dependants and family support. Only the fields sent are stored.
+         * @description Save household composition, personal details, dependants and financial resilience.
          */
         put: operations["update_household_profile_api_v1_household_profile_put"];
         post?: never;
@@ -642,12 +759,52 @@ export interface paths {
          * Get Risk Capacity
          * @description Risk capacity from the details the person provided, plus their recorded balances and loans.
          *
-         *     A detail that was not provided is left out of the assessment and said so. With no saved profile
-         *     the level is "Not assessed".
+         *     A detail that was not provided is left out of the assessment and explicitly noted. With no saved profile
+         *     the level is 'Not assessed'.
          */
         get: operations["get_risk_capacity_api_v1_household_risk_capacity_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/income/projection": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Income Projection
+         * @description Annual and cumulative planned income by calendar year for the first `horizon_months` months.
+         */
+        post: operations["income_projection_api_v1_income_projection_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/income/projection/csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Income Projection Csv
+         * @description The same projection as CSV: UTF-8 with a byte-order mark so Excel opens it with the right columns.
+         */
+        post: operations["income_projection_csv_api_v1_income_projection_csv_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -935,6 +1092,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/recommendations/conservative-comparison": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Compare Conservative Recommendations
+         * @description Compare baseline recommendations with a deterministic, more conservative variant.
+         *
+         *     The conservative variant applies a lower investment growth rate and an expanded defensive
+         *     reserve buffer without modifying or overwriting the original plan or assessment records.
+         */
+        post: operations["compare_conservative_recommendations_api_v1_recommendations_conservative_comparison_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/rescue/analyze": {
         parameters: {
             query?: never;
@@ -949,6 +1129,66 @@ export interface paths {
          * @description Run constraint-aware rescue analysis to solve competing multi-goal conflicts.
          */
         post: operations["analyze_and_rescue_api_v1_rescue_analyze_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/risk/assessment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit Risk Assessment
+         * @description Submit responses to the guided risk questionnaire, calculate scores, and persist a historical assessment record.
+         */
+        post: operations["submit_risk_assessment_api_v1_risk_assessment_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/risk/assessment/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Risk Assessment History
+         * @description Retrieve prior risk assessment results without overwriting previous history.
+         */
+        get: operations["get_risk_assessment_history_api_v1_risk_assessment_history_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/risk/assessment/latest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Latest Risk Assessment
+         * @description Retrieve the most recent completed risk assessment for the signed-in user.
+         */
+        get: operations["get_latest_risk_assessment_api_v1_risk_assessment_latest_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1244,6 +1484,306 @@ export interface components {
             imported_count: number;
         };
         /**
+         * CalcAfterMaturity
+         * @description What happens to a balance whose growth period ends before the common valuation date.
+         */
+        CalcAfterMaturity: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "hold" | "continue" | "reinvest";
+            /** Rate */
+            rate?: string | null;
+        };
+        /** CalcAggregate */
+        CalcAggregate: {
+            /** Gain */
+            gain: string;
+            /** Included */
+            included: number;
+            /** Inflation Adjusted Value */
+            inflation_adjusted_value: string | null;
+            /** Mixed Valuation Dates */
+            mixed_valuation_dates: boolean;
+            /** Post Tax Value */
+            post_tax_value: string;
+            /** Principal */
+            principal: string;
+            /** Tax */
+            tax: string;
+            /** Total Gains */
+            total_gains: string;
+            /** Total Losses */
+            total_losses: string;
+            /** Value */
+            value: string;
+        };
+        /** CalcAnnualRow */
+        CalcAnnualRow: {
+            /** Closing */
+            closing: string;
+            /** Contributions */
+            contributions: string;
+            /** Cumulative Gain */
+            cumulative_gain: string;
+            /** Cumulative Invested */
+            cumulative_invested: string;
+            /** From Month */
+            from_month: string;
+            /** Growth */
+            growth: string;
+            /** Inflation Adjusted Closing */
+            inflation_adjusted_closing: string;
+            /** Instalment */
+            instalment: string;
+            /** Instalments */
+            instalments: number;
+            /** Months */
+            months: number;
+            /** Opening */
+            opening: string;
+            /**
+             * Phase
+             * @enum {string}
+             */
+            phase: "contributing" | "growth_only" | "after_maturity";
+            /** To Month */
+            to_month: string;
+            /** Year */
+            year: number;
+        };
+        /**
+         * CalcCompareEntry
+         * @description A saved scenario (`scenario_id`) or an unsaved calculator (`config`), with a label.
+         */
+        CalcCompareEntry: {
+            config?: components["schemas"]["CalculatorConfig"] | null;
+            /** Label */
+            label?: string | null;
+            /** Scenario Id */
+            scenario_id?: string | null;
+        };
+        /** CalcCompareRequest */
+        CalcCompareRequest: {
+            /** Common Date */
+            common_date?: string | null;
+            /** Entries */
+            entries: components["schemas"]["CalcCompareEntry"][];
+        };
+        /** CalcCompareResponse */
+        CalcCompareResponse: {
+            /** Rows */
+            rows: components["schemas"]["CalcCompareRow"][];
+        };
+        /** CalcCompareRow */
+        CalcCompareRow: {
+            aggregate: components["schemas"]["CalcAggregate"];
+            /** Common Date */
+            common_date: string | null;
+            /** Delta Post Tax Vs First */
+            delta_post_tax_vs_first: string;
+            /** Label */
+            label: string;
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "individual" | "common_date";
+            /** Scenario Id */
+            scenario_id: string | null;
+        };
+        /** CalcCompilation */
+        CalcCompilation: {
+            aggregate: components["schemas"]["CalcAggregate"];
+            /** Investment Ids */
+            investment_ids: string[];
+            /** Years */
+            years: components["schemas"]["CalcCompiledYear"][];
+        };
+        /** CalcCompiledYear */
+        CalcCompiledYear: {
+            /** Closing Active */
+            closing_active: string;
+            /** Closing Total */
+            closing_total: string;
+            /** Contributions */
+            contributions: string;
+            /** Cumulative Gain */
+            cumulative_gain: string;
+            /** Cumulative Invested */
+            cumulative_invested: string;
+            /** Matured Held */
+            matured_held: string;
+            /** Year */
+            year: number;
+        };
+        /** CalcInvestment */
+        CalcInvestment: {
+            after_maturity?: components["schemas"]["CalcAfterMaturity"] | null;
+            /** Annual Growth */
+            annual_growth: string;
+            /** Growth Years */
+            growth_years: number;
+            /** Id */
+            id: string;
+            /**
+             * Inflation Rate
+             * @default 0
+             */
+            inflation_rate: string;
+            /**
+             * Lump Sum
+             * @default 0.00
+             */
+            lump_sum: string;
+            /** Name */
+            name: string;
+            sip?: components["schemas"]["CalcSip"] | null;
+            /** Start Month */
+            start_month: string;
+            /**
+             * Tax Rate
+             * @default 0
+             */
+            tax_rate: string;
+        };
+        /** CalcInvestmentResult */
+        CalcInvestmentResult: {
+            /** Annual */
+            annual: components["schemas"]["CalcAnnualRow"][];
+            /** Contributions Made */
+            contributions_made: number;
+            /** Gain */
+            gain: string;
+            /** Id */
+            id: string;
+            /** Inflation Adjusted Value */
+            inflation_adjusted_value: string;
+            /** Months Valued */
+            months_valued: number;
+            /** Name */
+            name: string;
+            /** Post Tax Value */
+            post_tax_value: string;
+            /** Principal */
+            principal: string;
+            /** Start Month */
+            start_month: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "not_started" | "before_maturity" | "at_maturity" | "after_maturity";
+            /** Tax */
+            tax: string;
+            /** Valuation Month */
+            valuation_month: string | null;
+            /** Value */
+            value: string;
+        };
+        /** CalcScenarioIn */
+        CalcScenarioIn: {
+            config: components["schemas"]["CalculatorConfig"];
+            /** Name */
+            name: string;
+        };
+        /** CalcScenarioOut */
+        CalcScenarioOut: {
+            config: components["schemas"]["CalculatorConfig"];
+            /** Created At */
+            created_at: string;
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Updated At */
+            updated_at: string;
+        };
+        /** CalcScenarioSummary */
+        CalcScenarioSummary: {
+            /** Id */
+            id: string;
+            /** Investments */
+            investments: number;
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "individual" | "common_date";
+            /** Name */
+            name: string;
+            /** Updated At */
+            updated_at: string;
+        };
+        /** CalcSip */
+        CalcSip: {
+            /** Amount */
+            amount: string;
+            /** Contribution Years */
+            contribution_years: number;
+            /**
+             * Frequency
+             * @default monthly
+             * @enum {string}
+             */
+            frequency: "monthly" | "quarterly" | "annual";
+            /** Step Ups */
+            step_ups?: components["schemas"]["CalcStepUp"][];
+        };
+        /**
+         * CalcStepUp
+         * @description From investment year `from_year` (year 1 = the first 12 months), the instalment changes.
+         *
+         *     `amount` sets the new instalment; `percent` raises the previous instalment by that fraction (0.10 = +10%).
+         */
+        CalcStepUp: {
+            /** Amount */
+            amount?: string | null;
+            /** From Year */
+            from_year: number;
+            /**
+             * Mode
+             * @default amount
+             * @enum {string}
+             */
+            mode: "amount" | "percent";
+            /** Percent */
+            percent?: string | null;
+        };
+        /**
+         * CalculatorConfig
+         * @description One calculator state. `mode` picks how every investment is valued.
+         */
+        CalculatorConfig: {
+            /** Common Date */
+            common_date?: string | null;
+            /** Compile Ids */
+            compile_ids?: string[] | null;
+            /** Investments */
+            investments: components["schemas"]["CalcInvestment"][];
+            /**
+             * Mode
+             * @default individual
+             * @enum {string}
+             */
+            mode: "individual" | "common_date";
+        };
+        /** CalculatorResult */
+        CalculatorResult: {
+            aggregate: components["schemas"]["CalcAggregate"];
+            /** Common Date */
+            common_date: string | null;
+            compilation: components["schemas"]["CalcCompilation"];
+            /** Investments */
+            investments: components["schemas"]["CalcInvestmentResult"][];
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "individual" | "common_date";
+        };
+        /**
          * Commitment
          * @description An existing fixed payment (for example an EMI) that stops after remaining_months.
          */
@@ -1291,6 +1831,16 @@ export interface components {
             diffs: components["schemas"]["CompareDiff"][];
             /** Results */
             results: components["schemas"]["CompareEntry"][];
+        };
+        /** ConservativeComparisonResponse */
+        ConservativeComparisonResponse: {
+            conservative: components["schemas"]["RecommendationVariant"];
+            differences: components["schemas"]["RecommendationDifferences"];
+            /** Notes */
+            notes: string[];
+            original: components["schemas"]["RecommendationVariant"];
+            /** Plan Source */
+            plan_source: string;
         };
         /**
          * CrowdedOut
@@ -1521,6 +2071,14 @@ export interface components {
             /** Type */
             type: string;
         };
+        /** ExportCalculatorScenario */
+        ExportCalculatorScenario: {
+            config: components["schemas"]["CalculatorConfig"];
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+        };
         /** ExportPlan */
         ExportPlan: {
             /** As Of */
@@ -1545,6 +2103,11 @@ export interface components {
         ExportResponse: {
             /** Accounts */
             accounts: components["schemas"]["ExportAccount"][];
+            /**
+             * Calculator Scenarios
+             * @default []
+             */
+            calculator_scenarios: components["schemas"]["ExportCalculatorScenario"][];
             household_profile: components["schemas"]["HouseholdProfileResponse"];
             /** Investments */
             investments: components["schemas"]["InvestmentResponse"][];
@@ -1717,6 +2280,28 @@ export interface components {
             /** Target Date */
             target_date?: string | null;
         };
+        /** GoalRecommendationItem */
+        GoalRecommendationItem: {
+            /**
+             * Delay Months
+             * @default 0
+             */
+            delay_months: number;
+            /** Goal Id */
+            goal_id: string;
+            /** Label */
+            label: string;
+            /** Projected Completion */
+            projected_completion?: string | null;
+            /** Required Monthly Savings */
+            required_monthly_savings: string;
+            /** Status */
+            status: string;
+            /** Target Amount Today */
+            target_amount_today: string;
+            /** Target Date */
+            target_date: string;
+        };
         /** HealthResponse */
         HealthResponse: {
             /** Status */
@@ -1727,55 +2312,121 @@ export interface components {
          * @description The details the person has provided. A field that was never provided is null, never a default.
          */
         HouseholdProfileResponse: {
+            /** Children Ages */
+            children_ages?: number[];
             /** Children Count */
             children_count: number | null;
+            /** Debt Types */
+            debt_types?: string[];
             /** Dependants Count */
             dependants_count: number | null;
             /** Dependants Details */
             dependants_details: components["schemas"]["DependantDetail"][];
             /** Elderly Dependants Count */
             elderly_dependants_count: number | null;
+            /** Emergency Fund Coverage */
+            emergency_fund_coverage?: string | null;
             /** Emergency Fund Months Target */
             emergency_fund_months_target: number | null;
+            /** Employment Status */
+            employment_status?: string | null;
+            /** Expected Retirement Age */
+            expected_retirement_age?: number | null;
+            /** Financial Dependants */
+            financial_dependants?: string | null;
+            /** Full Name */
+            full_name?: string | null;
+            /** Has Children */
+            has_children?: boolean | null;
+            /** Health Insurance Status */
+            health_insurance_status?: string | null;
             /** Household Type */
             household_type: string | null;
+            /** Housing Status */
+            housing_status?: string | null;
             /** Id */
             id: string | null;
+            /** Income Predictability */
+            income_predictability?: string | null;
             /** Is Saved */
             is_saved: boolean;
             /** Job Stability */
             job_stability: string | null;
+            /** Life Insurance Status */
+            life_insurance_status?: string | null;
+            /** Marital Status */
+            marital_status?: string | null;
             /** Monthly Family Support */
             monthly_family_support: string | null;
+            /** Phone Number */
+            phone_number?: string | null;
             /** Planned Events */
             planned_events: components["schemas"]["PlannedLifeEvent"][];
             /** Primary Earner Age */
             primary_earner_age: number | null;
+            /** Supports Father */
+            supports_father?: string | null;
+            /** Supports Mother */
+            supports_mother?: string | null;
             /** Updated At */
             updated_at: string | null;
+            /** User Email */
+            user_email?: string | null;
         };
         /** HouseholdProfileUpdateRequest */
         HouseholdProfileUpdateRequest: {
+            /** Children Ages */
+            children_ages?: number[] | null;
             /** Children Count */
             children_count?: number | null;
+            /** Debt Types */
+            debt_types?: ("no_debt" | "home_loan" | "education_loan" | "personal_loan" | "vehicle_loan" | "other" | "multiple")[] | null;
             /** Dependants Count */
             dependants_count?: number | null;
             /** Dependants Details */
             dependants_details?: components["schemas"]["DependantDetail"][] | null;
             /** Elderly Dependants Count */
             elderly_dependants_count?: number | null;
+            /** Emergency Fund Coverage */
+            emergency_fund_coverage?: ("none" | "less_than_3" | "3_to_6" | "more_than_6" | "not_sure") | null;
             /** Emergency Fund Months Target */
             emergency_fund_months_target?: number | null;
+            /** Employment Status */
+            employment_status?: ("salaried" | "self_employed" | "business_owner" | "student" | "unemployed" | "retired" | "other") | null;
+            /** Expected Retirement Age */
+            expected_retirement_age?: number | null;
+            /** Financial Dependants */
+            financial_dependants?: ("none" | "one" | "two" | "three" | "four_or_more") | null;
+            /** Full Name */
+            full_name?: string | null;
+            /** Has Children */
+            has_children?: boolean | null;
+            /** Health Insurance Status */
+            health_insurance_status?: ("yes" | "no" | "not_sure") | null;
             /** Household Type */
             household_type?: ("single_earner" | "dual_earner" | "retiree") | null;
+            /** Housing Status */
+            housing_status?: ("own_house" | "rented_house") | null;
+            /** Income Predictability */
+            income_predictability?: ("very_predictable" | "mostly_predictable" | "varies_significantly" | "seasonal_project" | "no_income" | "not_sure") | null;
             /** Job Stability */
             job_stability?: ("high" | "stable" | "moderate" | "variable") | null;
+            /** Life Insurance Status */
+            life_insurance_status?: ("yes" | "no" | "not_sure") | null;
+            /** Marital Status */
+            marital_status?: ("married" | "not_married") | null;
             /** Monthly Family Support */
             monthly_family_support?: string | null;
+            /** Phone Number */
+            phone_number?: string | null;
             /** Planned Events */
             planned_events?: components["schemas"]["PlannedLifeEvent"][] | null;
             /** Primary Earner Age */
             primary_earner_age?: number | null;
+            /** Supports Father */
+            supports_father?: ("yes" | "no" | "unsure") | null;
+            /** Supports Mother */
+            supports_mother?: ("yes" | "no" | "unsure") | null;
         };
         /**
          * IncomeChange
@@ -1796,16 +2447,91 @@ export interface components {
              */
             type: "income_change";
         };
-        /** IncomeStream */
+        /**
+         * IncomeProjectionRequest
+         * @description `plan_id` uses the signed-in user's saved plan; `plan` projects an explicit hypothetical plan.
+         */
+        IncomeProjectionRequest: {
+            /**
+             * Horizon Months
+             * @default 60
+             */
+            horizon_months: number;
+            plan?: components["schemas"]["Plan"] | null;
+            /** Plan Id */
+            plan_id?: string | null;
+        };
+        /** IncomeProjectionResponse */
+        IncomeProjectionResponse: {
+            /** First Month */
+            first_month: string;
+            /** Horizon Months */
+            horizon_months: number;
+            /** Plan Source */
+            plan_source: string;
+            /** Total Projected Income */
+            total_projected_income: string;
+            /** Years */
+            years: components["schemas"]["IncomeYear"][];
+        };
+        /**
+         * IncomeStepUp
+         * @description From `year` (January) the stream's base amount is replaced by `amount`, in the stream's frequency.
+         */
+        IncomeStepUp: {
+            /** Amount */
+            amount: string;
+            /** Id */
+            id: string;
+            /** Year */
+            year: number;
+        };
+        /**
+         * IncomeStream
+         * @description Planned (expected, take-home) income.
+         *
+         *     Two forms. A legacy stream has only `monthly_net` and the optional month `ends_after`; the plan-wide
+         *     `income_growth_annual` applies to it exactly as before. A scheduled stream has `start_year` and
+         *     `amount` + `frequency`, an optional inclusive `end_year`, its own optional `annual_growth`, and
+         *     optional `step_ups`; the plan-wide growth is never applied to it. For scheduled streams `monthly_net`
+         *     is derived (the initial amount's monthly equivalent) and any value sent is replaced.
+         */
         IncomeStream: {
+            /** Amount */
+            amount?: string | null;
+            /** Annual Growth */
+            annual_growth?: string | null;
+            /** End Year */
+            end_year?: number | null;
             /** Ends After */
             ends_after?: string | null;
+            /**
+             * Frequency
+             * @default monthly
+             * @enum {string}
+             */
+            frequency: "monthly" | "quarterly" | "yearly";
             /** Id */
             id: string;
             /** Label */
             label: string;
             /** Monthly Net */
             monthly_net: string;
+            /** Start Year */
+            start_year?: number | null;
+            /** Step Ups */
+            step_ups?: components["schemas"]["IncomeStepUp"][];
+        };
+        /** IncomeYear */
+        IncomeYear: {
+            /** Annual Income */
+            annual_income: string;
+            /** Cumulative Income */
+            cumulative_income: string;
+            /** Months Included */
+            months_included: number;
+            /** Year */
+            year: number;
         };
         /** InsuranceDashboardSummary */
         InsuranceDashboardSummary: {
@@ -2035,6 +2761,15 @@ export interface components {
             status: "fresh" | "stale" | "unavailable";
             /** Symbol */
             symbol: string;
+        };
+        /** MaturityDecisionNeeded */
+        MaturityDecisionNeeded: {
+            /** Investment Id */
+            investment_id: string;
+            /** Matures */
+            matures: string;
+            /** Name */
+            name: string;
         };
         /** MessageResponse */
         MessageResponse: {
@@ -2347,6 +3082,53 @@ export interface components {
             /** Uncovered Deficit Months */
             uncovered_deficit_months: string[];
         };
+        /**
+         * RecommendationComparisonRequest
+         * @description Give `plan_id` to use the signed-in user's saved plan, or `plan` for an explicit hypothetical.
+         */
+        RecommendationComparisonRequest: {
+            /**
+             * Conservative Return Drop
+             * @default 0.025
+             */
+            conservative_return_drop: number | string;
+            plan?: components["schemas"]["Plan"] | null;
+            /** Plan Id */
+            plan_id?: string | null;
+            scenario?: components["schemas"]["Scenario"] | null;
+        };
+        /** RecommendationDifferences */
+        RecommendationDifferences: {
+            /** Additional Reserve Needed */
+            additional_reserve_needed: string;
+            /** Annual Return Drop */
+            annual_return_drop: string;
+            /** Delay Impacts */
+            delay_impacts: string[];
+            /** Monthly Savings Increase */
+            monthly_savings_increase: string;
+            /** Summary Explanation */
+            summary_explanation: string;
+        };
+        /** RecommendationVariant */
+        RecommendationVariant: {
+            /** Assumed Annual Return */
+            assumed_annual_return: string;
+            /** Delayed Count */
+            delayed_count: number;
+            /** Goals */
+            goals: components["schemas"]["GoalRecommendationItem"][];
+            /** Label */
+            label: string;
+            /** Name */
+            name: string;
+            /** On Track Count */
+            on_track_count: number;
+            /** Recommended Reserve Months */
+            recommended_reserve_months: number;
+            /** Total Monthly Required */
+            total_monthly_required: string;
+        };
         /** RescueAlternativeItem */
         RescueAlternativeItem: {
             /** Alternative Id */
@@ -2443,6 +3225,79 @@ export interface components {
             run_id: string;
             /** Unresolved Gap */
             unresolved_gap: string | null;
+        };
+        /** RiskAssessmentHistoryItem */
+        RiskAssessmentHistoryItem: {
+            /** Completed At */
+            completed_at: string;
+            /** Composite Stance */
+            composite_stance: string;
+            /** Id */
+            id: string;
+            /** Risk Capacity */
+            risk_capacity: string;
+            /** Risk Tolerance */
+            risk_tolerance: string;
+            /** Scoring Version */
+            scoring_version: string;
+            /** Tolerance Score */
+            tolerance_score: number;
+        };
+        /** RiskAssessmentResponse */
+        RiskAssessmentResponse: {
+            /** Completed At */
+            completed_at: string;
+            /**
+             * Composite Stance
+             * @enum {string}
+             */
+            composite_stance: "Conservative" | "Moderate" | "Aggressive";
+            /** Conflict Note */
+            conflict_note?: string | null;
+            /** Explanations */
+            explanations: string[];
+            /** Id */
+            id: string;
+            /** Limitations */
+            limitations: string[];
+            /** Loss Reaction */
+            loss_reaction: string;
+            /**
+             * Risk Capacity
+             * @enum {string}
+             */
+            risk_capacity: "Low" | "Moderate" | "High" | "Not assessed";
+            /**
+             * Risk Tolerance
+             * @enum {string}
+             */
+            risk_tolerance: "Conservative" | "Moderate" | "Aggressive";
+            /** Safety Growth */
+            safety_growth: string;
+            /** Scoring Version */
+            scoring_version: string;
+            /** Time Horizon */
+            time_horizon: string;
+            /** Tolerance Score */
+            tolerance_score: number;
+        };
+        /** RiskAssessmentSubmitRequest */
+        RiskAssessmentSubmitRequest: {
+            /**
+             * Loss Reaction
+             * @enum {string}
+             */
+            loss_reaction: "sell_all" | "reduce_some" | "hold" | "invest_more";
+            /**
+             * Safety Growth
+             * @enum {string}
+             */
+            safety_growth: "protect" | "balance" | "grow";
+            /**
+             * Time Horizon
+             * @enum {string}
+             */
+            time_horizon: "short" | "medium_short" | "medium" | "long";
         };
         /** RiskCapacityIndicatorResponse */
         RiskCapacityIndicatorResponse: {
@@ -3245,6 +4100,536 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["AuthResponse"];
                 };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    compare_api_v1_calculators_compare_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CalcCompareRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalcCompareResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    export_csv_api_v1_calculators_export_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CalculatorConfig"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    maturity_check_api_v1_calculators_maturity_check_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CalculatorConfig"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaturityDecisionNeeded"][];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    run_calculator_api_v1_calculators_run_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CalculatorConfig"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalculatorResult"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_scenarios_api_v1_calculators_scenarios_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalcScenarioSummary"][];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_scenario_api_v1_calculators_scenarios_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CalcScenarioIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalcScenarioOut"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_scenario_api_v1_calculators_scenarios__scenario_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scenario_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalcScenarioOut"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    update_scenario_api_v1_calculators_scenarios__scenario_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scenario_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CalcScenarioIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalcScenarioOut"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_scenario_api_v1_calculators_scenarios__scenario_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scenario_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Sign in required, or the token is missing, malformed or expired. */
             401: {
@@ -5004,6 +6389,124 @@ export interface operations {
             };
         };
     };
+    income_projection_api_v1_income_projection_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IncomeProjectionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncomeProjectionResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    income_projection_csv_api_v1_income_projection_csv_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IncomeProjectionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_insurance_dashboard_api_v1_insurance_dashboard_get: {
         parameters: {
             query?: never;
@@ -6009,6 +7512,66 @@ export interface operations {
             };
         };
     };
+    compare_conservative_recommendations_api_v1_recommendations_conservative_comparison_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecommendationComparisonRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConservativeComparisonResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     analyze_and_rescue_api_v1_rescue_analyze_post: {
         parameters: {
             query?: never;
@@ -6029,6 +7592,178 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RescueResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    submit_risk_assessment_api_v1_risk_assessment_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskAssessmentSubmitRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_risk_assessment_history_api_v1_risk_assessment_history_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentHistoryItem"][];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_latest_risk_assessment_api_v1_risk_assessment_latest_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentResponse"];
                 };
             };
             /** @description Sign in required, or the token is missing, malformed or expired. */

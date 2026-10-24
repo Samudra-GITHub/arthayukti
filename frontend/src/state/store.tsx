@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { api } from '../api/client'
-import type { FixOption, Goal, Plan, SampleDetail } from '../api/types'
+import { fromPaise, toPaise } from '../lib/money'
+import type { FixOption, Goal, IncomeStream, Plan, SampleDetail } from '../api/types'
 import { copy } from '../i18n/copy'
 import type { Language } from '../lib/months'
 import { blankPlan, hasGoals, MAX_GOALS, newGoal } from '../lib/blank'
@@ -213,10 +214,19 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     (streamId: string, amount: string) =>
       update((current) => ({
         ...current,
-        income_streams: current.income_streams.map((stream) =>
-          stream.id === streamId ? { ...stream, monthly_net: amount } : stream,
-        ),
+        income_streams: current.income_streams.map((stream) => {
+          if (stream.id !== streamId) return stream
+          if (stream.start_year == null) return { ...stream, monthly_net: amount }
+          // A scheduled stream keeps its own frequency: the monthly figure typed here becomes its amount.
+          const months = stream.frequency === 'yearly' ? 12n : stream.frequency === 'quarterly' ? 3n : 1n
+          return { ...stream, monthly_net: amount, amount: fromPaise(toPaise(amount) * months) }
+        }),
       })),
+    [update],
+  )
+
+  const setIncomeStreams = useCallback(
+    (streams: IncomeStream[]) => update((current) => ({ ...current, income_streams: streams })),
     [update],
   )
 
@@ -360,6 +370,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     baseline,
     fixes,
     setIncome,
+    setIncomeStreams,
     setExpense,
     setGoalAmount,
     setGoalDate,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { monthlyEquivalent } from './frequency'
-import { buildPlan, emptyDraft, goalIssues, percentToRate, preview, type AccountDraft, type GoalDraft } from './onboarding'
+import { buildPlan, emptyDraft, goalIssues, incomeIssues, percentToRate, preview, type AccountDraft, type GoalDraft } from './onboarding'
 
 const goal = (over: Partial<GoalDraft>): GoalDraft => ({ id: 'g', kind: 'other', label: 'Goal', amount: '100000.00', date: '2029-01', basis: 'today', tier: 3, saved: '', ...over })
 
@@ -31,8 +31,8 @@ describe('building the plan the engine takes', () => {
   const base = () => {
     const draft = emptyDraft('2027-01')
     draft.income = [
-      { id: 'i1', label: 'Salary', amount: '90000', frequency: 'monthly', endsAfter: '', include: true },
-      { id: 'i2', label: 'Left out', amount: '5000', frequency: 'monthly', endsAfter: '', include: false },
+      { id: 'i1', label: 'Salary', amount: '90000', frequency: 'monthly', endYear: '', growthPercent: '', include: true },
+      { id: 'i2', label: 'Left out', amount: '5000', frequency: 'monthly', endYear: '', growthPercent: '', include: false },
     ]
     draft.expenses = [
       { id: 'e1', label: 'Rent', amount: '30000', frequency: 'monthly', essential: true, include: true },
@@ -100,14 +100,14 @@ describe('building the plan the engine takes', () => {
   it('shows no income as an explicit zero line, not a made-up figure', () => {
     const draft = base()
     draft.income = []
-    expect(buildPlan(draft, 'A').plan?.income_streams).toEqual([{ id: 'income_1', label: 'No regular income entered', monthly_net: '0.00', ends_after: null }])
+    expect(buildPlan(draft, 'A').plan?.income_streams).toEqual([{ id: 'income_1', label: 'No regular income entered', monthly_net: '0.00', ends_after: null, frequency: 'monthly' }])
   })
 })
 
 describe('live totals', () => {
   it('add up what was typed, and keep spending apart from loans', () => {
     const draft = emptyDraft('2027-01')
-    draft.income = [{ id: 'i', label: 'Pay', amount: '100000', frequency: 'monthly', endsAfter: '', include: true }]
+    draft.income = [{ id: 'i', label: 'Pay', amount: '100000', frequency: 'monthly', endYear: '', growthPercent: '', include: true }]
     draft.expenses = [
       { id: 'e1', label: 'Rent', amount: '30000', frequency: 'monthly', essential: true, include: true },
       { id: 'e2', label: 'Fun', amount: '6000', frequency: 'half_yearly', essential: false, include: true },
@@ -158,5 +158,29 @@ describe('savings kept as the emergency fund', () => {
   it('gives the money to one emergency goal only', () => {
     const plan = savingsOf(draftWith([account({})], [emergency({ id: 'e1', label: 'E1' }), emergency({ id: 'e2', label: 'E2' })]))
     expect([plan.E1, plan.E2].sort()).toEqual(['0.00', '400000.00'])
+  })
+})
+
+describe('planned income streams in the plan', () => {
+  it('accepts more than four sources and keeps each amount, frequency, start, end and growth', () => {
+    const draft = emptyDraft('2027-01')
+    draft.goals = [goal({})]
+    draft.income = Array.from({ length: 7 }, (_, i) => ({ id: `i${i}`, label: `Source ${i + 1}`, amount: '150000', frequency: i % 3 === 0 ? 'quarterly' : i % 3 === 1 ? 'yearly' : 'monthly', endYear: i === 2 ? '2030' : '', growthPercent: i === 3 ? '5' : '', include: true }))
+    const { plan, problems } = buildPlan(draft, 'A')
+    expect(problems).toEqual([])
+    const streams = plan!.income_streams
+    expect(streams).toHaveLength(7)
+    expect(streams[0]).toMatchObject({ amount: '150000.00', frequency: 'quarterly', monthly_net: '50000.00', start_year: 2027, ends_after: null })
+    expect(streams[1]).toMatchObject({ frequency: 'yearly', monthly_net: '12500.00' })
+    expect(streams[2]).toMatchObject({ frequency: 'monthly', monthly_net: '150000.00', end_year: 2030 })
+    expect(streams[3]).toMatchObject({ annual_growth: '0.050000' })
+    expect(streams[4]).not.toHaveProperty('annual_growth') // blank means no automatic increase
+  })
+
+  it('flags an end year in the past or a bad growth rate', () => {
+    const row = { id: 'i', label: 'Pay', amount: '1000', frequency: 'monthly' as const, endYear: '2026', growthPercent: '', include: true }
+    expect(incomeIssues(row, '2027-01')).toContain('past')
+    expect(incomeIssues({ ...row, endYear: '2030', growthPercent: '45' }, '2027-01')).toContain('range')
+    expect(incomeIssues({ ...row, endYear: '2027' }, '2027-01')).toEqual([])
   })
 })

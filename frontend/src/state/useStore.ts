@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react'
 import type {
+  IncomeStream,
   Goal,
   FixOption,
   FixResult,
@@ -58,6 +59,8 @@ export interface Store {
   baseline: Remote<ProjectionResult>
   fixes: Remote<FixResult>
   setIncome: (streamId: string, amount: string) => void
+  /** Replaces the whole list of planned income streams (the Income editor). */
+  setIncomeStreams: (streams: IncomeStream[]) => void
   setExpense: (expenseId: string, amount: string) => void
   setGoalAmount: (goalId: string, amount: string) => void
   setGoalDate: (goalId: string, month: string) => void

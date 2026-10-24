@@ -5,7 +5,11 @@ import { fromPaise, toPaise } from './money'
 import { monthToIndex } from './months'
 
 // What the engine accepts, from the API contract.
-export const LIMITS = { income: 4, expenses: 12, commitments: 6, goals: 8 } as const
+// Income has no product limit; the server only bounds request size.
+export const LIMITS = { expenses: 12, commitments: 6, goals: 8 } as const
+
+/** Planned income is entered monthly, quarterly or yearly. */
+export const INCOME_FREQUENCIES: Frequency[] = ['monthly', 'quarterly', 'yearly']
 
 let counter = 0
 export function uid(prefix: string): string {
@@ -18,8 +22,10 @@ export interface IncomeDraft {
   label: string
   amount: string
   frequency: Frequency
-  /** The last month this income is received (YYYY-MM), or '' when it has no end. */
-  endsAfter: string
+  /** The last calendar year this income is received (inclusive of December), or '' for no end. */
+  endYear: string
+  /** Yearly increase as a percentage, or '' for none. */
+  growthPercent: string
   include: boolean
 }
 
@@ -185,7 +191,7 @@ const GOAL_TYPE: Record<GoalKind, Goal['type']> = {
   other: 'custom',
 }
 
-export type Problem = 'too_many_income' | 'too_many_expenses' | 'too_many_commitments' | 'too_many_goals' | 'no_goal' | 'bad_inflation'
+export type Problem = 'too_many_expenses' | 'too_many_commitments' | 'too_many_goals' | 'no_goal' | 'bad_inflation'
 
 export function buildPlan(draft: Draft, name: string): { plan: Plan | null; problems: Problem[] } {
   const problems: Problem[] = []
@@ -195,7 +201,6 @@ export function buildPlan(draft: Draft, name: string): { plan: Plan | null; prob
   const loans = draft.liabilities.filter((row) => filled(row.payment) && /^[1-9]\d*$/.test(row.remainingMonths))
   const rate = percentToRate(draft.inflationPercent)
 
-  if (income.length > LIMITS.income) problems.push('too_many_income')
   if (expenseRows.length + premiumRows.length > LIMITS.expenses) problems.push('too_many_expenses')
   if (loans.length > LIMITS.commitments) problems.push('too_many_commitments')
   if (draft.goals.length > LIMITS.goals) problems.push('too_many_goals')
@@ -222,10 +227,17 @@ export function buildPlan(draft: Draft, name: string): { plan: Plan | null; prob
         ? income.map((row, index) => ({
             id: `income_${index + 1}`,
             label: row.label.trim().slice(0, 80) || `Income ${index + 1}`,
+            // monthly_net is derived by the server from amount and frequency; sent for a consistent shape.
             monthly_net: monthlyEquivalent(row.amount, row.frequency),
-            ends_after: row.endsAfter || null,
+            ends_after: null,
+            amount: fromPaise(toPaise(row.amount)),
+            frequency: row.frequency as 'monthly' | 'quarterly' | 'yearly',
+            start_year: Number(draft.asOf.slice(0, 4)),
+            ...(row.endYear.trim() ? { end_year: Number(row.endYear) } : {}),
+            ...(row.growthPercent.trim() ? { annual_growth: percentToRate(row.growthPercent) ?? '0.000000' } : {}),
+            step_ups: [],
           }))
-        : [{ id: 'income_1', label: 'No regular income entered', monthly_net: '0.00', ends_after: null }],
+        : [{ id: 'income_1', label: 'No regular income entered', monthly_net: '0.00', ends_after: null, frequency: 'monthly' }],
     expenses: [
       ...expenseRows.map((row, index) => ({
         id: `expense_${index + 1}`,
@@ -272,7 +284,8 @@ export function incomeIssues(row: IncomeDraft, asOf: string): RowIssue[] {
   const issues: RowIssue[] = []
   if (!filled(row.label)) issues.push('label')
   if (!positive(row.amount)) issues.push('amount')
-  if (row.endsAfter && monthToIndex(row.endsAfter) < monthToIndex(asOf)) issues.push('past')
+  if (row.endYear.trim() && (!/^\d{4}$/.test(row.endYear.trim()) || Number(row.endYear) < Number(asOf.slice(0, 4)))) issues.push('past')
+  if (row.growthPercent.trim() && percentToRate(row.growthPercent) === null) issues.push('range')
   return issues
 }
 

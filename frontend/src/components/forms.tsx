@@ -1,6 +1,7 @@
 import { useId, useState, type ReactNode } from 'react'
 import { Eye, EyeOff, Plus, Trash2 } from 'lucide-react'
 import { formatMoney, parseRupeeInput } from '../lib/money'
+import { Select } from './Select'
 
 const FIELD =
   'min-h-12 w-full rounded-xl border border-line bg-paper px-3 text-[16px] text-ink placeholder:text-muted/70 focus-visible:border-ink aria-[invalid=true]:border-late'
@@ -44,19 +45,21 @@ interface TextFieldProps {
   onChange: (value: string) => void
   hint?: string
   error?: string | null
-  type?: 'text' | 'email' | 'password'
+  type?: 'text' | 'email' | 'password' | 'month'
+  inputMode?: 'text' | 'numeric' | 'decimal'
   autoComplete?: string
   maxLength?: number
   placeholder?: string
 }
 
-export function TextField({ label, value, onChange, hint, error, type = 'text', autoComplete, maxLength, placeholder }: TextFieldProps) {
+export function TextField({ label, value, onChange, hint, error, type = 'text', inputMode, autoComplete, maxLength, placeholder }: TextFieldProps) {
   const id = useId()
   return (
     <FieldShell id={id} label={label} hint={hint} error={error}>
       <input
         id={id}
         type={type}
+        inputMode={inputMode}
         value={value}
         autoComplete={autoComplete}
         maxLength={maxLength}
@@ -118,20 +121,15 @@ export function SelectField<T extends string>({ label, value, onChange, options,
   const id = useId()
   return (
     <FieldShell id={id} label={label} hint={hint} error={error}>
-      <select
+      <Select
         id={id}
         value={value}
-        onChange={(event) => onChange(event.target.value as T)}
+        onChange={onChange}
+        options={options}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy(id, hint, error)}
         className={FIELD}
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      />
     </FieldShell>
   )
 }
@@ -289,7 +287,7 @@ export function Repeater<T extends { id: string }>({
     <div className="flex flex-col gap-3">
       {items.length === 0 ? <p className="text-muted">{empty}</p> : null}
       {items.map((item, index) => (
-        <div key={item.id} className="flex flex-col gap-3 rounded-2xl border border-line bg-paper p-4">
+        <div key={item.id} className="flex flex-col gap-3 rounded-2xl glass p-4">
           {renderItem(item, index)}
           <div className="flex items-center justify-end gap-2">
             {asking === item.id ? (

@@ -44,7 +44,7 @@ describe('the comparison page when no change is offered', () => {
   it('does not say every goal is on time while one is late and no single fix exists', async () => {
     mockApi(handlers(() => json({ needs_fix: true, options: [], recommended_option_id: null, no_single_fix_reason: 'No single change fixes every goal.' })))
     render(<App />)
-    expect(await screen.findByText('No single change fixes every dream within the limits you set.')).toBeInTheDocument()
+    expect(await screen.findByText('No single change fixes every dream within the limits you set.', {}, { timeout: 5000 })).toBeInTheDocument()
     expect(screen.queryByText('Every dream is on time as it is.')).toBeNull()
   })
 

@@ -17,7 +17,7 @@ export function blankPlan(asOf: string = currentMonth(), name = 'My household'):
     name,
     as_of: asOf,
     currency: 'INR',
-    income_streams: [{ id: 'income', label: 'Monthly income', monthly_net: '0.00', ends_after: null }],
+    income_streams: [{ id: 'income', label: 'Monthly income', monthly_net: '0.00', ends_after: null, frequency: 'monthly' }],
     expenses: [
       { id: 'food_home', label: 'Food, home and bills', monthly: '0.00', essential: true },
       { id: 'school_travel', label: 'School and travel', monthly: '0.00', essential: true },

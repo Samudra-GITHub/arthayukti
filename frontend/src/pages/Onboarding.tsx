@@ -218,7 +218,7 @@ export function OnboardingPage({ navigate }: PageProps) {
     <div className="min-h-screen p-2 sm:p-4">
       <div className="mx-auto grid max-w-[1500px] gap-3 sm:gap-4 lg:grid-cols-[320px_1fr]">
       <aside className="stage relative flex flex-col gap-6 overflow-hidden rounded-[19px] px-6 py-6 lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)] lg:px-8 lg:py-10">
-        <Wordmark size="lg" />
+        <Wordmark size="lg" surface="dark" />
         <ol className="hidden flex-col gap-2 lg:flex" aria-label={c.stepOf(step + 1, STEPS.length)}>
           {STEPS.map((id, index) => (
             <li key={id} className={`flex items-center gap-3 text-[15px] ${index === step ? 'font-semibold text-ink' : index < step ? 'text-muted' : 'text-muted/60'}`} aria-current={index === step ? 'step' : undefined}>
@@ -330,7 +330,7 @@ function ReviewStep({ draft, c, go }: { draft: Draft; c: OnboardingCopy; go: (id
         <h2 className="font-display text-[28px] leading-tight font-bold tracking-tight">{t.title}</h2>
         <p className="text-muted">{t.why}</p>
       </div>
-      <div className="rounded-2xl border border-line bg-paper p-4">
+      <div className="rounded-2xl glass p-4">
         <div className="mb-2 flex items-center justify-between">
           <h3 className="font-semibold">{t.yourNumbers}</h3>
           {edit('income')}
@@ -352,7 +352,7 @@ function ReviewStep({ draft, c, go }: { draft: Draft; c: OnboardingCopy; go: (id
           </div>
         </dl>
       </div>
-      <div className="rounded-2xl border border-line bg-paper p-4">
+      <div className="rounded-2xl glass p-4">
         <div className="mb-2 flex items-center justify-between">
           <h3 className="font-semibold">{t.goals}</h3>
           {edit('goals')}
@@ -377,7 +377,7 @@ function ReviewStep({ draft, c, go }: { draft: Draft; c: OnboardingCopy; go: (id
           {c.goals.inflation}: {draft.inflationPercent}% <span className="rounded-xl bg-sand px-2 text-[12px] text-ink">{draft.inflationPercent === '5' ? t.defaultValue : t.entered}</span>
         </p>
       </div>
-      <div className="grid gap-3 rounded-2xl border border-line bg-paper p-4 text-[15px] sm:grid-cols-2">
+      <div className="grid gap-3 rounded-2xl glass p-4 text-[15px] sm:grid-cols-2">
         {([['cash', records.accounts.length], ['assets', records.investments.length], ['debts', records.liabilities.length], ['insurance', records.policies.length]] as const).map(([id, count]) => (
           <p key={id} className="flex items-center justify-between gap-2">
             <span>
@@ -436,11 +436,11 @@ function OutlookStep({ c, onDone }: { c: OnboardingCopy; onDone: () => void }) {
         <>
           {row ? (
             <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border border-line bg-paper p-4">
+              <div className="rounded-2xl glass p-4">
                 <p className="text-[14px] text-muted">{t.position}</p>
                 <p className="font-figures text-[26px] font-semibold">{formatMoney(row.income)}</p>
               </div>
-              <div className="rounded-2xl border border-line bg-paper p-4">
+              <div className="rounded-2xl glass p-4">
                 <p className="text-[14px] text-muted">{t.surplus}</p>
                 <p className="font-figures text-[26px] font-semibold">{formatMoney(isNegative(row.surplus) ? '0.00' : row.surplus)}</p>
               </div>
@@ -449,7 +449,7 @@ function OutlookStep({ c, onDone }: { c: OnboardingCopy; onDone: () => void }) {
           <h3 className="font-semibold">{t.goalsTitle}</h3>
           <ul className="flex flex-col gap-2">
             {projection.data.goals.map((goal) => (
-              <li key={goal.goal_id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-paper px-4 py-3">
+              <li key={goal.goal_id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl glass px-4 py-3">
                 <span>
                   {goalNameById(text, plan, goal.goal_id)} <span className="text-[13px] text-muted">{monthLabelLong(goal.target_date, language)}</span>
                 </span>

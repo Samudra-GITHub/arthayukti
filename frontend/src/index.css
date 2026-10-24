@@ -15,14 +15,24 @@
   --radius-3xl: 0.9rem;
   --radius-4xl: 1.2rem;
   /* A soft grey-green canvas. Surfaces are translucent white so the canvas shows through (glass). */
-  --color-cream: #e9ede9;
+  --color-cream: #dbe8f5;
   --color-paper: rgb(255 255 255 / 0.62);
-  --color-sand: #dde5de;
-  --color-line: #cfd9d1;
-  --color-ink: #0e3b29;
-  --color-muted: #52645a;
-  --color-brand: #14854f;
-  --color-brand-soft: #8fc2a2;
+  --color-sand: #d3e2f2;
+  /* Raised controls and chips on glass: white in light, a lifted navy in dark. */
+  --color-surface: #ffffff;
+  --color-line: #bccfe6;
+  --color-ink: #0c1c35;
+  --color-muted: #586779;
+  /* Brand colours, exactly as exported in the ArthaYukti logo files. Applied selectively: primary buttons,
+     links, active states and focus. Surfaces, text, charts and semantic colours keep their original values.
+     #285FE8 primary blue | #7EA5FF blue on dark | #0C1C35 ink | #586779 muted | #AFBDD1 muted on dark | #FFFFFF */
+  --color-brand: #285fe8;
+  --color-brand-light: #7ea5ff;
+  --color-brand-ink: #0c1c35;
+  --color-brand-muted: #586779;
+  --color-brand-muted-on-dark: #afbdd1;
+  --color-focus: #285fe8;
+  --color-brand-soft: #7ea5ff;
   --color-turmeric: #b8893a;
   --color-ontime: #1f8f5f;
   --color-late: #c4452d;
@@ -30,9 +40,9 @@
   --color-blush: #fbebe5;
   --color-bar: #9cced5;
 
-  --color-night: #0b1f1a;
-  --color-night-soft: #12302a;
-  --color-night-line: #24473f;
+  --color-night: #0c1c35;
+  --color-night-soft: #14294d;
+  --color-night-line: #28426e;
   --color-glow: #d9b25a;
   --color-mint: #a8d672;
 
@@ -42,12 +52,12 @@
   --font-body: 'Inter Variable', 'Noto Sans Devanagari Variable', system-ui, sans-serif;
   --font-figures: 'Space Grotesk Variable', 'Inter Variable', system-ui, sans-serif;
 
-  --shadow-card: 0 1px 1px rgb(255 255 255 / 0.6) inset, 0 10px 30px -14px rgb(14 59 41 / 0.28);
+  --shadow-card: 0 1px 1px rgb(255 255 255 / 0.6) inset, 0 10px 30px -14px rgb(12 28 53 / 0.28);
 }
 
 @layer base {
   html {
-    background: var(--color-cream);
+    background: linear-gradient(180deg, #eaf3fb 0%, #d3e5f5 42%, #b8d2ec 100%) fixed;
     color: var(--color-ink);
     font-family: var(--font-body);
     font-size: 17px;
@@ -59,12 +69,35 @@
   body {
     margin: 0;
     min-height: 100vh;
+    background: transparent;
+  }
+
+  /* Light on moving water: soft pools of light and blue that drift slowly behind everything. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: -15%;
+    z-index: -2;
+    pointer-events: none;
     background:
-      radial-gradient(900px 520px at 8% -4%, rgb(20 133 79 / 0.22), transparent 62%),
-      radial-gradient(800px 560px at 100% 12%, rgb(168 214 114 / 0.3), transparent 58%),
-      radial-gradient(760px 520px at 42% 105%, rgb(14 59 41 / 0.14), transparent 60%),
-      var(--color-cream);
-    background-attachment: fixed;
+      radial-gradient(55% 38% at 18% 26%, rgb(255 255 255 / 0.7), transparent 62%),
+      radial-gradient(48% 34% at 82% 18%, rgb(126 165 255 / 0.4), transparent 62%),
+      radial-gradient(64% 42% at 62% 92%, rgb(40 95 232 / 0.2), transparent 66%);
+    animation: river-drift 42s ease-in-out infinite alternate;
+  }
+
+  /* A faint, stretched ripple texture, like a surface seen at an angle. */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.22;
+    mix-blend-mode: soft-light;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='420'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006 0.028' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.6 -0.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E");
+    background-size: 640px 420px;
+    animation: ripple-flow 70s linear infinite;
   }
 
   button,
@@ -79,7 +112,7 @@
   }
 
   :focus-visible {
-    outline: 3px solid var(--color-turmeric);
+    outline: 3px solid var(--color-focus);
     outline-offset: 2px;
   }
 }
@@ -107,17 +140,19 @@
 /* A dark stage: re-maps the page tokens so any component placed inside reads on midnight. */
 @layer utilities {
   .stage {
-    --color-ink: #f2efe3;
-    --color-paper: #12302a;
-    --color-cream: #0b1f1a;
-    --color-line: #24473f;
-    --color-muted: #a9bdb4;
-    --color-sand: #183a33;
+    --color-focus: #7ea5ff;
+    --color-ink: #ffffff;
+    --color-paper: #14294d;
+    --color-cream: #0c1c35;
+    --color-line: #28426e;
+    --color-muted: #afbdd1;
+    --color-sand: #1a3260;
+    --color-surface: #1a3260;
     --color-ontime: #a8d672;
     --color-late: #ff8a6b;
-    --color-sage: #14382f;
+    --color-sage: #123a37;
     --color-blush: #3a2230;
-    background: radial-gradient(120% 90% at 85% 0%, #1b4036 0%, #0b1f1a 60%);
+    background: radial-gradient(120% 90% at 85% 0%, #1b3a73 0%, #0c1c35 60%);
     color: var(--color-ink);
   }
 }
@@ -174,26 +209,32 @@
   }
 
   .glass {
-    background: rgb(255 255 255 / 0.58);
-    -webkit-backdrop-filter: blur(20px) saturate(1.4);
-    backdrop-filter: blur(20px) saturate(1.4);
+    background: linear-gradient(145deg, rgb(255 255 255 / 0.62), rgb(255 255 255 / 0.4));
+    -webkit-backdrop-filter: blur(22px) saturate(1.5);
+    backdrop-filter: blur(22px) saturate(1.5);
     border: 1px solid rgb(255 255 255 / 0.75);
-    box-shadow: var(--shadow-card);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.85),
+      0 10px 28px -16px rgb(12 28 53 / 0.28);
   }
 
   .glass-bar {
-    background: rgb(255 255 255 / 0.66);
-    -webkit-backdrop-filter: blur(22px) saturate(1.5);
-    backdrop-filter: blur(22px) saturate(1.5);
+    background: linear-gradient(145deg, rgb(255 255 255 / 0.72), rgb(255 255 255 / 0.5));
+    -webkit-backdrop-filter: blur(24px) saturate(1.6);
+    backdrop-filter: blur(24px) saturate(1.6);
     border: 1px solid rgb(255 255 255 / 0.8);
-    box-shadow: 0 14px 40px -20px rgb(14 59 41 / 0.4);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.9),
+      0 12px 32px -18px rgb(12 28 53 / 0.32);
   }
 
   /* Solid, for menus that sit over content and must stay readable. */
   .surface-solid {
-    background: #ffffff;
-    border: 1px solid var(--color-line);
-    box-shadow: 0 18px 40px -16px rgb(14 59 41 / 0.35);
+    background: rgb(255 255 255 / 0.9);
+    -webkit-backdrop-filter: blur(24px) saturate(1.6);
+    backdrop-filter: blur(24px) saturate(1.6);
+    border: 1px solid rgb(255 255 255 / 0.85);
+    box-shadow: 0 18px 40px -16px rgb(12 28 53 / 0.35);
   }
 
   .hatch {
@@ -223,4 +264,367 @@
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
+}
+
+/* The Income page opens on a deep navy band with a large heading (scoped: nothing else uses it). */
+.income-hero {
+  background:
+    radial-gradient(90% 140% at 100% 0%, rgb(40 95 232 / 0.55), transparent 60%),
+    linear-gradient(135deg, #0c1c35 0%, #14346f 100%);
+  color: #ffffff;
+}
+.income-hero .eyebrow {
+  color: var(--color-brand-light);
+  letter-spacing: 0.18em;
+}
+.income-bar {
+  background: linear-gradient(180deg, #285fe8, #14346f);
+  transition:
+    filter 160ms ease,
+    transform 160ms ease;
+}
+.income-bar:hover,
+.income-bar:focus-visible {
+  filter: brightness(1.15);
+  transform: translateY(-2px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .income-bar {
+    transition: none;
+  }
+  .income-bar:hover,
+  .income-bar:focus-visible {
+    transform: none;
+  }
+}
+
+@keyframes river-drift {
+  from {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(3%, 2%, 0) scale(1.06);
+  }
+}
+@keyframes ripple-flow {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 640px 210px;
+  }
+}
+
+/* Floating: surfaces sit above the water on layered shadows and rise a little when pointed at. */
+@layer utilities {
+  .glass {
+    transition:
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 260ms ease;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.9),
+      inset 0 -1px 0 rgb(12 28 53 / 0.05),
+      0 2px 4px rgb(12 28 53 / 0.06),
+      0 14px 24px -10px rgb(12 28 53 / 0.18),
+      0 34px 48px -26px rgb(12 28 53 / 0.26);
+  }
+  @media (hover: hover) {
+    .glass:hover {
+      transform: translateY(-3px);
+      box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.95),
+        inset 0 -1px 0 rgb(12 28 53 / 0.05),
+        0 4px 8px rgb(12 28 53 / 0.07),
+        0 22px 34px -12px rgb(12 28 53 / 0.22),
+        0 46px 60px -28px rgb(12 28 53 / 0.3);
+    }
+  }
+  button.bg-brand {
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.3),
+      0 8px 16px -8px rgb(40 95 232 / 0.7);
+    transition:
+      transform 160ms ease,
+      box-shadow 160ms ease;
+  }
+  button.bg-brand:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.35),
+      0 12px 20px -8px rgb(40 95 232 / 0.75);
+  }
+}
+
+/* The net-worth card: deep water with soft waves, lifted off the page. */
+.water-card {
+  isolation: isolate;
+  background: linear-gradient(145deg, #3a6df0 0%, #285fe8 38%, #17389a 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.35),
+    0 3px 6px rgb(12 28 53 / 0.1),
+    0 22px 34px -12px rgb(40 95 232 / 0.55),
+    0 44px 60px -28px rgb(12 28 53 / 0.4);
+}
+.water-card::before {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 55%;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 160' preserveAspectRatio='none'%3E%3Cpath d='M0 70 C80 40 160 100 260 70 S440 40 600 75 V160 H0Z' fill='white' fill-opacity='0.10'/%3E%3Cpath d='M0 105 C100 80 180 130 290 105 S470 80 600 110 V160 H0Z' fill='white' fill-opacity='0.10'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+}
+
+/* Waves: three layers of water at the foot of the window, sliding at different speeds. */
+html::before,
+html::after {
+  content: '';
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background-repeat: repeat-x;
+  background-position: 0 100%;
+}
+html::before {
+  z-index: -1;
+  height: 38vh;
+  min-height: 170px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 160' preserveAspectRatio='none'%3E%3Cpath d='M0 80 Q150 20 300 80 T600 80 T900 80 T1200 80 V160 H0Z' fill='%23285FE8' fill-opacity='0.3'/%3E%3C/svg%3E"), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 160' preserveAspectRatio='none'%3E%3Cpath d='M0 110 Q150 70 300 110 T600 110 T900 110 T1200 110 V160 H0Z' fill='%237EA5FF' fill-opacity='0.42'/%3E%3C/svg%3E");
+  background-size: 1500px 100%, 1100px 80%;
+  animation: wave-back 26s linear infinite;
+}
+html::after {
+  z-index: -1;
+  height: 24vh;
+  min-height: 120px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 160' preserveAspectRatio='none'%3E%3Cpath d='M0 95 Q150 45 300 95 T600 95 T900 95 T1200 95 V160 H0Z' fill='%23FFFFFF' fill-opacity='0.65'/%3E%3C/svg%3E");
+  background-size: 900px 100%;
+  animation: wave-front 17s linear infinite;
+}
+@keyframes wave-back {
+  from {
+    background-position: 0 100%, 0 100%;
+  }
+  to {
+    background-position: -1500px 100%, 1100px 100%;
+  }
+}
+@keyframes wave-front {
+  from {
+    background-position: 0 100%;
+  }
+  to {
+    background-position: 900px 100%;
+  }
+}
+
+/* The page frame behind the whole workspace. */
+.shell-frame {
+  border: 1px solid rgb(255 255 255 / 0.5);
+  background: rgb(255 255 255 / 0.1);
+}
+
+/* ---- Dark theme -------------------------------------------------------------------------------
+   Same tokens, new values: every component already reads colour from them, so the switch is only
+   this block. Surfaces are lifted navy (the brand ink, lightened), text is near-white, and the
+   brand blue keeps its fill while link text moves to the brand's own "blue on dark". */
+:root[data-theme='dark'] {
+  --color-cream: #0b1932;
+  --color-paper: rgb(22 43 82 / 0.62);
+  --color-sand: #1d3563;
+  --color-surface: #1a3260;
+  --color-line: #2c4778;
+  --color-ink: #e8eefa;
+  --color-muted: #a9b9d1;
+  --color-focus: #7ea5ff;
+  --color-turmeric: #d9a64a;
+  --color-ontime: #5fd39a;
+  --color-late: #ff8a6b;
+  --color-sage: #12383a;
+  --color-blush: #3a2230;
+  --color-bar: #4f8f9a;
+  background: linear-gradient(180deg, #060f21 0%, #0a1a36 45%, #0f2a5c 100%) fixed;
+}
+:root[data-theme='dark'] .text-brand {
+  color: var(--color-brand-light);
+}
+:root[data-theme='dark'] .shell-frame {
+  border-color: rgb(126 165 255 / 0.16);
+  background: rgb(8 18 40 / 0.35);
+}
+:root[data-theme='dark'] body::before {
+  background:
+    radial-gradient(55% 38% at 18% 26%, rgb(126 165 255 / 0.16), transparent 62%),
+    radial-gradient(48% 34% at 82% 18%, rgb(40 95 232 / 0.3), transparent 62%),
+    radial-gradient(64% 42% at 62% 92%, rgb(40 95 232 / 0.22), transparent 66%);
+}
+:root[data-theme='dark'] body::after {
+  opacity: 0.1;
+}
+:root[data-theme='dark'] html::before,
+:root[data-theme='dark']::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 160' preserveAspectRatio='none'%3E%3Cpath d='M0 80 Q150 20 300 80 T600 80 T900 80 T1200 80 V160 H0Z' fill='%23285FE8' fill-opacity='0.3'/%3E%3C/svg%3E"), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 160' preserveAspectRatio='none'%3E%3Cpath d='M0 110 Q150 70 300 110 T600 110 T900 110 T1200 110 V160 H0Z' fill='%2314346F' fill-opacity='0.7'/%3E%3C/svg%3E");
+}
+:root[data-theme='dark']::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 160' preserveAspectRatio='none'%3E%3Cpath d='M0 95 Q150 45 300 95 T600 95 T900 95 T1200 95 V160 H0Z' fill='%230C1C35' fill-opacity='0.7'/%3E%3C/svg%3E");
+}
+:root[data-theme='dark'] .glass {
+  background: linear-gradient(145deg, rgb(28 52 100 / 0.66), rgb(16 34 68 / 0.52));
+  border-color: rgb(126 165 255 / 0.18);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.08),
+    0 2px 4px rgb(0 0 0 / 0.25),
+    0 14px 24px -10px rgb(0 0 0 / 0.45),
+    0 34px 48px -26px rgb(0 0 0 / 0.5);
+}
+@media (hover: hover) {
+  :root[data-theme='dark'] .glass:hover {
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.1),
+      0 4px 8px rgb(0 0 0 / 0.28),
+      0 22px 34px -12px rgb(0 0 0 / 0.5),
+      0 46px 60px -28px rgb(0 0 0 / 0.55);
+  }
+}
+:root[data-theme='dark'] .glass-bar {
+  background: linear-gradient(145deg, rgb(24 46 90 / 0.78), rgb(14 30 62 / 0.62));
+  border-color: rgb(126 165 255 / 0.2);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.08),
+    0 12px 32px -18px rgb(0 0 0 / 0.6);
+}
+:root[data-theme='dark'] .surface-solid {
+  background: rgb(18 38 74 / 0.96);
+  border-color: rgb(126 165 255 / 0.22);
+  box-shadow: 0 18px 40px -16px rgb(0 0 0 / 0.7);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root[data-theme='dark'] .glass,
+  :root[data-theme='dark'] .glass-bar {
+    background: #12264a;
+  }
+  :root[data-theme='dark'] {
+    --color-paper: #14294d;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  :root[data-theme='dark'] .glass,
+  :root[data-theme='dark'] .glass-bar {
+    background: #12264a;
+  }
+  :root[data-theme='dark'] .bg-paper {
+    background-color: #14294d;
+  }
+}
+
+/* The logo: the symbol made for each background. */
+.logo-on-dark {
+  display: none;
+}
+:root[data-theme='dark'] .logo-on-light {
+  display: none;
+}
+:root[data-theme='dark'] .logo-on-dark {
+  display: block;
+}
+
+/* Motion for the section navigator and the theme switch. */
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes pop-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes theme-icon-in {
+  from {
+    opacity: 0;
+    transform: rotate(-70deg) scale(0.6);
+  }
+}
+.pop-panel {
+  animation: pop-in 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.pop-panel[data-closing] {
+  animation: pop-out 140ms ease-in both;
+}
+.pop-backdrop {
+  animation: fade-in 200ms ease both;
+}
+.pop-backdrop[data-closing] {
+  animation: fade-out 140ms ease-in both;
+}
+.theme-icon {
+  animation: theme-icon-in 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 420ms;
+  animation-timing-function: ease;
+}
+
+/* Everything that can be pressed answers smoothly: colour and shadow ease, and it dips slightly while held. */
+@layer base {
+  button,
+  a,
+  summary,
+  select,
+  input,
+  textarea,
+  [role='button'] {
+    transition-property: color, background-color, border-color, box-shadow, opacity, transform, filter;
+    transition-duration: 180ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  button:active:not(:disabled):not(.fixed),
+  a:active,
+  summary:active,
+  [role='button']:active {
+    transform: scale(0.97);
+    transition-duration: 90ms;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    transition-duration: 120ms;
+  }
+}
+
+/* A new page fades and rises into place. */
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.page-in {
+  animation: page-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+details > :not(summary) {
+  animation: fade-in 220ms ease both;
 }

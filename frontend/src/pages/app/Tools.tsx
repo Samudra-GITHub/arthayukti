@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { IncomeSection } from './Income'
 import { api } from '../../api/client'
 import type { AIConsultResponse, CSVImportResponse, IntentSuggestions } from '../../api/types'
 import { AmountField, CheckField, DateField, FormError, SelectField, TextField } from '../../components/forms'
@@ -332,37 +333,7 @@ export function TaxesPage() {
   )
 }
 
-export function ProfilePage() {
-  const t = useModulesCopy().profile
-  const x = useExtrasCopy().profileForm
-  return (
-    <>
-      <Unavailable title={t.title}>
-        <p>{t.body}</p>
-      </Unavailable>
-      <Panel title={t.nowTitle}>
-        <ul className="list-disc pl-5">
-          {t.now.map((line) => (
-            <li key={line}>{line}</li>
-          ))}
-        </ul>
-      </Panel>
-      <Panel title={x.title}>
-        <Notice tone="warn">{x.banner}</Notice>
-        <fieldset disabled className="grid gap-3 opacity-70 sm:grid-cols-2">
-          <DateField label={x.age} value="" onChange={() => undefined} />
-          <TextField label={x.arrangement} value="" onChange={() => undefined} />
-          <AmountField label={x.parents} value="" onChange={() => undefined} />
-          <AmountField label={x.medical} value="" onChange={() => undefined} />
-          <TextField label={x.children} value="" onChange={() => undefined} />
-          <TextField label={x.planned} value="" onChange={() => undefined} />
-          <TextField label={x.dependants} value="" onChange={() => undefined} />
-          <CheckField label={x.unsure} checked={false} onChange={() => undefined} />
-        </fieldset>
-      </Panel>
-    </>
-  )
-}
+export { ProfilePage } from './Profile'
 
 export function AdvisorPage() {
   const m = useModulesCopy()
@@ -446,7 +417,7 @@ export function AdvisorPage() {
         {analysis.binding_constraint ? <p>{x.rescue.binding}: <strong>{analysis.binding_constraint.replace(/_/g, ' ')}</strong></p> : null}
         <ul className="flex flex-col gap-3">
           {analysis.alternatives.map((item) => (
-            <li key={item.alternative_id} className={`flex flex-col gap-2 rounded-2xl border p-4 ${item.alternative_id === analysis.recommended_alternative_id ? 'border-brand bg-sage/60' : 'border-line bg-white/60'}`}>
+            <li key={item.alternative_id} className={`flex flex-col gap-2 rounded-2xl border p-4 ${item.alternative_id === analysis.recommended_alternative_id ? 'border-brand bg-sage/60' : 'border-line bg-surface/60'}`}>
               <p className="font-semibold">
                 {item.title}
                 {item.alternative_id === analysis.recommended_alternative_id ? <span className="ml-2 rounded-xl bg-brand px-3 py-1 text-[13px] text-white">{x.rescue.recommended}</span> : null}
@@ -535,13 +506,7 @@ export function FinancesPage({ navigate }: PageProps) {
   if (!plan) return <Notice>{m.common.needsPlan}</Notice>
   return (
     <>
-      <Panel title={t.income} aside={<button type="button" onClick={() => navigate('money-in')} className="text-[14px] font-semibold underline">{t.editAmounts}</button>}>
-        {plan.income_streams.length === 0 ? (
-          <p className="text-muted">{t.empty}</p>
-        ) : (
-          <Table caption={t.income} head={[m.common.name, m.common.value]} rows={plan.income_streams.map((s) => [s.ends_after ? `${s.label} (${t.ends(s.ends_after)})` : s.label, `${formatMoney(s.monthly_net)} ${m.common.perMonth}`])} />
-        )}
-      </Panel>
+      <IncomeSection />
       <Panel title={t.expenses} aside={<button type="button" onClick={() => navigate('money-out')} className="text-[14px] font-semibold underline">{t.editSpending}</button>}>
         {(plan.expenses ?? []).length === 0 ? (
           <p className="text-muted">{t.empty}</p>

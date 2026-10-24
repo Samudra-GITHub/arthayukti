@@ -28,6 +28,14 @@ import type {
   UserProfile,
   AIConsultResponse,
   EscalationCreateRequest,
+  IncomeProjectionResponse,
+  CalculatorCompareEntry,
+  CalculatorCompareResponse,
+  CalculatorConfig,
+  CalculatorResult,
+  CalculatorScenario,
+  CalculatorScenarioSummary,
+  MaturityDecisionNeeded,
   EscalationHistoryResponse,
   EscalationResponse,
   MarketQuoteResponse,
@@ -35,6 +43,13 @@ import type {
   RescueRequest,
   RescueResponse,
   TransactionCreateRequest,
+  HouseholdProfileResponse,
+  HouseholdProfileUpdateRequest,
+  RiskCapacityIndicatorResponse,
+  RiskAssessmentResponse,
+  RiskAssessmentSubmitRequest,
+  RiskAssessmentHistoryItem,
+  ConservativeComparisonResponse,
 } from './types'
 
 const BASE = import.meta.env.VITE_API_BASE_URL ?? ''
@@ -88,6 +103,7 @@ async function request<T>(path: string, init: RequestInit): Promise<T> {
     if (response.status === 401 && accessToken && code === 'unauthorized') onUnauthorized?.()
     throw new ApiFailure(code, message, response.status)
   }
+  if (response.status === 204) return undefined as T
   return (await response.json()) as T
 }
 
@@ -102,6 +118,11 @@ function send<T>(method: string, path: string, body: unknown, signal?: AbortSign
 
 const post = <T>(path: string, body: unknown, signal?: AbortSignal) => send<T>('POST', path, body, signal)
 const get = <T>(path: string, signal?: AbortSignal) => request<T>(path, { signal })
+
+const incomeBody = (source: { planId: string } | { plan: Plan }, horizonMonths: number) =>
+  'planId' in source
+    ? { plan_id: source.planId, horizon_months: horizonMonths }
+    : { plan: source.plan, horizon_months: horizonMonths }
 
 export const api = {
   health: (signal?: AbortSignal) => get<{ status: string }>('/health', signal),
@@ -155,6 +176,44 @@ export const api = {
   consult: (plan: Plan, scenario: Scenario | undefined, prompt: string) =>
     post<AIConsultResponse>('/ai/consult', { plan, scenario, user_prompt: prompt }),
   rescue: (body: RescueRequest) => post<RescueResponse>('/rescue/analyze', body),
+  incomeProjection: (source: { planId: string } | { plan: Plan }, horizonMonths: number, signal?: AbortSignal) =>
+    post<IncomeProjectionResponse>('/income/projection', incomeBody(source, horizonMonths), signal),
+  incomeProjectionCsv: async (source: { planId: string } | { plan: Plan }, horizonMonths: number): Promise<Blob> => {
+    const headers = new Headers({ 'Content-Type': 'application/json' })
+    if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`)
+    let response: Response
+    try {
+      response = await fetch(`${PREFIX}/income/projection/csv`, { method: 'POST', headers, body: JSON.stringify(incomeBody(source, horizonMonths)) })
+    } catch {
+      throw new ApiFailure('offline', 'The service is not reachable.')
+    }
+    if (!response.ok) throw new ApiFailure('http_error', `Export failed (${response.status}).`, response.status)
+    return response.blob()
+  },
+  // Investment calculators
+  calcRun: (config: CalculatorConfig, signal?: AbortSignal) => post<CalculatorResult>('/calculators/run', config, signal),
+  calcMaturityCheck: (config: CalculatorConfig, signal?: AbortSignal) =>
+    post<MaturityDecisionNeeded[]>('/calculators/maturity-check', config, signal),
+  calcExport: async (config: CalculatorConfig): Promise<Blob> => {
+    const headers = new Headers({ 'Content-Type': 'application/json' })
+    if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`)
+    let response: Response
+    try {
+      response = await fetch(`${PREFIX}/calculators/export`, { method: 'POST', headers, body: JSON.stringify(config) })
+    } catch {
+      throw new ApiFailure('offline', 'The service is not reachable.')
+    }
+    if (!response.ok) throw new ApiFailure('http_error', `Export failed (${response.status}).`, response.status)
+    return response.blob()
+  },
+  calcCompare: (entries: CalculatorCompareEntry[], commonDate: string | null, signal?: AbortSignal) =>
+    post<CalculatorCompareResponse>('/calculators/compare', { entries, ...(commonDate ? { common_date: commonDate } : {}) }, signal),
+  calcScenarios: (signal?: AbortSignal) => get<CalculatorScenarioSummary[]>('/calculators/scenarios', signal),
+  calcScenario: (id: string, signal?: AbortSignal) => get<CalculatorScenario>(`/calculators/scenarios/${id}`, signal),
+  calcCreateScenario: (name: string, config: CalculatorConfig) => post<CalculatorScenario>('/calculators/scenarios', { name, config }),
+  calcUpdateScenario: (id: string, name: string, config: CalculatorConfig) =>
+    send<CalculatorScenario>('PUT', `/calculators/scenarios/${id}`, { name, config }),
+  calcDeleteScenario: (id: string) => request<void>(`/calculators/scenarios/${id}`, { method: 'DELETE' }),
   marketQuote: (symbol: string, signal?: AbortSignal) =>
     get<MarketQuoteResponse>(`/market/quotes/${encodeURIComponent(symbol)}`, signal),
   createTransaction: (body: TransactionCreateRequest) => post<TransactionResponse>('/financials/transactions', body),
@@ -173,4 +232,28 @@ export const api = {
     get<EscalationHistoryResponse[]>(`/insurance/escalations/${id}/history`, signal),
   processEscalation: (id: string, body: ProcessEscalationEventRequest) =>
     post<EscalationHistoryResponse>(`/insurance/escalations/${id}/process-event`, body),
+
+  // Household Profile & Life Context
+  getHouseholdProfile: (signal?: AbortSignal) => get<HouseholdProfileResponse>('/household/profile', signal),
+  updateHouseholdProfile: (body: HouseholdProfileUpdateRequest) =>
+    send<HouseholdProfileResponse>('PUT', '/household/profile', body),
+  getRiskCapacity: (signal?: AbortSignal) =>
+    get<RiskCapacityIndicatorResponse>('/household/risk-capacity', signal),
+
+  // Guided Risk Assessment
+  submitRiskAssessment: (body: RiskAssessmentSubmitRequest) =>
+    post<RiskAssessmentResponse>('/risk/assessment', body),
+  getLatestRiskAssessment: (signal?: AbortSignal) =>
+    get<RiskAssessmentResponse>('/risk/assessment/latest', signal),
+  getRiskAssessmentHistory: (signal?: AbortSignal) =>
+    get<RiskAssessmentHistoryItem[]>('/risk/assessment/history', signal),
+
+  // Recommendations: Original vs More Conservative
+  compareRecommendations: (source: { planId: string } | { plan: Plan }, scenario?: Scenario, signal?: AbortSignal) =>
+    post<ConservativeComparisonResponse>(
+      '/recommendations/conservative-comparison',
+      'planId' in source ? { plan_id: source.planId, scenario } : { plan: source.plan, scenario },
+      signal,
+    ),
 }
+

@@ -48,7 +48,7 @@ export function QuoteLookup() {
       </form>
       {look.failure ? <FormError>{t.failed}</FormError> : null}
       {quote ? (
-        <div role="status" className="flex flex-col gap-3 rounded-2xl bg-white/60 p-4">
+        <div role="status" className="flex flex-col gap-3 rounded-2xl bg-surface/60 p-4">
           <p className="flex flex-wrap items-center gap-2 font-semibold">
             <span className="font-figures">{quote.symbol}</span>
             <span className={`rounded-xl px-3 py-1 text-[13px] ${quote.status === 'fresh' ? 'bg-sage text-ontime' : quote.status === 'stale' ? 'bg-sand' : 'bg-blush text-late'}`}>{label}</span>

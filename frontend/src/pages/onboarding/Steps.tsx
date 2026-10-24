@@ -6,6 +6,7 @@ import { FREQUENCIES, type Frequency } from '../../lib/frequency'
 import { formatMoney, isNegative } from '../../lib/money'
 import { addMonths } from '../../lib/months'
 import {
+  INCOME_FREQUENCIES,
   LIMITS,
   expenseIssues,
   goalIssues,
@@ -66,7 +67,7 @@ export function WelcomeStep({ c }: { c: OnboardingCopy }) {
     <Section title={c.welcome.title} why={c.welcome.body}>
       <ul className="grid gap-2 sm:grid-cols-2">
         {c.welcome.willAsk.map((item, index) => (
-          <li key={item} className="flex items-center gap-3 rounded-xl border border-line bg-paper px-4 py-3">
+          <li key={item} className="flex items-center gap-3 rounded-xl glass px-4 py-3">
             <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand text-[13px] font-semibold text-white">{index + 1}</span>
             {item}
           </li>
@@ -89,16 +90,14 @@ export function IncomeStep({ draft, setDraft, tried, c }: StepProps) {
   const add = () =>
     setDraft((d) => ({
       ...d,
-      income: [...d.income, { id: uid('inc'), label: '', amount: '', frequency: 'monthly', endsAfter: '', include: true } satisfies IncomeDraft],
+      income: [...d.income, { id: uid('inc'), label: '', amount: '', frequency: 'monthly', endYear: '', growthPercent: '', include: true } satisfies IncomeDraft],
     }))
   return (
     <Section title={t.title} why={t.why}>
       <Repeater
         items={draft.income}
-        max={LIMITS.income}
         addLabel={t.add}
         empty={t.empty}
-        limitNote={t.limit}
         removeLabel={(index) => c.addRemove.remove(`${t.removeItem} ${index + 1}`)}
         confirmRemove={c.addRemove.confirm}
         confirmYes={c.addRemove.yes}
@@ -112,8 +111,9 @@ export function IncomeStep({ draft, setDraft, tried, c }: StepProps) {
             <div className="grid gap-3 sm:grid-cols-2">
               <TextField label={t.source} placeholder={t.sourcePlaceholder} value={row.label} onChange={(label) => set({ label })} maxLength={80} error={problem(c, issues, 'label')} />
               <AmountField label={t.amount} value={row.amount} onChange={(amount) => set({ amount })} error={problem(c, issues, 'amount')} />
-              <SelectField label={t.frequency} value={row.frequency} onChange={(frequency: Frequency) => set({ frequency })} options={frequencyOptions(c)} />
-              <MonthField label={t.ends} hint={t.endsHint} value={row.endsAfter} onChange={(endsAfter) => set({ endsAfter })} error={problem(c, issues, 'past') && c.errors.endPast} />
+              <SelectField label={t.frequency} value={row.frequency} onChange={(frequency: Frequency) => set({ frequency })} options={INCOME_FREQUENCIES.map((value) => ({ value, label: c.frequency[value] }))} />
+              <TextField label={t.ends} hint={t.endsHint} value={row.endYear} onChange={(endYear) => set({ endYear })} maxLength={4} placeholder={draft.asOf.slice(0, 4)} error={issues.includes('past') ? c.errors.endPast : null} />
+              <TextField label={t.growth} hint={t.growthHint} value={row.growthPercent} onChange={(growthPercent) => set({ growthPercent })} maxLength={5} error={issues.includes('range') ? c.errors.growth : null} />
               <div className="sm:col-span-2">
                 <CheckField label={t.include} checked={row.include} onChange={(include) => set({ include })} />
               </div>
@@ -188,7 +188,7 @@ export function ExpensesStep({ draft, setDraft, tried, c }: StepProps) {
         }}
       />
       <Note>{t.note}</Note>
-      <dl className="grid gap-2 rounded-2xl border border-line bg-paper p-4 sm:grid-cols-2" aria-live="polite">
+      <dl className="grid gap-2 rounded-2xl glass p-4 sm:grid-cols-2" aria-live="polite">
         {(
           [
             [t.totals.income, totals.income],
@@ -246,7 +246,7 @@ export function CashStep({ draft, setDraft, tried, c }: StepProps) {
           )
         }}
       />
-      <div className="flex flex-col gap-3 rounded-2xl border border-line bg-paper p-4">
+      <div className="flex flex-col gap-3 rounded-2xl glass p-4">
         <h3 className="font-semibold">{t.emergencyTitle}</h3>
         <TextField
           label={t.months}

@@ -134,7 +134,7 @@ export function CoverGrowth({ policies, onChanged }: { policies: PolicyResponse[
       </form>
 
       {rules.map((rule) => (
-        <div key={rule.id} className="flex flex-col gap-3 rounded-2xl bg-white/60 p-4">
+        <div key={rule.id} className="flex flex-col gap-3 rounded-2xl bg-surface/60 p-4">
           <p className="font-semibold">
             {x.openRule}: {x.types[rule.escalation_type as keyof typeof x.types] ?? rule.escalation_type}
           </p>

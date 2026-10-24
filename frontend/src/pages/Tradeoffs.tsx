@@ -351,7 +351,7 @@ function ContextStrip({
   const { text } = useStore()
   const copy = text.tradeoffs
   return (
-    <div className="flex flex-col gap-1 rounded-2xl border border-line bg-paper px-4 py-3">
+    <div className="flex flex-col gap-1 rounded-2xl glass px-4 py-3">
       <p className="flex flex-wrap items-center gap-x-4 gap-y-1">
         <span className="font-semibold">{label}</span>
         {surplus !== undefined ? <span>{copy.leftEachMonth(formatMoney(surplus))}</span> : null}

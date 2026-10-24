@@ -2,30 +2,31 @@ import type { ReactNode } from 'react'
 import { ArrowLeft, ArrowRight, Volume2, type LucideIcon } from 'lucide-react'
 import { useStore } from '../state/useStore'
 
-export function LanguageControl() {
+export function LanguageControl({ compact = false }: { compact?: boolean }) {
   const { language, setLanguage } = useStore()
-  const option = (value: 'en' | 'hi', label: string) => (
+  const option = (value: 'en' | 'hi', label: string, short: string) => (
     <button
       type="button"
       onClick={() => setLanguage(value)}
       aria-pressed={language === value}
       lang={value}
-      className={`min-h-10 rounded-lg px-3 text-[16px] font-semibold ${
-        language === value ? 'bg-paper' : 'bg-sand'
+      aria-label={label}
+      className={`${compact ? 'min-h-8 px-2.5 text-[13px]' : 'min-h-10 px-3 text-[16px]'} rounded-lg font-semibold ${
+        language === value ? "bg-surface shadow-sm" : "bg-transparent"
       }`}
     >
-      {label}
+      {compact ? <span aria-hidden="true"><span className="sm:hidden">{short}</span><span className="hidden sm:inline">{label}</span></span> : label}
     </button>
   )
   return (
-    <div className="flex items-center rounded-xl bg-sand p-1" role="group">
-      {option('en', 'English')}
-      {option('hi', 'हिन्दी')}
+    <div className="glass flex items-center rounded-xl p-1" role="group">
+      {option('en', 'English', 'EN')}
+      {option('hi', 'हिन्दी', 'हि')}
     </div>
   )
 }
 
-export function ListenButton({ speak }: { speak: string }) {
+export function ListenButton({ speak, compact = false }: { speak: string; compact?: boolean }) {
   const { text } = useStore()
   if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null
 
@@ -41,10 +42,16 @@ export function ListenButton({ speak }: { speak: string }) {
     <button
       type="button"
       onClick={onClick}
-      className="flex min-h-12 items-center gap-2 rounded-xl border border-line px-3 text-[16px]"
+      aria-label={compact ? text.listen : undefined}
+      title={compact ? text.listen : undefined}
+      className={
+        compact
+          ? 'flex size-10 shrink-0 items-center justify-center rounded-xl border border-line bg-surface/70 hover:bg-surface'
+          : 'flex min-h-12 items-center gap-2 rounded-xl border border-line px-3 text-[16px]'
+      }
     >
-      <Volume2 size={20} aria-hidden="true" />
-      <span>{text.listen}</span>
+      <Volume2 size={compact ? 18 : 20} aria-hidden="true" />
+      {compact ? null : <span>{text.listen}</span>}
     </button>
   )
 }

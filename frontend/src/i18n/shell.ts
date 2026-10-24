@@ -13,6 +13,7 @@ export interface ShellCopy {
     debts: string
     insurance: string
     taxes: string
+    calculators: string
     outlook: string
     advisor: string
     import: string
@@ -47,6 +48,9 @@ export interface ShellCopy {
     saving: string
     saveFailed: string
     save: string
+    themeToLight: string
+    themeToDark: string
+    onThisPage: string
     skip: string
   }
   auth: {
@@ -111,6 +115,7 @@ export const shellCopy: Record<'en' | 'hi', ShellCopy> = {
       debts: 'Debt & liabilities',
       insurance: 'Insurance',
       taxes: 'Taxes',
+      calculators: 'Calculators',
       outlook: 'Financial outlook',
       advisor: 'AI advisor',
       import: 'Import & transactions',
@@ -140,11 +145,14 @@ export const shellCopy: Record<'en' | 'hi', ShellCopy> = {
       account: 'Account',
       signOut: 'Sign out',
       settings: 'Settings',
-      saved: 'All changes saved',
+      saved: 'Saved',
       unsaved: 'Unsaved changes',
       saving: 'Saving…',
       saveFailed: 'Could not save. Your changes are still here.',
       save: 'Save changes',
+      themeToLight: 'Switch to light theme',
+      themeToDark: 'Switch to dark theme',
+      onThisPage: 'On this page',
       skip: 'Skip to content',
     },
     auth: {
@@ -213,6 +221,7 @@ export const shellCopy: Record<'en' | 'hi', ShellCopy> = {
       debts: 'कर्ज़ और देनदारियाँ',
       insurance: 'बीमा',
       taxes: 'कर',
+      calculators: 'कैलकुलेटर',
       outlook: 'आर्थिक अनुमान',
       advisor: 'AI सलाहकार',
       import: 'आयात और लेन-देन',
@@ -242,11 +251,14 @@ export const shellCopy: Record<'en' | 'hi', ShellCopy> = {
       account: 'खाता',
       signOut: 'साइन आउट',
       settings: 'सेटिंग',
-      saved: 'सारे बदलाव सेव हैं',
+      saved: 'सेव हो गया',
       unsaved: 'बदलाव सेव नहीं हुए',
       saving: 'सेव हो रहा है…',
       saveFailed: 'सेव नहीं हो सका। आपके बदलाव यहीं हैं।',
       save: 'बदलाव सेव करें',
+      themeToLight: 'लाइट थीम चुनें',
+      themeToDark: 'डार्क थीम चुनें',
+      onThisPage: 'इस पेज पर',
       skip: 'सीधे सामग्री पर जाएँ',
     },
     auth: {

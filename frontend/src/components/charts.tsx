@@ -35,7 +35,7 @@ export function HatchedBars({ points, summary }: { points: Point[]; summary: str
               <div
                 aria-hidden="true"
                 style={{ height: `${height}%` }}
-                className={`hatch w-full rounded-lg ${negative ? 'bg-late/70' : solid ? 'bg-brand' : 'bg-brand-soft'}`}
+                className={`w-full rounded-lg ${negative ? 'bg-late/70' : solid ? 'bg-brand' : 'bg-brand/25'}`}
               />
             </div>
           )

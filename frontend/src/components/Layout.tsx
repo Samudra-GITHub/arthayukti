@@ -7,6 +7,7 @@ import { useShellCopy } from '../state/useShellCopy'
 import { useStore } from '../state/useStore'
 import { AppShell } from './AppShell'
 import { LanguageControl, ListenButton } from './Controls'
+import { ThemeToggle } from './ThemeToggle'
 import { Wordmark } from './Wordmark'
 
 interface LayoutProps {
@@ -45,7 +46,7 @@ export function Layout({ route, navigate, speak, children }: LayoutProps) {
       <header className="stage border-b border-night-line px-4 py-3 sm:px-8 lg:px-12">
         <div className="mx-auto flex max-w-[1180px] flex-wrap items-center gap-x-8 gap-y-2">
           <button type="button" onClick={() => navigate('home')} aria-label="ArthaYukti">
-            <Wordmark />
+            <Wordmark surface="dark" />
           </button>
           {plan ? (
             <nav aria-label={text.nav.label} className="hidden flex-1 items-center gap-1 md:flex">
@@ -77,6 +78,7 @@ export function Layout({ route, navigate, speak, children }: LayoutProps) {
               {shell.auth.createAccount}
             </button>
             <LanguageControl />
+            <ThemeToggle light={shell.header.themeToLight} dark={shell.header.themeToDark} />
             <ListenButton speak={speak} />
           </div>
         </div>

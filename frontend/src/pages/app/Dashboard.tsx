@@ -4,6 +4,8 @@ import type { ProjectionResult } from '../../api/types'
 import { AreaLine, HatchedBars } from '../../components/charts'
 import { MonthlyBars } from '../../components/MonthlyBars'
 import { Money } from '../../components/Money'
+import { PageActions } from '../../components/PageActions'
+import { SectionNavigator } from '../../components/SectionNavigator'
 import { Loaded, Notice, Panel, Stat, Table } from '../../components/panel'
 import { addMoney, atLeastZero, formatMoney, isNegative, subMoney } from '../../lib/money'
 import { monthLabel, monthLabelLong } from '../../lib/months'
@@ -40,7 +42,7 @@ function Charts({ result }: { result: ProjectionResult }) {
         id="dash-cashflow"
         title={d.barsTitle}
         aside={
-          <div role="group" aria-label={d.ranges.label} className="flex gap-1 rounded-xl bg-white/60 p-1 text-[14px]">
+          <div role="group" aria-label={d.ranges.label} className="flex gap-1 rounded-xl bg-surface/60 p-1 text-[14px]">
             {(['12', '24', 'all'] as const).map((value) => (
               <button
                 key={value}
@@ -97,17 +99,12 @@ export function DashboardPage({ navigate }: PageProps) {
 
   return (
     <>
-      <nav aria-label={d.jump} className="flex flex-wrap items-center gap-2 text-[14px]">
-        <span className="text-muted">{d.jump}:</span>
-        {SECTIONS.map((id) => (
-          <a key={id} href={`#dash-${id}`} className="glass rounded-xl px-3 py-1 hover:bg-white">
-            {d.sections[id]}
-          </a>
-        ))}
-      </nav>
+      <PageActions>
+        <SectionNavigator label={d.jump} sections={SECTIONS.map((id) => ({ id: `dash-${id}`, label: d.sections[id] }))} />
+      </PageActions>
 
       <div className="grid gap-5 lg:grid-cols-12">
-        <section id="dash-summary" aria-labelledby="dash-summary-title" className="hatch relative flex min-w-0 scroll-mt-24 flex-col justify-between gap-6 overflow-hidden rounded-3xl bg-brand p-6 text-white shadow-[0_24px_50px_-24px_var(--color-brand)] lg:col-span-5">
+        <section id="dash-summary" aria-labelledby="dash-summary-title" className="water-card relative flex min-w-0 scroll-mt-24 flex-col justify-between gap-6 overflow-hidden rounded-3xl p-6 text-white lg:col-span-5">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 id="dash-summary-title" className="font-display text-[20px] font-bold tracking-tight">
               {d.sections.summary}
@@ -119,7 +116,7 @@ export function DashboardPage({ navigate }: PageProps) {
               <>
                 <div>
                   <p className="text-[14px] text-white/75">{d.netWorth}</p>
-                  <p className="font-figures text-[40px] leading-tight font-semibold sm:text-[46px]">
+                  <p className="font-figures text-[34px] leading-tight font-semibold sm:text-[40px]">
                     <Money amount={w.net_worth} tone="light" />
                   </p>
                 </div>

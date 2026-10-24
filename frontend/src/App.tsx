@@ -31,6 +31,7 @@ import {
 } from './pages/app/Outlook'
 import { AssetsPage, DebtsPage, InsurancePage } from './pages/app/Records'
 import { RescuePage } from './pages/app/Rescue'
+import { CalculatorsPage } from './pages/app/Calculators'
 import { AdvisorPage, AlertsPage, FinancesPage, GoalsPage, ImportPage, ProfilePage, SettingsPage, TaxesPage } from './pages/app/Tools'
 import type { PageProps } from './pages/types'
 import { StoreProvider } from './state/store'
@@ -109,7 +110,7 @@ function Screens() {
     case 'dashboard':
       return <AppPage route={route} navigate={navigate}><DashboardPage navigate={navigate} /></AppPage>
     case 'profile':
-      return <AppPage route={route} navigate={navigate}><ProfilePage /></AppPage>
+      return <AppPage route={route} navigate={navigate}><ProfilePage navigate={navigate} /></AppPage>
     case 'finances':
       return <AppPage route={route} navigate={navigate}><FinancesPage navigate={navigate} /></AppPage>
     case 'goals':
@@ -122,6 +123,8 @@ function Screens() {
       return <AppPage route={route} navigate={navigate}><InsurancePage /></AppPage>
     case 'taxes':
       return <AppPage route={route} navigate={navigate}><TaxesPage /></AppPage>
+    case 'calculators':
+      return <AppPage route={route} navigate={navigate}><CalculatorsPage /></AppPage>
     case 'outlook-household':
       return <AppPage route={route} navigate={navigate}><HouseholdTrajectoryPage /></AppPage>
     case 'outlook-investment':

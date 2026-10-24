@@ -36,7 +36,7 @@ function List({ title, items }: { title: string; items: string[] }) {
 function Option({ item, recommended }: { item: RescueAlternativeItem; recommended: boolean }) {
   const t = useExtrasCopy().rescue
   return (
-    <li className={`flex flex-col gap-3 rounded-2xl border p-4 ${recommended ? 'border-brand bg-sage/60' : 'border-line bg-white/60'}`}>
+    <li className={`flex flex-col gap-3 rounded-2xl border p-4 ${recommended ? 'border-brand bg-sage/60' : 'border-line bg-surface/60'}`}>
       <div className="flex flex-wrap items-center gap-2">
         <h3 className="font-display text-[18px] font-bold">{item.title}</h3>
         {recommended ? <span className="rounded-xl bg-brand px-3 py-1 text-[13px] font-semibold text-white">{t.recommended}</span> : null}

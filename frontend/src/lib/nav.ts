@@ -1,6 +1,7 @@
 import {
   Bell,
   Bot,
+  Calculator,
   Building2,
   ChartLine,
   FileUp,
@@ -35,6 +36,7 @@ export const NAV_BEFORE_OUTLOOK: NavItem[] = [
   { route: 'debts', key: 'debts', icon: Landmark, covers: [] },
   { route: 'insurance', key: 'insurance', icon: ShieldCheck, covers: [] },
   { route: 'taxes', key: 'taxes', icon: Receipt, covers: [] },
+  { route: 'calculators', key: 'calculators', icon: Calculator, covers: [] },
 ]
 
 export const OUTLOOK_ITEMS: { route: Route; key: keyof ShellCopy['nav']['outlookItems'] }[] = [

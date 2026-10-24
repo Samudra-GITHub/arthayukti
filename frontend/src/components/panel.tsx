@@ -4,7 +4,7 @@ import type { Remote } from '../state/useRemote'
 
 export function Panel({ id, title, aside, children }: { id?: string; title?: string; aside?: ReactNode; children: ReactNode }) {
   return (
-    <section id={id} aria-labelledby={id ? `${id}-title` : undefined} className="glass flex scroll-mt-24 flex-col gap-4 rounded-3xl p-5">
+    <section id={id} aria-labelledby={id ? `${id}-title` : undefined} tabIndex={id ? -1 : undefined} className="glass flex scroll-mt-24 flex-col gap-4 rounded-3xl p-5 outline-none">
       {title || aside ? (
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           {title ? (
