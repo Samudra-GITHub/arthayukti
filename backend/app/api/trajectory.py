@@ -17,6 +17,7 @@ from sqlalchemy.orm import Session
 from app.api.common import AUTH_RESPONSES, VALIDATION_RESPONSES
 from app.api.deps import get_current_user, get_db
 from app.api.ledger import _replay, _rows, _valuation
+from app.api.spending import load_spending
 from app.db.models import (
     AssetInvestment,
     FinancialAccount,
@@ -267,7 +268,27 @@ def _build_inputs(req: TrajectoryRequest, plan: Plan, db: Session, user: User) -
             )
         planned.append(PlannedEventIn(event.id, event.month, event.kind, event.label, event.amount, event.charges, event.account_id, event.maturity_amount))
 
-    in_spending = contains_insurance_spending(plan) if req.premiums_in_spending == "auto" else req.premiums_in_spending == "yes"
+    spending_override = None
+    spending_has_premiums = False
+    if req.spending_source == "expenditure_plans":
+        loaded = load_spending(db, user, plan.as_of, months)
+        if loaded is None:
+            raise ApiError(422, "no_expenditure_plans", "You have no active plans on the Expenditure page. Add one, or use the spending in your plan.")
+        spending_override, spending_has_premiums = loaded
+        notes.append(
+            {
+                "code": "spending_from_expenditure_plans",
+                "severity": "info",
+                "message": "Planned spending is read from your Expenditure plans (their own inflation and scheduled changes), not from the expense lines in your plan.",
+                "component": "spending",
+                "record_id": None,
+                "edit_route": "outlook-expenditure",
+            }
+        )
+    if req.premiums_in_spending == "auto":
+        in_spending = spending_has_premiums if spending_override is not None else contains_insurance_spending(plan)
+    else:
+        in_spending = req.premiums_in_spending == "yes"
     return Inputs(
         plan=plan,
         horizon_months=months,
@@ -288,6 +309,8 @@ def _build_inputs(req: TrajectoryRequest, plan: Plan, db: Session, user: User) -
         linked_commitments=linked,
         reference_age=reference_age,
         notes=notes,
+        spending_override=spending_override,
+        inflation_annual=req.inflation_annual,
     )
 
 
@@ -296,6 +319,7 @@ def snapshot_hash(inp: Inputs) -> str:
     always give the same hash."""
     material = {
         "model": MODEL_VERSION,
+        "inflation": None if inp.inflation_annual is None else str(inp.inflation_annual),
         "plan": inp.plan.model_dump(mode="json"),
         "horizon": inp.horizon_months,
         "view": inp.view,

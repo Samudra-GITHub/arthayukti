@@ -327,3 +327,30 @@ def test_deleting_the_account_removes_assessments_and_profile():
     assert db.query(HouseholdProfile).filter(HouseholdProfile.user_id == me).count() == 0
     # Phone number is not a login identifier.
     assert c.post("/api/v1/auth/login", json={"email": "+91 98765 43210", "password": "x" * 12}).status_code in (401, 422)
+
+
+def test_employment_other_can_be_described_only_while_the_status_is_other():
+    c = authed_client("carol")
+    refused = c.put("/api/v1/household/profile", json={"employment_status": "salaried", "employment_other": "Freelance"})
+    assert refused.status_code == 422 and refused.json()["error"]["code"] == "employment_other_not_applicable"
+    ok = c.put("/api/v1/household/profile", json={"employment_status": "other", "employment_other": "  Seasonal farm work  "})
+    assert ok.status_code == 200 and ok.json()["employment_other"] == "Seasonal farm work"
+    assert c.put("/api/v1/household/profile", json={"employment_other": "x" * 101}).status_code == 422
+    changed = c.put("/api/v1/household/profile", json={"employment_status": "salaried"})
+    assert changed.json()["employment_other"] is None  # the detail does not outlive "other"
+    assert c.get("/api/v1/household/profile").json()["employment_other"] is None
+
+
+def test_an_assessment_is_marked_when_the_profile_changes_after_it():
+    c = authed_client("dave")
+    c.put("/api/v1/household/profile", json={"employment_status": "salaried", "financial_dependants": "one"})
+    answers = {"loss_reaction": "hold", "safety_growth": "balance", "time_horizon": "long"}
+    first = c.post("/api/v1/risk/assessment", json=answers)
+    assert first.status_code == 200 and first.json()["profile_changed_since"] is False
+    assert c.get("/api/v1/risk/assessment/latest").json()["profile_changed_since"] is False
+    c.put("/api/v1/household/profile", json={"financial_dependants": "three"})
+    latest = c.get("/api/v1/risk/assessment/latest").json()
+    assert latest["profile_changed_since"] is True
+    assert latest["id"] == first.json()["id"] and latest["risk_tolerance"] == first.json()["risk_tolerance"]  # nothing rewritten
+    c.post("/api/v1/risk/assessment", json=answers)  # retaking clears the mark
+    assert c.get("/api/v1/risk/assessment/latest").json()["profile_changed_since"] is False

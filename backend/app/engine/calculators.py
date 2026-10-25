@@ -96,14 +96,14 @@ class Series:
 def simulate(inv: CalcInvestment, months: int) -> Series:
     schedule = instalment_schedule(inv)
     growth_months = inv.growth_years * 12
-    monthly = inv.annual_growth / TWELVE
+    monthly = _monthly_rate(inv.annual_growth, inv.rate_convention)
     after = inv.after_maturity
     after_factor = ONE
     if after is not None:
         if after.action == "continue":
             after_factor = ONE + monthly
         elif after.action == "reinvest":
-            after_factor = ONE + after.rate / TWELVE  # type: ignore[operator]
+            after_factor = ONE + _monthly_rate(after.rate, inv.rate_convention)  # type: ignore[arg-type]
     balance = inv.lump_sum
     contributions = [inv.lump_sum]
     balances = [balance]
@@ -117,8 +117,19 @@ def simulate(inv: CalcInvestment, months: int) -> Series:
     return Series(contributions, balances, {m: a for m, a in schedule.items() if m <= months})
 
 
-def _deflator(rate: Decimal, months: int) -> Decimal:
-    return (ONE + rate / TWELVE) ** months if rate > 0 else ONE
+def _monthly_rate(rate: Decimal, convention: str) -> Decimal:
+    """The rate for one month. Effective annual: (1 + rate)^(1/12) - 1, so twelve months compound to exactly `rate`."""
+    if convention == "effective_annual":
+        return (ONE + rate) ** (ONE / TWELVE) - ONE
+    return rate / TWELVE
+
+
+def _deflator(rate: Decimal, months: int, convention: str = "nominal_monthly") -> Decimal:
+    if rate <= 0:
+        return ONE
+    if convention == "effective_annual":
+        return (ONE + rate) ** (Decimal(months) / TWELVE)
+    return (ONE + rate / TWELVE) ** months
 
 
 def _valuation_months(inv: CalcInvestment, config: CalculatorConfig) -> int:
@@ -195,7 +206,7 @@ def _annual_rows(inv: CalcInvestment, series: Series, months: int) -> list[CalcA
                 closing=closing,
                 cumulative_invested=invested,
                 cumulative_gain=closing - invested,
-                inflation_adjusted_closing=quantize(closing / _deflator(inv.inflation_rate, last)),
+                inflation_adjusted_closing=quantize(closing / _deflator(inv.inflation_rate, last, inv.rate_convention)),
             )
         )
     return rows
@@ -228,14 +239,15 @@ def _value_investment(
     principal = sum(series.contributions, ZERO)
     value = series.balances[months]
     gain = value - principal
-    tax = quantize(max(gain, ZERO) * inv.tax_rate)
+    taxable = max(value, ZERO) if inv.tax_method == "total_amount" else max(gain, ZERO)
+    tax = quantize(taxable * inv.tax_rate)
     post_tax = value - tax
     deflate_months = (
         months
         if config.mode == "individual"
         else months + (month_number(inv.start_month) - base_start)
     )
-    real = quantize(post_tax / _deflator(inv.inflation_rate, deflate_months))
+    real = quantize(post_tax / _deflator(inv.inflation_rate, deflate_months, inv.rate_convention))
     return CalcInvestmentResult(
         id=inv.id,
         name=inv.name,

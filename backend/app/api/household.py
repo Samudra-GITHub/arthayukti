@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from app.api.common import AUTH_RESPONSES
 from app.api.deps import get_current_user, get_db
 from app.db.models import FinancialAccount, HouseholdProfile, Liability, User
+from app.errors import ApiError
 from app.schemas.household import (
     DependantDetail,
     HouseholdProfileResponse,
@@ -125,6 +126,7 @@ def _to_profile_response(p: HouseholdProfile | None, user: User | None = None) -
         supports_father=p.supports_father,
         housing_status=p.housing_status,
         employment_status=p.employment_status,
+        employment_other=p.employment_other,
         expected_retirement_age=p.expected_retirement_age,
         financial_dependants=p.financial_dependants,
         debt_types=debt_types,
@@ -194,6 +196,12 @@ def update_household_profile(
         profile.housing_status = req.housing_status
     if req.employment_status is not None:
         profile.employment_status = req.employment_status
+        if req.employment_status != "other":
+            profile.employment_other = None  # the detail only belongs to 'other'
+    if req.employment_other is not None:
+        if profile.employment_status != "other":
+            raise ApiError(422, "employment_other_not_applicable", "Describe your work only when employment status is 'other'.")
+        profile.employment_other = req.employment_other.strip() or None
     if req.expected_retirement_age is not None:
         profile.expected_retirement_age = req.expected_retirement_age
 

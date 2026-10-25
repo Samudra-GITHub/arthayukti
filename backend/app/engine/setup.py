@@ -66,6 +66,8 @@ class Resolved:
     warnings: list[PlanWarning] = field(default_factory=list)
     # Scheduled income streams: unrounded monthly-equivalent base by calendar year (see engine/income.py)
     stream_bases: dict[str, dict[int, Decimal]] = field(default_factory=dict)
+    # When set, the month's base spending (by plan month t) comes from here instead of the plan's expense lines.
+    spending_override: dict[int, Decimal] | None = None
 
     def month_label(self, t: int) -> str:
         return index_to_month(self.as_of_index + t - 1)

@@ -46,7 +46,7 @@ describe('buildConfig', () => {
     expect(built.config).toEqual({
       mode: 'individual',
       investments: [
-        { id: 'a', name: 'Fund A', start_month: '2027-01', lump_sum: '100000.00', growth_years: 10, annual_growth: '0.120000', tax_rate: '0.0000', inflation_rate: '0.000000' },
+        { id: 'a', name: 'Fund A', start_month: '2027-01', lump_sum: '100000.00', growth_years: 10, annual_growth: '0.120000', tax_rate: '0.0000', tax_method: 'gains', rate_convention: 'nominal_monthly', inflation_rate: '0.000000' },
       ],
       compile_ids: ['a'],
     })

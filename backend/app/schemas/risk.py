@@ -29,6 +29,8 @@ class RiskAssessmentResponse(ApiModel):
     conflict_note: str | None = None
     limitations: list[str]
     completed_at: str
+    # True when the profile was edited after this assessment, so its capacity reading may be out of date.
+    profile_changed_since: bool = False
 
 
 class RiskAssessmentHistoryItem(ApiModel):

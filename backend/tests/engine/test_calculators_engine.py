@@ -452,3 +452,35 @@ def test_a_common_date_far_after_the_start_is_refused():
     with pytest.raises(ApiError) as caught:
         run(config)
     assert caught.value.code == "valuation_too_far"
+
+
+# ---- tax method and rate convention (opt-in; the defaults above are unchanged) -----------------------------------------
+
+
+def one(**kw):
+    return run(cfg(inv(lump_sum="100000.00", **kw))).investments[0]
+
+
+def test_tax_on_the_total_amount_charges_the_whole_value_not_just_the_gain():
+    # No growth: value 100,000, gain 0. Gains tax is 0; tax on the total amount at 10% is 10,000.
+    assert one(tax_rate="0.100000").tax == D("0.00")
+    total = one(tax_rate="0.100000", tax_method="total_amount")
+    assert total.tax == D("10000.00") and total.post_tax_value == D("90000.00")
+
+
+def test_tax_on_the_total_amount_is_charged_once_and_not_on_a_negative_value():
+    zero = one(tax_rate="0.100000", tax_method="total_amount", annual_growth="-1.000000", rate_convention="effective_annual")
+    assert zero.value == D("0.00") and zero.tax == D("0.00")  # a total loss: nothing to tax, no invalid number
+
+
+def test_an_effective_annual_rate_compounds_to_exactly_that_rate_over_a_year():
+    # 10% effective: twelve equal monthly steps of 1.1^(1/12) give 110,000 (to within the monthly rounding to the paisa).
+    value = one(annual_growth="0.100000", rate_convention="effective_annual").value
+    assert abs(value - D("110000.00")) < D("0.10")
+    # The default convention is untouched: 12% nominal over twelve months is 112,682.50 unrounded, 112,682.51 with monthly rounding.
+    assert one(annual_growth="0.120000").value == D("112682.51")
+
+
+def test_effective_annual_inflation_divides_by_one_plus_the_rate_per_year():
+    # No growth, 10% effective inflation for one year: 100,000 / 1.1 = 90,909.09 in today's money.
+    assert one(inflation_rate="0.100000", rate_convention="effective_annual").inflation_adjusted_value == D("90909.09")

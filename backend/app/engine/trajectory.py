@@ -162,6 +162,8 @@ class Inputs:
     linked_commitments: dict[str, str] = field(default_factory=dict)  # commitment id -> liability id
     reference_age: int | None = None
     notes: list[dict] = field(default_factory=list)  # warnings the caller found while reading the records
+    spending_override: dict[int, Decimal] | None = None  # month t -> spending from the Expenditure plans
+    inflation_annual: Decimal | None = None  # for the inflation-adjusted net worth only; it changes no cash flow
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -402,6 +404,7 @@ def _simulate(inp: Inputs, view: str, prepay: dict[str, dict[int, Decimal]]) -> 
     plan_flows = plan.model_copy(update={"goals": chosen_goals, "commitments": commitments})
     scenario = inp.scenario if view == "scenario" else None
     base = resolve(plan_flows, scenario)
+    base.spending_override = inp.spending_override
     flows = [month_flows(base, t) for t in range(1, horizon + 1)]
 
     schedules = {loan.id: loan_schedule(loan, horizon, prepay.get(loan.id)) for loan in inp.loans}
@@ -952,6 +955,72 @@ def _class_present(inp: Inputs, klass: str) -> bool:
     return any(HOLDING_CLASS.get(h.asset_type, "physical_and_other_assets") == klass for h in inp.holdings if h.value is not None)
 
 
+_GROUP_KEYS = (
+    ("income", "income_events"),
+    ("expense", "expense_events"),
+    ("debt", "debt_events"),
+    ("insurance", "insurance_events"),
+    ("investment", "investment_events"),
+    ("deposit", "deposit_events"),
+    ("goal", "goal_events"),
+    ("other", "other_events"),
+)
+
+
+def _yearly(rows: list[dict], age, real) -> list[dict]:
+    """Calendar-year rows from the monthly ledger: opening and closing balances, cash in and out by group, and the
+    interest and principal of debt payments. Nothing is calculated that the months do not already say."""
+    out: list[dict] = []
+    start = 0
+    while start < len(rows):
+        year = rows[start]["month"][:4]
+        end = start
+        while end < len(rows) and rows[end]["month"][:4] == year:
+            end += 1
+        chunk = rows[start:end]
+        opening, closing = chunk[0]["opening_balances"], chunk[-1]["closing_balances"]
+        groups = {name: [ZERO, ZERO, ZERO] for name, _ in _GROUP_KEYS}
+        interest = principal = effects = ZERO
+        for row in chunk:
+            for name, key in _GROUP_KEYS:
+                for event in row[key]:
+                    cash = event["cash_delta"]
+                    groups[name][0 if cash > 0 else 1] += cash if cash > 0 else -cash
+                    groups[name][2] += event["net_worth_effect"]
+                    effects += event["net_worth_effect"]
+                    if name == "debt":
+                        interest += event["interest"] or ZERO
+                        principal += event["principal"] or ZERO
+        change = closing["net_worth"] - opening["net_worth"]
+        out.append(
+            {
+                "year": int(year),
+                "months_included": len(chunk),
+                "age": age(end),
+                "opening_cash": opening["cash"],
+                "closing_cash": closing["cash"],
+                "cash_in": quantize(sum((g[0] for g in groups.values()), ZERO)),
+                "cash_out": quantize(sum((g[1] for g in groups.values()), ZERO)),
+                "interest_paid": quantize(interest),
+                "principal_repaid": quantize(principal),
+                "groups": [{"group": n, "cash_in": quantize(v[0]), "cash_out": quantize(v[1]), "net_worth_effect": quantize(v[2])} for n, v in groups.items()],
+                "closing_market_investments": closing["market_investments"],
+                "closing_deposits_and_accounts": closing["deposits_and_investment_accounts"],
+                "closing_retirement_and_fixed_income": closing["retirement_and_fixed_income"],
+                "closing_physical_and_other_assets": closing["physical_and_other_assets"],
+                "closing_total_assets": closing["total_assets"],
+                "closing_total_liabilities": closing["total_liabilities"],
+                "opening_net_worth": opening["net_worth"],
+                "closing_net_worth": closing["net_worth"],
+                "net_worth_change": quantize(change),
+                "closing_net_worth_real": real(closing["net_worth"], end),
+                "reconciles": quantize(change) == quantize(effects),
+            }
+        )
+        start = end
+    return out
+
+
 def run_trajectory(inp: Inputs) -> dict:
     """The whole result as plain data. Money is Decimal; the API turns it into decimal strings."""
     with engine_context():
@@ -978,11 +1047,17 @@ def run_trajectory(inp: Inputs) -> dict:
     def age(t: int) -> int | None:
         return None if inp.reference_age is None else inp.reference_age + t // 12
 
-    checkpoints = [{"month": inp.plan.as_of, "months_ahead": 0, "age": age(0), "assets": opening["total_assets"], "liabilities": opening["total_liabilities"], "net_worth": opening["net_worth"], "cash": opening["cash"]}]
+    def real(value: Decimal, t: int) -> Decimal | None:
+        """A nominal amount `t` months ahead in today's money: value / (1 + inflation)^(t / 12)."""
+        if inp.inflation_annual is None:
+            return None
+        return quantize(value / (Decimal(1) + inp.inflation_annual) ** (Decimal(t) / 12))
+
+    checkpoints = [{"month": inp.plan.as_of, "months_ahead": 0, "age": age(0), "net_worth_real": real(opening["net_worth"], 0), "assets": opening["total_assets"], "liabilities": opening["total_liabilities"], "net_worth": opening["net_worth"], "cash": opening["cash"]}]
     marks = sorted({t for t in range(12, inp.horizon_months + 1, 12)} | {inp.horizon_months})
     for t in marks:
         c = rows[t - 1]["closing_balances"]
-        checkpoints.append({"month": rows[t - 1]["month"], "months_ahead": t, "age": age(t), "assets": c["total_assets"], "liabilities": c["total_liabilities"], "net_worth": c["net_worth"], "cash": c["cash"]})
+        checkpoints.append({"month": rows[t - 1]["month"], "months_ahead": t, "age": age(t), "net_worth_real": real(c["net_worth"], t), "assets": c["total_assets"], "liabilities": c["total_liabilities"], "net_worth": c["net_worth"], "cash": c["cash"]})
 
     loans_out = []
     for loan in inp.loans:
@@ -1040,6 +1115,8 @@ def run_trajectory(inp: Inputs) -> dict:
             "horizon_liabilities": final["total_liabilities"],
             "horizon_net_worth": final["net_worth"],
             "horizon_cash": final["cash"],
+            "inflation_annual": inp.inflation_annual,
+            "horizon_net_worth_real": real(final["net_worth"], inp.horizon_months),
             "projected_debt_free_dates": loans_out,
             "all_debts_cleared_month": (
                 max(item["month"] for item in loans_out) if loans_out and all(item["month"] for item in loans_out) else None
@@ -1059,6 +1136,7 @@ def run_trajectory(inp: Inputs) -> dict:
             }
         ),
         "checkpoints": checkpoints,
+        "yearly": _yearly(rows, age, real),
         "opening_balances": opening,
         "monthly_ledger": rows,
     }

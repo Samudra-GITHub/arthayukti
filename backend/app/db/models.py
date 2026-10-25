@@ -489,6 +489,7 @@ class HouseholdProfile(Base):
     supports_father = Column(String(20), nullable=True)  # yes, no, unsure
     housing_status = Column(String(50), nullable=True)  # own_house, rented_house
     employment_status = Column(String(50), nullable=True)  # salaried, self_employed, business_owner, student, unemployed, retired, other
+    employment_other = Column(String(100), nullable=True)  # what "other" means, only while employment_status is other
     expected_retirement_age = Column(Integer, nullable=True)
     financial_dependants = Column(String(50), nullable=True)  # none, one, two, three, four_or_more
     debt_types_json = Column(Text, nullable=True)

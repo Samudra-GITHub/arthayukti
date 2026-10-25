@@ -14,6 +14,7 @@ from app.schemas.insurance import PolicyResponse
 from app.schemas.ledger import TransactionCreate  # noqa: F401
 from app.schemas.plan import Plan
 from app.schemas.recovery_plan import AgreementDraft
+from app.schemas.spending import CategoryOut, PlanOut, SettingsOut
 from app.schemas.types import ApiModel, Rate
 
 # bcrypt only reads the first 72 bytes, so longer passwords would be silently truncated.
@@ -124,6 +125,12 @@ class ExportPolicy(ApiModel):
     details: PolicyResponse
 
 
+class ExportExpenditure(ApiModel):
+    plans: list[PlanOut]
+    categories: list[CategoryOut]
+    settings: SettingsOut
+
+
 class ExportCalculatorScenario(ApiModel):
     id: str
     name: str
@@ -162,3 +169,4 @@ class ExportResponse(ApiModel):
     calculator_scenarios: list[ExportCalculatorScenario] = []
     recovery_agreements: list[ExportRecoveryAgreement] = []
     investment_transactions: list[ExportInvestmentTransaction] = []
+    expenditure: ExportExpenditure | None = None

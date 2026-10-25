@@ -24,11 +24,13 @@ from app.api.financials import (
 )
 from app.api.household import _to_profile_response
 from app.api.insurance import _to_policy_response
+from app.api.spending import _plan_out, _settings_out, list_categories
 from app.config import BACKEND_DIR, settings
 from app.db.models import (
     AssetInvestment,
     AuditLog,
     CalculatorScenario,
+    ExpenditurePlan,
     FinancialAccount,
     FinancialTransaction,
     HouseholdProfile,
@@ -44,6 +46,7 @@ from app.schemas.auth import (
     AuthResponse,
     ExportAccount,
     ExportCalculatorScenario,
+    ExportExpenditure,
     ExportInvestmentTransaction,
     ExportPlan,
     ExportPolicy,
@@ -439,6 +442,14 @@ def export_user_data(
             )
             for r in agreements
         ],
+        expenditure=ExportExpenditure(
+            plans=[
+                _plan_out(db, current_user, p)
+                for p in db.query(ExpenditurePlan).filter(ExpenditurePlan.user_id == uid).order_by(ExpenditurePlan.created_at).all()
+            ],
+            categories=list_categories(db, current_user),
+            settings=_settings_out(db, current_user),
+        ),
         calculator_scenarios=[
             ExportCalculatorScenario(
                 id=c.id, name=c.name, config=CalculatorConfig.model_validate_json(c.config_json)

@@ -76,3 +76,14 @@ account. A user can keep 50.
   cap, account export and deletion, and comparison without double counting.
 - `frontend/src/lib/calculators.test.ts` and `frontend/src/pages/app/Calculators.test.tsx`: input parsing,
   the request the page builds, the maturity decision, save, name clash and CSV download.
+
+## Update: tax method and rate convention (both optional, per investment)
+
+- `tax_method`: `gains` (the default, as above) or `total_amount`: `tax_rate x max(0, value)` charged once at the valuation date. A loss
+  is never taxed under `gains`; under `total_amount` a value of zero is taxed zero.
+- `rate_convention`: `nominal_monthly` (the default and the product's convention, rate / 12 a month) or `effective_annual`: a month is
+  `(1 + rate)^(1/12) - 1`, so twelve months compound to exactly the stated rate, and inflation divides by `(1 + inflation)^(months / 12)`.
+  It applies to growth, an after-maturity reinvestment rate and inflation. A rate of -100% a year gives a zero balance without error.
+- Saved calculators without these fields keep their old behaviour.
+- Not done: scenarios saved under a single calculator (use Compare, which values each configuration alone), and default
+  "Investment 1, 2..." names, which belong to the page rather than the engine.

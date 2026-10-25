@@ -1662,6 +1662,15 @@
             "title": "Name",
             "type": "string"
           },
+          "rate_convention": {
+            "default": "nominal_monthly",
+            "enum": [
+              "nominal_monthly",
+              "effective_annual"
+            ],
+            "title": "Rate Convention",
+            "type": "string"
+          },
           "sip": {
             "anyOf": [
               {
@@ -1675,6 +1684,15 @@
           "start_month": {
             "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
             "title": "Start Month",
+            "type": "string"
+          },
+          "tax_method": {
+            "default": "gains",
+            "enum": [
+              "gains",
+              "total_amount"
+            ],
+            "title": "Tax Method",
             "type": "string"
           },
           "tax_rate": {
@@ -2435,6 +2453,18 @@
             "pattern": "^-?\\d+(\\.\\d+)?$",
             "title": "Net Worth",
             "type": "string"
+          },
+          "net_worth_real": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net Worth Real"
           }
         },
         "required": [
@@ -4488,6 +4518,35 @@
         "title": "ExportCalculatorScenario",
         "type": "object"
       },
+      "ExportExpenditure": {
+        "additionalProperties": false,
+        "properties": {
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/CategoryOut"
+            },
+            "title": "Categories",
+            "type": "array"
+          },
+          "plans": {
+            "items": {
+              "$ref": "#/components/schemas/PlanOut"
+            },
+            "title": "Plans",
+            "type": "array"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/SettingsOut"
+          }
+        },
+        "required": [
+          "plans",
+          "categories",
+          "settings"
+        ],
+        "title": "ExportExpenditure",
+        "type": "object"
+      },
       "ExportInvestmentTransaction": {
         "additionalProperties": false,
         "properties": {
@@ -4683,6 +4742,16 @@
             },
             "title": "Calculator Scenarios",
             "type": "array"
+          },
+          "expenditure": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExportExpenditure"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "household_profile": {
             "$ref": "#/components/schemas/HouseholdProfileResponse"
@@ -5755,6 +5824,17 @@
             ],
             "title": "Emergency Fund Months Target"
           },
+          "employment_other": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Employment Other"
+          },
           "employment_status": {
             "anyOf": [
               {
@@ -6130,6 +6210,18 @@
               }
             ],
             "title": "Emergency Fund Months Target"
+          },
+          "employment_other": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Employment Other"
           },
           "employment_status": {
             "anyOf": [
@@ -11585,6 +11677,11 @@
             "title": "Loss Reaction",
             "type": "string"
           },
+          "profile_changed_since": {
+            "default": false,
+            "title": "Profile Changed Since",
+            "type": "boolean"
+          },
           "risk_capacity": {
             "enum": [
               "Low",
@@ -13082,6 +13179,18 @@
             "title": "Include Monthly Ledger",
             "type": "boolean"
           },
+          "inflation_annual": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inflation Annual"
+          },
           "input_snapshot_hash": {
             "anyOf": [
               {
@@ -13175,6 +13284,15 @@
             "maxItems": 8,
             "title": "Selected Goal Ids",
             "type": "array"
+          },
+          "spending_source": {
+            "default": "plan",
+            "enum": [
+              "plan",
+              "expenditure_plans"
+            ],
+            "title": "Spending Source",
+            "type": "string"
           },
           "view": {
             "default": "baseline",
@@ -13300,6 +13418,13 @@
             },
             "title": "Warnings",
             "type": "array"
+          },
+          "yearly": {
+            "items": {
+              "$ref": "#/components/schemas/YearlyRow"
+            },
+            "title": "Yearly",
+            "type": "array"
           }
         },
         "required": [
@@ -13378,6 +13503,30 @@
             "pattern": "^-?\\d+(\\.\\d+)?$",
             "title": "Horizon Net Worth",
             "type": "string"
+          },
+          "horizon_net_worth_real": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Horizon Net Worth Real"
+          },
+          "inflation_annual": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inflation Annual"
           },
           "projected_debt_free_dates": {
             "items": {
@@ -14128,6 +14277,185 @@
           "selected_label"
         ],
         "title": "VersionSummary",
+        "type": "object"
+      },
+      "YearlyGroup": {
+        "additionalProperties": false,
+        "properties": {
+          "cash_in": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cash In",
+            "type": "string"
+          },
+          "cash_out": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cash Out",
+            "type": "string"
+          },
+          "group": {
+            "title": "Group",
+            "type": "string"
+          },
+          "net_worth_effect": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Net Worth Effect",
+            "type": "string"
+          }
+        },
+        "required": [
+          "group",
+          "cash_in",
+          "cash_out",
+          "net_worth_effect"
+        ],
+        "title": "YearlyGroup",
+        "type": "object"
+      },
+      "YearlyRow": {
+        "additionalProperties": false,
+        "description": "One calendar year of the horizon, built from the monthly ledger and nothing else.",
+        "properties": {
+          "age": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age"
+          },
+          "cash_in": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cash In",
+            "type": "string"
+          },
+          "cash_out": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cash Out",
+            "type": "string"
+          },
+          "closing_cash": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Closing Cash",
+            "type": "string"
+          },
+          "closing_deposits_and_accounts": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Closing Deposits And Accounts",
+            "type": "string"
+          },
+          "closing_market_investments": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Closing Market Investments",
+            "type": "string"
+          },
+          "closing_net_worth": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Closing Net Worth",
+            "type": "string"
+          },
+          "closing_net_worth_real": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closing Net Worth Real"
+          },
+          "closing_physical_and_other_assets": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Closing Physical And Other Assets",
+            "type": "string"
+          },
+          "closing_retirement_and_fixed_income": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Closing Retirement And Fixed Income",
+            "type": "string"
+          },
+          "closing_total_assets": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Closing Total Assets",
+            "type": "string"
+          },
+          "closing_total_liabilities": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Closing Total Liabilities",
+            "type": "string"
+          },
+          "groups": {
+            "items": {
+              "$ref": "#/components/schemas/YearlyGroup"
+            },
+            "title": "Groups",
+            "type": "array"
+          },
+          "interest_paid": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Interest Paid",
+            "type": "string"
+          },
+          "months_included": {
+            "title": "Months Included",
+            "type": "integer"
+          },
+          "net_worth_change": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Net Worth Change",
+            "type": "string"
+          },
+          "opening_cash": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Opening Cash",
+            "type": "string"
+          },
+          "opening_net_worth": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Opening Net Worth",
+            "type": "string"
+          },
+          "principal_repaid": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Principal Repaid",
+            "type": "string"
+          },
+          "reconciles": {
+            "title": "Reconciles",
+            "type": "boolean"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "months_included",
+          "age",
+          "opening_cash",
+          "closing_cash",
+          "cash_in",
+          "cash_out",
+          "interest_paid",
+          "principal_repaid",
+          "groups",
+          "closing_market_investments",
+          "closing_deposits_and_accounts",
+          "closing_retirement_and_fixed_income",
+          "closing_physical_and_other_assets",
+          "closing_total_assets",
+          "closing_total_liabilities",
+          "opening_net_worth",
+          "closing_net_worth",
+          "net_worth_change",
+          "reconciles"
+        ],
+        "title": "YearlyRow",
         "type": "object"
       }
     },

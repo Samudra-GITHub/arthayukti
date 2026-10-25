@@ -140,3 +140,17 @@ assumptions, links, the ledger and sources.
 - Age views use the age on the profile (whole years), not a date of birth.
 - A shortfall is never repaid by later surplus: it stays as an unfunded line (the same convention as the goal engine).
 - Checked in the in-app browser against a local API and a scratch SQLite database (seeded account: accounts, a fixed deposit, gold, a priced-but-stale holding, two debts, a policy, a profile age): figures matched hand calculations, and 375 px and 320 px widths showed no horizontal overflow. Not checked on a physical device, in dark mode or in Hindi, nor against a hosted database. No deployment, migration or production change was made by this work.
+
+## Update: inflation-adjusted net worth, the year-by-year table, spending source
+
+- `inflation_annual` (optional): restates net worth in today's money as `net_worth / (1 + inflation)^(months ahead / 12)`. It changes
+  no cash flow. The result adds `summary.inflation_annual`, `summary.horizon_net_worth_real`, `checkpoints[].net_worth_real` and
+  `yearly[].closing_net_worth_real`. With no rate given these are null: no inflation is assumed. The rate is part of the input
+  snapshot hash.
+- `yearly`: one row per calendar year of the horizon, built only from the monthly ledger: opening and closing cash, cash in and out
+  (total and by group), interest and principal of debt payments, closing balances by class, opening and closing net worth, the change,
+  and `reconciles` (the change equals the sum of the year's events' net-worth effects). Each year's closing figures equal the next
+  year's opening figures. Age is the age at the end of the year.
+- `spending_source`: see `EXPENDITURE_PROJECTION.md`.
+- Still not in the table as separate columns: investment growth versus contributions (they are in the group totals and the event
+  ledger), and a physical-asset purchases/sales split. The records do not carry a physical-asset growth rate, so assets are held constant.

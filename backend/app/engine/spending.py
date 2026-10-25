@@ -216,3 +216,18 @@ def trajectory(plans: list[PlanSpec], rates: RateSchedule, today: date, horizon_
         cumulative_plain += sum((row.without_inflation for row in rows), ZERO)
         years.append(YearRow(year, len(rows), annual, cumulative, cumulative_plain))
     return Trajectory(today.year, today.month, horizon_months, months, years)
+
+
+def monthly_totals(plans: list[PlanSpec], rates: RateSchedule, first_index: int, months: int, inflate: bool = True) -> list[Decimal]:
+    """The rounded total spending for `months` months starting at month index `first_index` (any start, past or future)."""
+    with engine_context():
+        memos: dict[str, dict[tuple[int, int], Decimal]] = {plan.id: {} for plan in plans}
+        totals: list[Decimal] = []
+        for offset in range(months):
+            total = ZERO
+            for plan in plans:
+                raw = monthly_amount(plan, first_index + offset, rates, inflate, memos[plan.id])
+                if raw is not None:
+                    total += quantize(raw)
+            totals.append(total)
+    return totals

@@ -70,3 +70,13 @@ The CSV is built from the same `trajectory()` call as the screen (UTF-8 with a b
 `backend/tests/engine/test_spending_engine.py` (hand-worked figures), `backend/tests/api/test_spending_api.py` (validation, lifecycle,
 categories, settings, CSV reconciliation, isolation), `frontend/src/lib/spending.test.ts`,
 `frontend/src/components/spending/SpendingDashboard.test.tsx`.
+
+## Update: connected to the Financial Trajectory, and exported
+
+- `POST /trajectory/project` takes `spending_source`: `plan` (the default, unchanged) or `expenditure_plans`. The second reads the
+  person's active Expenditure plans month by month (their own inflation, scheduled changes and the global rate schedule) instead of
+  the plan's expense lines, so the two are never added together. With no active plan it answers 422 `no_expenditure_plans` rather than
+  assuming nothing is spent. An insurance-category plan counts as premiums already in spending.
+- The goal engine, scenarios and the other plan-based endpoints still read the plan's own expense lines. Choosing one source for
+  every screen is a product decision that has not been made.
+- The account data export now includes the plans, categories and settings (`expenditure`), and deleting the account removes them.

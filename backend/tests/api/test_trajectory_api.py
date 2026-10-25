@@ -313,3 +313,38 @@ def test_the_errors_do_not_echo_the_request_body(client):
     response = post(client, pid, view="selected_goals", selected_goal_ids=["secret-looking-id"])
     assert response.status_code == 422
     assert "plan_id" not in response.text and pid not in response.text
+
+
+# ---- inflation-adjusted net worth and the year-by-year table ---------------------------------------------------------------------
+
+
+def test_net_worth_is_restated_in_todays_money_only_when_an_inflation_rate_is_given(client):
+    add_account(client, "100000.00")
+    plan = plan_body(income="0.00", expenses=[], goals=False)
+    plain = client.post(URL, json={"plan": plan, "horizon": {"months": 24}}).json()
+    assert plain["summary"]["horizon_net_worth_real"] is None and plain["checkpoints"][-1]["net_worth_real"] is None
+    adjusted = client.post(URL, json={"plan": plan, "horizon": {"months": 24}, "inflation_annual": "0.100000"}).json()
+    # Nothing is spent or earned, so net worth stays 100,000 nominal; two years at 10%: 100,000 / 1.21 = 82,644.63.
+    assert adjusted["summary"]["horizon_net_worth"] == "100000.00"
+    assert adjusted["summary"]["horizon_net_worth_real"] == "82644.63"
+    assert adjusted["checkpoints"][0]["net_worth_real"] == "100000.00"  # today needs no adjustment
+    assert adjusted["input_snapshot_hash"] != plain["input_snapshot_hash"]  # the adjustment is part of what the figures depend on
+
+
+def test_the_yearly_table_reconciles_with_the_monthly_ledger_and_chains_year_to_year(client):
+    add_account(client, "50000.00")
+    plan = plan_body(income="100000.00", expenses=[("Life", "60000.00")], goals=False, as_of="2027-01")
+    result = client.post(URL, json={"plan": plan, "horizon": {"months": 30}, "inflation_annual": "0.050000"}).json()
+    yearly = result["yearly"]
+    assert [(y["year"], y["months_included"]) for y in yearly] == [(2027, 12), (2028, 12), (2029, 6)]
+    assert all(y["reconciles"] for y in yearly)
+    for earlier, later in zip(yearly, yearly[1:]):
+        assert earlier["closing_net_worth"] == later["opening_net_worth"] and earlier["closing_cash"] == later["opening_cash"]
+    for y in yearly:
+        assert D(y["closing_net_worth"]) - D(y["opening_net_worth"]) == D(y["net_worth_change"])
+        assert D(y["closing_total_assets"]) - D(y["closing_total_liabilities"]) == D(y["closing_net_worth"])
+    assert yearly[-1]["closing_net_worth"] == result["summary"]["horizon_net_worth"]
+    assert yearly[-1]["closing_net_worth_real"] == result["summary"]["horizon_net_worth_real"]
+    ledger = result["monthly_ledger"]
+    income_in_2027 = sum(D(e["cash_delta"]) for m in ledger if m["month"].startswith("2027") for e in m["income_events"])
+    assert D(next(g for g in yearly[0]["groups"] if g["group"] == "income")["cash_in"]) == income_in_2027

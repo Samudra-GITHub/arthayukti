@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field, model_validator
 
 from app.schemas.plan import Plan
 from app.schemas.scenario import Scenario
-from app.schemas.types import Amount, ApiModel, DecimalStr, GrowthRate, Id, Label, Money, Month
+from app.schemas.types import Amount, ApiModel, DecimalStr, GrowthRate, Id, Label, Money, Month, Rate
 from app.timeline import MAX_HORIZON_MONTHS
 
 View = Literal["baseline", "selected_goals", "scenario"]
@@ -104,7 +104,11 @@ class TrajectoryRequest(BaseModel):
     include_events: bool = True
     return_assumptions: list[ReturnAssumption] = Field(default_factory=list, max_length=50)
     premium_growth_annual: GrowthRate = Decimal("0.000000")
+    # The general inflation used to restate net worth in today's money. None: no inflation adjustment is shown.
+    inflation_annual: Rate | None = None
     premiums_in_spending: Literal["auto", "yes", "no"] = "auto"
+    # "plan": the plan's own expense lines (the default). "expenditure_plans": the plans on the Expenditure page.
+    spending_source: Literal["plan", "expenditure_plans"] = "plan"
     linked_commitments: list[LinkedCommitment] = Field(default_factory=list, max_length=6)
     goal_effects: list[GoalEffect] = Field(default_factory=list, max_length=8)
     planned_events: list[PlannedEvent] = Field(default_factory=list, max_length=20)
@@ -180,6 +184,40 @@ class Checkpoint(ApiModel):
     liabilities: Amount
     net_worth: Amount
     cash: Amount
+    net_worth_real: Amount | None = None  # net_worth / (1 + inflation)^(months_ahead / 12), when an inflation rate was given
+
+
+class YearlyGroup(ApiModel):
+    group: str  # income | expense | debt | insurance | investment | deposit | goal | other
+    cash_in: Amount
+    cash_out: Amount
+    net_worth_effect: Amount
+
+
+class YearlyRow(ApiModel):
+    """One calendar year of the horizon, built from the monthly ledger and nothing else."""
+
+    year: int
+    months_included: int
+    age: int | None  # at the end of the year
+    opening_cash: Amount
+    closing_cash: Amount
+    cash_in: Amount
+    cash_out: Amount
+    interest_paid: Amount
+    principal_repaid: Amount
+    groups: list[YearlyGroup]
+    closing_market_investments: Amount
+    closing_deposits_and_accounts: Amount
+    closing_retirement_and_fixed_income: Amount
+    closing_physical_and_other_assets: Amount
+    closing_total_assets: Amount
+    closing_total_liabilities: Amount
+    opening_net_worth: Amount
+    closing_net_worth: Amount
+    net_worth_change: Amount
+    closing_net_worth_real: Amount | None = None
+    reconciles: bool  # the year's net-worth change equals the sum of its events' net-worth effects
 
 
 class DebtFreeDate(ApiModel):
@@ -201,6 +239,8 @@ class TrajectorySummary(ApiModel):
     horizon_liabilities: Amount
     horizon_net_worth: Amount
     horizon_cash: Amount
+    inflation_annual: Amount | None = None
+    horizon_net_worth_real: Amount | None = None  # today's purchasing power
     projected_debt_free_dates: list[DebtFreeDate]
     all_debts_cleared_month: Month | None
     reconciles: bool
@@ -298,5 +338,6 @@ class TrajectoryResult(ApiModel):
     goals: list[GoalImpact]
     comparison: Comparison | None
     checkpoints: list[Checkpoint]
+    yearly: list[YearlyRow] = Field(default_factory=list)
     opening_balances: Balances
     monthly_ledger: list[LedgerMonth] | None

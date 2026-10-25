@@ -56,7 +56,9 @@ def month_flows(resolved: Resolved, t: int) -> Flows:
             income += paid
 
     expenses = Decimal(0)
-    for item in resolved.expenses:
+    if resolved.spending_override is not None:
+        expenses += resolved.spending_override.get(t, Decimal(0))
+    for item in [] if resolved.spending_override is not None else resolved.expenses:
         # A plain line is monthly x the plan-wide step-up, as always; a scheduled line follows its own dates and growth.
         amount = line_amount(item, t, resolved.as_of_index, resolved.expense_growth)
         if amount is not None:

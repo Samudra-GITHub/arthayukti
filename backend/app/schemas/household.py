@@ -64,6 +64,7 @@ class HouseholdProfileUpdateRequest(ApiModel):
     supports_father: FamilySupportStatus | None = None
     housing_status: HousingStatus | None = None
     employment_status: EmploymentStatus | None = None
+    employment_other: str | None = Field(default=None, max_length=100)  # only with employment_status 'other'
     expected_retirement_age: int | None = Field(default=None, ge=30, le=100)
 
     # Financial resilience
@@ -141,6 +142,7 @@ class HouseholdProfileResponse(ApiModel):
     supports_father: str | None = None
     housing_status: str | None = None
     employment_status: str | None = None
+    employment_other: str | None = None
     expected_retirement_age: int | None = None
 
     financial_dependants: str | None = None

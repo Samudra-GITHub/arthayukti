@@ -2627,9 +2627,21 @@ export interface components {
             lump_sum: string;
             /** Name */
             name: string;
+            /**
+             * Rate Convention
+             * @default nominal_monthly
+             * @enum {string}
+             */
+            rate_convention: "nominal_monthly" | "effective_annual";
             sip?: components["schemas"]["CalcSip"] | null;
             /** Start Month */
             start_month: string;
+            /**
+             * Tax Method
+             * @default gains
+             * @enum {string}
+             */
+            tax_method: "gains" | "total_amount";
             /**
              * Tax Rate
              * @default 0
@@ -2883,6 +2895,8 @@ export interface components {
             months_ahead: number;
             /** Net Worth */
             net_worth: string;
+            /** Net Worth Real */
+            net_worth_real?: string | null;
         };
         /**
          * Commitment
@@ -3502,6 +3516,14 @@ export interface components {
             /** Name */
             name: string;
         };
+        /** ExportExpenditure */
+        ExportExpenditure: {
+            /** Categories */
+            categories: components["schemas"]["CategoryOut"][];
+            /** Plans */
+            plans: components["schemas"]["PlanOut"][];
+            settings: components["schemas"]["SettingsOut"];
+        };
         /** ExportInvestmentTransaction */
         ExportInvestmentTransaction: {
             /** Fees */
@@ -3564,6 +3586,7 @@ export interface components {
              * @default []
              */
             calculator_scenarios: components["schemas"]["ExportCalculatorScenario"][];
+            expenditure?: components["schemas"]["ExportExpenditure"] | null;
             household_profile: components["schemas"]["HouseholdProfileResponse"];
             /**
              * Investment Transactions
@@ -3900,6 +3923,8 @@ export interface components {
             emergency_fund_coverage?: string | null;
             /** Emergency Fund Months Target */
             emergency_fund_months_target: number | null;
+            /** Employment Other */
+            employment_other?: string | null;
             /** Employment Status */
             employment_status?: string | null;
             /** Expected Retirement Age */
@@ -3963,6 +3988,8 @@ export interface components {
             emergency_fund_coverage?: ("none" | "less_than_3" | "3_to_6" | "more_than_6" | "not_sure") | null;
             /** Emergency Fund Months Target */
             emergency_fund_months_target?: number | null;
+            /** Employment Other */
+            employment_other?: string | null;
             /** Employment Status */
             employment_status?: ("salaried" | "self_employed" | "business_owner" | "student" | "unemployed" | "retired" | "other") | null;
             /** Expected Retirement Age */
@@ -5644,6 +5671,11 @@ export interface components {
             /** Loss Reaction */
             loss_reaction: string;
             /**
+             * Profile Changed Since
+             * @default false
+             */
+            profile_changed_since: boolean;
+            /**
              * Risk Capacity
              * @enum {string}
              */
@@ -6162,6 +6194,8 @@ export interface components {
              * @default true
              */
             include_monthly_ledger: boolean;
+            /** Inflation Annual */
+            inflation_annual?: string | null;
             /** Input Snapshot Hash */
             input_snapshot_hash?: string | null;
             /** Linked Commitments */
@@ -6187,6 +6221,12 @@ export interface components {
             scenario?: components["schemas"]["Scenario"] | null;
             /** Selected Goal Ids */
             selected_goal_ids?: string[];
+            /**
+             * Spending Source
+             * @default plan
+             * @enum {string}
+             */
+            spending_source: "plan" | "expenditure_plans";
             /**
              * View
              * @default baseline
@@ -6228,6 +6268,8 @@ export interface components {
             view: "baseline" | "selected_goals" | "scenario";
             /** Warnings */
             warnings: components["schemas"]["TrajectoryWarning"][];
+            /** Yearly */
+            yearly?: components["schemas"]["YearlyRow"][];
         };
         /** TrajectorySummary */
         TrajectorySummary: {
@@ -6249,6 +6291,10 @@ export interface components {
             horizon_liabilities: string;
             /** Horizon Net Worth */
             horizon_net_worth: string;
+            /** Horizon Net Worth Real */
+            horizon_net_worth_real?: string | null;
+            /** Inflation Annual */
+            inflation_annual?: string | null;
             /** Projected Debt Free Dates */
             projected_debt_free_dates: components["schemas"]["DebtFreeDate"][];
             /** Reconciles */
@@ -6477,6 +6523,65 @@ export interface components {
             selected_label: string | null;
             /** Version */
             version: number;
+        };
+        /** YearlyGroup */
+        YearlyGroup: {
+            /** Cash In */
+            cash_in: string;
+            /** Cash Out */
+            cash_out: string;
+            /** Group */
+            group: string;
+            /** Net Worth Effect */
+            net_worth_effect: string;
+        };
+        /**
+         * YearlyRow
+         * @description One calendar year of the horizon, built from the monthly ledger and nothing else.
+         */
+        YearlyRow: {
+            /** Age */
+            age: number | null;
+            /** Cash In */
+            cash_in: string;
+            /** Cash Out */
+            cash_out: string;
+            /** Closing Cash */
+            closing_cash: string;
+            /** Closing Deposits And Accounts */
+            closing_deposits_and_accounts: string;
+            /** Closing Market Investments */
+            closing_market_investments: string;
+            /** Closing Net Worth */
+            closing_net_worth: string;
+            /** Closing Net Worth Real */
+            closing_net_worth_real?: string | null;
+            /** Closing Physical And Other Assets */
+            closing_physical_and_other_assets: string;
+            /** Closing Retirement And Fixed Income */
+            closing_retirement_and_fixed_income: string;
+            /** Closing Total Assets */
+            closing_total_assets: string;
+            /** Closing Total Liabilities */
+            closing_total_liabilities: string;
+            /** Groups */
+            groups: components["schemas"]["YearlyGroup"][];
+            /** Interest Paid */
+            interest_paid: string;
+            /** Months Included */
+            months_included: number;
+            /** Net Worth Change */
+            net_worth_change: string;
+            /** Opening Cash */
+            opening_cash: string;
+            /** Opening Net Worth */
+            opening_net_worth: string;
+            /** Principal Repaid */
+            principal_repaid: string;
+            /** Reconciles */
+            reconciles: boolean;
+            /** Year */
+            year: number;
         };
     };
     responses: never;

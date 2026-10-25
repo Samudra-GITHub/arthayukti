@@ -110,7 +110,13 @@ class CalcInvestment(BaseModel):
         ge=1, le=MAX_YEARS
     )  # total period money keeps growing, from the start
     annual_growth: CalcRate
-    tax_rate: TaxRate = Decimal("0")  # applied once, to the gain, at the valuation date
+    tax_rate: TaxRate = Decimal("0")  # applied once, at the valuation date
+    # gains: tax on the positive gain over the principal paid in. total_amount: tax on the whole (non-negative) value.
+    tax_method: Literal["gains", "total_amount"] = "gains"
+    # nominal_monthly: the rate is a nominal annual rate compounded monthly (rate / 12), the product's convention.
+    # effective_annual: the rate is the effective annual rate, so a month is (1 + rate)^(1/12) - 1 and inflation
+    # divides by (1 + inflation)^(years). It applies to growth, an after-maturity reinvestment rate and inflation.
+    rate_convention: Literal["nominal_monthly", "effective_annual"] = "nominal_monthly"
     inflation_rate: InflationRate = Decimal("0")
     after_maturity: CalcAfterMaturity | None = None
 

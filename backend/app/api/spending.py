@@ -32,6 +32,7 @@ from app.engine.spending import (
     RateSchedule,
     index_year_month,
     month_index,
+    monthly_totals,
     trajectory,
 )
 from app.errors import ApiError
@@ -651,6 +652,24 @@ def _specs(plans: list[ExpenditurePlan]) -> list[PlanSpec]:
             )
         )
     return specs
+
+
+def load_spending(db: Session, user: User, as_of: str, months: int) -> tuple[dict[int, Decimal], bool] | None:
+    """Spending by plan month (1 = `as_of`) from the person's active Expenditure plans, and whether any is insurance.
+
+    None when there are no active plans, so a caller never mistakes "nothing entered" for "no spending"."""
+    plans = (
+        db.query(ExpenditurePlan)
+        .filter(ExpenditurePlan.user_id == user.id, ExpenditurePlan.status == "active")
+        .order_by(ExpenditurePlan.created_at)
+        .all()
+    )
+    if not plans:
+        return None
+    schedule = _schedule(_settings(db, user), _rate_changes(db, user))
+    first = int(as_of[:4]) * 12 + int(as_of[5:7]) - 1
+    amounts = monthly_totals(_specs(plans), schedule, first, months)
+    return {t + 1: amount for t, amount in enumerate(amounts)}, any(p.system_category == "insurance" for p in plans)
 
 
 def _compute(db: Session, user: User):  # noqa: ANN202

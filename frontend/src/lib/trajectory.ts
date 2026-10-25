@@ -106,6 +106,7 @@ export function buildRequest(choices: TrajectoryChoices): Built {
       return_assumptions,
       premium_growth_annual: growth ?? '0.000000',
       premiums_in_spending: choices.premiumRule,
+      spending_source: 'plan',
       linked_commitments: Object.entries(choices.links).map(([commitment_id, liability_id]) => ({ commitment_id, liability_id })),
       goal_effects: selected
         .filter((id) => choices.goalEffects[id] !== undefined)

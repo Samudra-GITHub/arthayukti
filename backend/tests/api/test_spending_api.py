@@ -240,3 +240,21 @@ def test_it_requires_signing_in():
     from app.main import app
 
     assert TestClient(app).get("/api/v1/expenditure/trajectory").status_code == 401
+
+
+def test_spending_data_is_part_of_the_export_and_removed_with_the_account():
+    from app.db.models import ExpenditureCategory, ExpenditureChange, ExpenditurePlan
+    from app.db.session import SessionLocal
+
+    client = authed_client()
+    category = client.post("/api/v1/expenditure/categories", json={"name": "Pets"}).json()
+    plan = make(client, category=category["id"])
+    client.post(f"/api/v1/expenditure/plans/{plan['id']}/changes", json={"kind": "permanent", "effective_year": 2027, "effective_month": 1, "amount": "6000.00"})
+    exported = client.get("/api/v1/auth/export-data").json()["expenditure"]
+    assert [p["id"] for p in exported["plans"]] == [plan["id"]] and len(exported["plans"][0]["changes"]) == 1
+    assert any(c["id"] == category["id"] for c in exported["categories"]) and exported["settings"]["base_inflation"] == "0.060000"
+    assert client.delete("/api/v1/auth/delete-account").status_code == 200
+    with SessionLocal() as db:
+        assert db.query(ExpenditurePlan).filter(ExpenditurePlan.id == plan["id"]).count() == 0
+        assert db.query(ExpenditureCategory).filter(ExpenditureCategory.id == category["id"]).count() == 0
+        assert db.query(ExpenditureChange).filter(ExpenditureChange.plan_id == plan["id"]).count() == 0

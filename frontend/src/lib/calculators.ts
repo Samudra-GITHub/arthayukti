@@ -202,6 +202,8 @@ function buildInvestment(draft: InvestmentDraft, problems: Problems): Calculator
     growth_years: growthYears as number,
     annual_growth: growth as string,
     tax_rate: fourPlaces(tax as string),
+    tax_method: 'gains',
+    rate_convention: 'nominal_monthly',
     inflation_rate: inflation as string,
     ...(afterMaturity ? { after_maturity: afterMaturity } : {}),
   }

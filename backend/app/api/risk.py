@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from app.api.common import AUTH_RESPONSES
 from app.api.deps import get_current_user, get_db
 from app.api.household import get_risk_capacity
-from app.db.models import RiskAssessment, User
+from app.db.models import HouseholdProfile, RiskAssessment, User
 from app.schemas.risk import (
     RiskAssessmentHistoryItem,
     RiskAssessmentResponse,
@@ -193,6 +193,18 @@ def submit_risk_assessment(
     )
 
 
+def _profile_changed_since(db: Session, user: User, record: RiskAssessment) -> bool:
+    profile = db.query(HouseholdProfile).filter(HouseholdProfile.user_id == user.id).first()
+    if profile is None or profile.updated_at is None:
+        return False
+    edited, assessed = profile.updated_at, record.completed_at
+    if edited.tzinfo is None:
+        edited = edited.replace(tzinfo=assessed.tzinfo)
+    if assessed.tzinfo is None:
+        assessed = assessed.replace(tzinfo=edited.tzinfo)
+    return edited > assessed
+
+
 @router.get("/assessment/latest", response_model=RiskAssessmentResponse)
 def get_latest_risk_assessment(
     db: Session = Depends(get_db),
@@ -230,6 +242,7 @@ def get_latest_risk_assessment(
         conflict_note=record.conflict_note,
         limitations=LIMITATIONS,
         completed_at=record.completed_at.isoformat(),
+        profile_changed_since=_profile_changed_since(db, user, record),
     )
 
 
