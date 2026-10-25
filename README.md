@@ -1,13 +1,8 @@
 <div align="center">
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="frontend/public/brand/lockup-on-dark.svg">
-  <img src="frontend/public/brand/lockup-on-light.svg" alt="ArthaYukti" width="360">
-</picture>
+<img src="docs/assets/hero.svg" alt="ArthaYukti: every goal, one smarter plan" width="100%">
 
-### See which goal you lose when money runs short, and the smallest change that fixes it.
-
-Multi-goal financial planning under uncertainty, calculated from your own numbers by written rules, so the same inputs always give the same answer.
+<br>
 
 [**Live site**](https://arthayukti.vercel.app) · [Financial model](docs/FINANCIAL_MODEL.md) · [AI advisor](docs/AI_ADVISOR.md) · [API](docs/API.md) · [Deployment](docs/DEPLOYMENT.md)
 
@@ -44,6 +39,10 @@ When your income can't cover every goal (an emergency fund, a home, a child's ed
 English and हिन्दी throughout, light and dark themes, and a **Listen** option that reads a page aloud.
 
 ## The AI Financial Advisor
+
+<p align="center"><img src="docs/assets/flow.svg" alt="Advisor pipeline" width="100%"></p>
+
+<p align="center"><img src="docs/assets/goals.svg" alt="Each goal at its saved date and three years later" width="100%"></p>
 
 ```
  your records ──► snapshot (hashed) ──► engine: every goal at its date and +3 years
@@ -100,6 +99,23 @@ Copy `.env.example` to `backend/.env`. The defaults work locally (SQLite, a temp
 | `MARKET_PROVIDER` | Optional. `yahoo` reads live Indian share prices; the default uses the configured price service. |
 
 The frontend reads `VITE_API_BASE_URL` when the API is on another address.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  subgraph Web["Vercel · React 19 + TypeScript + Tailwind"]
+    UI["Pages: goals, Plan B, trajectory,<br/>advisor, portfolio"]
+  end
+  subgraph API["Render · FastAPI + Pydantic"]
+    R["Owner-scoped routes"] --> E["Deterministic engine<br/>(exact decimals)"]
+    R --> DB[("SQLite / PostgreSQL<br/>Alembic migrations")]
+    E --> A["Advisor: snapshot, +3-year goal dates,<br/>isolated scenarios"]
+  end
+  UI -- "typed from openapi.json" --> R
+  A -. "approved tools only" .-> G["Gemini<br/>(key stays on the server)"]
+  R -. "prices by symbol only" .-> P["Share price service"]
+```
 
 ## How it is built
 
