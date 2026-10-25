@@ -159,7 +159,8 @@ describe('ledger entry and import', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Save transaction' }))
     expect(await screen.findByText('Choose a date.')).toBeInTheDocument()
     expect(screen.getByText('Enter an amount above zero.')).toBeInTheDocument()
-    expect(calls.some((c) => c.method === 'POST')).toBe(false)
+    // The app's own background projection calls may land at any moment; what must not be sent is the ledger entry.
+    expect(calls.filter((c) => c.method === 'POST' && c.path.startsWith('/financials')).map((c) => c.path)).toEqual([])
   })
 })
 

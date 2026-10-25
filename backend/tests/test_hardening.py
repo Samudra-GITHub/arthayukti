@@ -28,6 +28,7 @@ client = TestClient(app)
 # Routes that are public on purpose. Everything else must demand a signed-in user.
 PUBLIC_PATHS = {
     ("GET", "/api/v1/health"),
+    ("GET", "/api/v1/health/ready"),
     ("GET", "/api/v1/samples"),
     ("GET", "/api/v1/samples/{sample_id}"),
     ("POST", "/api/v1/projections"),
@@ -758,3 +759,28 @@ def test_the_contract_says_the_token_is_optional_on_the_rescue_route_only():
 )
 def test_database_urls_are_normalised(given, expected):
     assert Settings(_env_file=None, DATABASE_URL=given).DATABASE_URL == expected
+
+
+def test_readiness_reports_ok_when_the_schema_is_current():
+    client = TestClient(app)
+    assert client.get("/api/v1/health").json() == {"status": "ok"}
+    assert client.get("/api/v1/health/ready").json() == {"status": "ok"}
+
+
+def test_readiness_refuses_when_the_schema_is_behind_or_the_database_is_down(monkeypatch):
+    from app.api import health
+
+    client = TestClient(app)
+    monkeypatch.setattr(health, "_migration_head", lambda: "some-newer-revision")
+    behind = client.get("/api/v1/health/ready")
+    assert behind.status_code == 503 and behind.json() == {"status": "schema_out_of_date"}
+
+    class Broken:
+        def connect(self):
+            raise RuntimeError("password=hunter2 host=db.example")
+
+    monkeypatch.setattr(health, "engine", Broken())
+    down = client.get("/api/v1/health/ready")
+    assert down.status_code == 503 and down.json() == {"status": "database_unavailable"}
+    assert "hunter2" not in down.text
+    assert client.get("/api/v1/health").status_code == 200  # liveness is independent of the database

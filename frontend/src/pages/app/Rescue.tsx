@@ -4,9 +4,11 @@ import type { RescueAlternativeItem, RescueResponse } from '../../api/types'
 import { AmountField, CheckField, FormError, TextField } from '../../components/forms'
 import { Notice, Panel, Stat } from '../../components/panel'
 import { formatMoney } from '../../lib/money'
+import type { Route } from '../../lib/route'
 import { useAction } from '../../state/useAction'
 import { useExtrasCopy } from '../../state/useExtrasCopy'
 import { useModulesCopy } from '../../state/useModulesCopy'
+import { usePlanBCopy } from '../../state/usePlanBCopy'
 import { useStore } from '../../state/useStore'
 
 const submitClass = 'min-h-12 self-start rounded-xl bg-brand px-6 font-semibold text-white disabled:opacity-60'
@@ -57,7 +59,8 @@ function Option({ item, recommended }: { item: RescueAlternativeItem; recommende
 }
 
 /** Constraint-aware rescue: the server tries ways to fit the goals inside limits the person sets. */
-export function RescuePage() {
+export function RescuePage({ navigate }: { navigate?: (route: Route) => void } = {}) {
+  const planB = usePlanBCopy().entry
   const t = useExtrasCopy().rescue
   const m = useModulesCopy()
   const { plan, scenario } = useStore()
@@ -98,6 +101,14 @@ export function RescuePage() {
 
   return (
     <>
+      {navigate ? (
+        <Panel id="plan-b-entry" title={planB.title}>
+          <p className="text-muted">{planB.body}</p>
+          <button type="button" onClick={() => navigate('plan-b')} className={submitClass}>
+            {planB.open}
+          </button>
+        </Panel>
+      ) : null}
       <Panel title={t.title}>
         <p className="text-muted">{t.body}</p>
         <h3 className="font-semibold">{t.limits}</h3>

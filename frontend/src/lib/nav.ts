@@ -31,7 +31,7 @@ export const NAV_BEFORE_OUTLOOK: NavItem[] = [
   { route: 'dashboard', key: 'dashboard', icon: Gauge, covers: [] },
   { route: 'profile', key: 'profile', icon: Users, covers: [] },
   { route: 'finances', key: 'finances', icon: HandCoins, covers: ['money-in', 'money-out'] },
-  { route: 'goals', key: 'goals', icon: Target, covers: ['dreams', 'plan', 'what-if', 'fixes', 'compare', 'tradeoffs', 'rescue'] },
+  { route: 'goals', key: 'goals', icon: Target, covers: ['dreams', 'plan', 'what-if', 'fixes', 'compare', 'tradeoffs', 'rescue', 'plan-b'] },
   { route: 'assets', key: 'assets', icon: Building2, covers: [] },
   { route: 'debts', key: 'debts', icon: Landmark, covers: [] },
   { route: 'insurance', key: 'insurance', icon: ShieldCheck, covers: [] },

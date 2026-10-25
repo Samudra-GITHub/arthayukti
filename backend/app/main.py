@@ -21,6 +21,7 @@ from app.api import (
     market,
     plans,
     recommendations,
+    recovery,
     rescue,
     risk,
     samples,
@@ -106,6 +107,7 @@ def create_app() -> FastAPI:
         recommendations,
         income,
         calculators,
+        recovery,
     ):
         app.include_router(module.router, prefix="/api/v1")
 

@@ -427,6 +427,330 @@
         "title": "AccountUpdateRequest",
         "type": "object"
       },
+      "Adjustment": {
+        "additionalProperties": false,
+        "description": "A change being tested: pause an item, or lower it, over a month range.",
+        "properties": {
+          "action": {
+            "enum": [
+              "pause",
+              "reduce_to"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "from_month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "From Month",
+            "type": "string"
+          },
+          "item_id": {
+            "pattern": "^[A-Za-z0-9_-]{1,40}$",
+            "title": "Item Id",
+            "type": "string"
+          },
+          "monthly": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Monthly"
+          },
+          "to_month": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Month"
+          }
+        },
+        "required": [
+          "item_id",
+          "action",
+          "from_month"
+        ],
+        "title": "Adjustment",
+        "type": "object"
+      },
+      "AdjustmentDescription": {
+        "additionalProperties": false,
+        "properties": {
+          "adjustment": {
+            "$ref": "#/components/schemas/Adjustment"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "adjustment",
+          "text"
+        ],
+        "title": "AdjustmentDescription",
+        "type": "object"
+      },
+      "AgreementCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "client_token": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "minLength": 8,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Token"
+          },
+          "draft": {
+            "$ref": "#/components/schemas/AgreementDraft"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "draft"
+        ],
+        "title": "AgreementCreate",
+        "type": "object"
+      },
+      "AgreementDraft": {
+        "additionalProperties": false,
+        "description": "What is saved: the situation, the chosen adjustments, restoration rules and the person's own words.",
+        "properties": {
+          "disruption_note": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Disruption Note",
+            "type": "string"
+          },
+          "fallback_note": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Fallback Note",
+            "type": "string"
+          },
+          "input": {
+            "$ref": "#/components/schemas/RecoveryInput"
+          },
+          "rationale": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Rationale",
+            "type": "string"
+          },
+          "selected_label": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selected Label"
+          },
+          "source_plan_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Plan Id"
+          },
+          "source_plan_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Plan Name"
+          }
+        },
+        "required": [
+          "input"
+        ],
+        "title": "AgreementDraft",
+        "type": "object"
+      },
+      "AgreementOut": {
+        "additionalProperties": false,
+        "properties": {
+          "changes_from_previous": {
+            "items": {
+              "$ref": "#/components/schemas/VersionChange"
+            },
+            "title": "Changes From Previous",
+            "type": "array"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "draft": {
+            "$ref": "#/components/schemas/AgreementDraft"
+          },
+          "evaluation": {
+            "$ref": "#/components/schemas/RecoveryEvaluation"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          },
+          "versions": {
+            "items": {
+              "$ref": "#/components/schemas/VersionSummary"
+            },
+            "title": "Versions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "version",
+          "created_at",
+          "updated_at",
+          "draft",
+          "evaluation",
+          "changes_from_previous",
+          "versions",
+          "limitations"
+        ],
+        "title": "AgreementOut",
+        "type": "object"
+      },
+      "AgreementRevise": {
+        "additionalProperties": false,
+        "properties": {
+          "change_note": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Change Note",
+            "type": "string"
+          },
+          "draft": {
+            "$ref": "#/components/schemas/AgreementDraft"
+          },
+          "expected_version": {
+            "minimum": 1.0,
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          }
+        },
+        "required": [
+          "draft",
+          "expected_version"
+        ],
+        "title": "AgreementRevise",
+        "type": "object"
+      },
+      "AgreementSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "feasible": {
+            "title": "Feasible",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "review_month": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Month"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "version",
+          "updated_at",
+          "feasible",
+          "review_month"
+        ],
+        "title": "AgreementSummary",
+        "type": "object"
+      },
       "AmortizationRequest": {
         "additionalProperties": false,
         "properties": {
@@ -1630,6 +1954,88 @@
         "title": "CalculatorResult",
         "type": "object"
       },
+      "CashItem": {
+        "additionalProperties": false,
+        "description": "A monthly outflow. Goal contributions are transfers to savings, not spending.",
+        "properties": {
+          "balance_id": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9_-]{1,40}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Balance Id"
+          },
+          "from_month": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Month"
+          },
+          "id": {
+            "pattern": "^[A-Za-z0-9_-]{1,40}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "essential",
+              "mandatory_debt",
+              "protected_obligation",
+              "flexible",
+              "goal_contribution"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "monthly": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Monthly",
+            "type": "string"
+          },
+          "protected": {
+            "default": true,
+            "title": "Protected",
+            "type": "boolean"
+          },
+          "to_month": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Month"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "kind",
+          "monthly"
+        ],
+        "title": "CashItem",
+        "type": "object"
+      },
       "Commitment": {
         "additionalProperties": false,
         "description": "An existing fixed payment (for example an EMI) that stops after remaining_months.",
@@ -2653,6 +3059,34 @@
         "title": "ExportPolicy",
         "type": "object"
       },
+      "ExportRecoveryAgreement": {
+        "additionalProperties": false,
+        "properties": {
+          "draft": {
+            "$ref": "#/components/schemas/AgreementDraft"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "version",
+          "draft"
+        ],
+        "title": "ExportRecoveryAgreement",
+        "type": "object"
+      },
       "ExportResponse": {
         "additionalProperties": false,
         "properties": {
@@ -2700,6 +3134,14 @@
               "$ref": "#/components/schemas/ExportPolicy"
             },
             "title": "Policies",
+            "type": "array"
+          },
+          "recovery_agreements": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ExportRecoveryAgreement"
+            },
+            "title": "Recovery Agreements",
             "type": "array"
           },
           "transactions": {
@@ -4130,6 +4572,40 @@
         "title": "IncomeProjectionResponse",
         "type": "object"
       },
+      "IncomeSegment": {
+        "additionalProperties": false,
+        "description": "Net monthly income over a range. `to_month=None` means the end of the horizon, duration unknown.",
+        "properties": {
+          "from_month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "From Month",
+            "type": "string"
+          },
+          "monthly_net": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Monthly Net",
+            "type": "string"
+          },
+          "to_month": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Month"
+          }
+        },
+        "required": [
+          "from_month",
+          "monthly_net"
+        ],
+        "title": "IncomeSegment",
+        "type": "object"
+      },
       "IncomeStepUp": {
         "additionalProperties": false,
         "description": "From `year` (January) the stream's base amount is replaced by `amount`, in the stream's frequency.",
@@ -4297,6 +4773,51 @@
           "cumulative_income"
         ],
         "title": "IncomeYear",
+        "type": "object"
+      },
+      "InfeasibilityReport": {
+        "additionalProperties": false,
+        "description": "When no permitted plan works: the strongest plan you allow, and why it still falls short.",
+        "properties": {
+          "conflicts": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Conflicts",
+            "type": "array"
+          },
+          "first_violation": {
+            "title": "First Violation",
+            "type": "string"
+          },
+          "shortfall": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Shortfall",
+            "type": "string"
+          },
+          "strongest_plan": {
+            "items": {
+              "$ref": "#/components/schemas/AdjustmentDescription"
+            },
+            "title": "Strongest Plan",
+            "type": "array"
+          },
+          "you_could_consider": {
+            "items": {
+              "type": "string"
+            },
+            "title": "You Could Consider",
+            "type": "array"
+          }
+        },
+        "required": [
+          "strongest_plan",
+          "first_violation",
+          "shortfall",
+          "conflicts",
+          "you_could_consider"
+        ],
+        "title": "InfeasibilityReport",
         "type": "object"
       },
       "InsuranceDashboardSummary": {
@@ -4737,6 +5258,32 @@
           }
         },
         "title": "InvestmentUpdateRequest",
+        "type": "object"
+      },
+      "ItemMonth": {
+        "additionalProperties": false,
+        "properties": {
+          "adjusted": {
+            "title": "Adjusted",
+            "type": "boolean"
+          },
+          "amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Amount",
+            "type": "string"
+          },
+          "item_id": {
+            "pattern": "^[A-Za-z0-9_-]{1,40}$",
+            "title": "Item Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "item_id",
+          "amount",
+          "adjusted"
+        ],
+        "title": "ItemMonth",
         "type": "object"
       },
       "LiabilityCreateRequest": {
@@ -5456,6 +6003,56 @@
         "title": "PasswordResetRequest",
         "type": "object"
       },
+      "Permission": {
+        "additionalProperties": false,
+        "description": "What the person allows to change. Without one, an item cannot be adjusted.",
+        "properties": {
+          "action": {
+            "enum": [
+              "pause",
+              "reduce_to"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "item_id": {
+            "pattern": "^[A-Za-z0-9_-]{1,40}$",
+            "title": "Item Id",
+            "type": "string"
+          },
+          "max_months": {
+            "anyOf": [
+              {
+                "maximum": 120.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Months"
+          },
+          "min_monthly": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Monthly"
+          }
+        },
+        "required": [
+          "item_id",
+          "action"
+        ],
+        "title": "Permission",
+        "type": "object"
+      },
       "Plan": {
         "additionalProperties": false,
         "properties": {
@@ -5531,6 +6128,160 @@
           "assumptions"
         ],
         "title": "Plan",
+        "type": "object"
+      },
+      "PlanMetrics": {
+        "additionalProperties": false,
+        "properties": {
+          "balances_end": {
+            "additionalProperties": {
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            "title": "Balances End",
+            "type": "object"
+          },
+          "final_liquid": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Final Liquid",
+            "type": "string"
+          },
+          "flexible_reduction_total": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Flexible Reduction Total",
+            "type": "string"
+          },
+          "floor_headroom": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Floor Headroom",
+            "type": "string"
+          },
+          "goal_contributions_deferred": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Goal Contributions Deferred",
+            "type": "string"
+          },
+          "goal_contributions_made": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Goal Contributions Made",
+            "type": "string"
+          },
+          "goal_delay": {
+            "title": "Goal Delay",
+            "type": "string"
+          },
+          "minimum_liquid": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Minimum Liquid",
+            "type": "string"
+          },
+          "paused_months": {
+            "title": "Paused Months",
+            "type": "integer"
+          },
+          "reduced_months": {
+            "title": "Reduced Months",
+            "type": "integer"
+          },
+          "restoration_complete_month": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restoration Complete Month"
+          }
+        },
+        "required": [
+          "minimum_liquid",
+          "final_liquid",
+          "floor_headroom",
+          "flexible_reduction_total",
+          "goal_contributions_deferred",
+          "goal_contributions_made",
+          "paused_months",
+          "reduced_months",
+          "balances_end",
+          "restoration_complete_month",
+          "goal_delay"
+        ],
+        "title": "PlanMetrics",
+        "type": "object"
+      },
+      "PlanOption": {
+        "additionalProperties": false,
+        "properties": {
+          "adjustments": {
+            "items": {
+              "$ref": "#/components/schemas/AdjustmentDescription"
+            },
+            "title": "Adjustments",
+            "type": "array"
+          },
+          "evaluation": {
+            "$ref": "#/components/schemas/RecoveryEvaluation"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "key_assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Key Assumptions",
+            "type": "array"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "metrics": {
+            "$ref": "#/components/schemas/PlanMetrics"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "what_would_break_it": {
+            "items": {
+              "type": "string"
+            },
+            "title": "What Would Break It",
+            "type": "array"
+          },
+          "what_you_give_up": {
+            "items": {
+              "type": "string"
+            },
+            "title": "What You Give Up",
+            "type": "array"
+          },
+          "why_it_works": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Why It Works",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "rank",
+          "adjustments",
+          "metrics",
+          "evaluation",
+          "why_it_works",
+          "what_you_give_up",
+          "key_assumptions",
+          "what_would_break_it"
+        ],
+        "title": "PlanOption",
         "type": "object"
       },
       "PlanRecord": {
@@ -6088,6 +6839,35 @@
         "title": "ProjectionSummary",
         "type": "object"
       },
+      "ProtectedBalance": {
+        "additionalProperties": false,
+        "description": "Money set aside for a goal or retirement. The evaluator never withdraws from it.",
+        "properties": {
+          "balance": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Balance",
+            "type": "string"
+          },
+          "id": {
+            "pattern": "^[A-Za-z0-9_-]{1,40}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "balance"
+        ],
+        "title": "ProtectedBalance",
+        "type": "object"
+      },
       "RecommendationComparisonRequest": {
         "description": "Give `plan_id` to use the signed-in user's saved plan, or `plan` for an explicit hypothetical.",
         "properties": {
@@ -6232,6 +7012,484 @@
           "goals"
         ],
         "title": "RecommendationVariant",
+        "type": "object"
+      },
+      "RecoveryEvaluation": {
+        "additionalProperties": false,
+        "properties": {
+          "assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Assumptions",
+            "type": "array"
+          },
+          "balances_end": {
+            "additionalProperties": {
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            "title": "Balances End",
+            "type": "object"
+          },
+          "feasible": {
+            "title": "Feasible",
+            "type": "boolean"
+          },
+          "final_liquid": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Final Liquid",
+            "type": "string"
+          },
+          "first_violation_month": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Violation Month"
+          },
+          "income_end_unknown": {
+            "title": "Income End Unknown",
+            "type": "boolean"
+          },
+          "minimum_liquid": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Minimum Liquid",
+            "type": "string"
+          },
+          "months": {
+            "items": {
+              "$ref": "#/components/schemas/RecoveryMonth"
+            },
+            "title": "Months",
+            "type": "array"
+          },
+          "protected_balances_withdrawn": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Protected Balances Withdrawn",
+            "type": "string"
+          },
+          "restorations": {
+            "items": {
+              "$ref": "#/components/schemas/RestorationOutcome"
+            },
+            "title": "Restorations",
+            "type": "array"
+          },
+          "review": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReviewSnapshot"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "violations": {
+            "items": {
+              "$ref": "#/components/schemas/RecoveryViolation"
+            },
+            "title": "Violations",
+            "type": "array"
+          }
+        },
+        "required": [
+          "feasible",
+          "months",
+          "violations",
+          "first_violation_month",
+          "minimum_liquid",
+          "final_liquid",
+          "balances_end",
+          "protected_balances_withdrawn",
+          "income_end_unknown",
+          "assumptions"
+        ],
+        "title": "RecoveryEvaluation",
+        "type": "object"
+      },
+      "RecoveryInput": {
+        "additionalProperties": false,
+        "properties": {
+          "adjustments": {
+            "items": {
+              "$ref": "#/components/schemas/Adjustment"
+            },
+            "maxItems": 40,
+            "title": "Adjustments",
+            "type": "array"
+          },
+          "income": {
+            "items": {
+              "$ref": "#/components/schemas/IncomeSegment"
+            },
+            "maxItems": 12,
+            "minItems": 1,
+            "title": "Income",
+            "type": "array"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CashItem"
+            },
+            "maxItems": 40,
+            "minItems": 1,
+            "title": "Items",
+            "type": "array"
+          },
+          "liquid_cash": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Liquid Cash",
+            "type": "string"
+          },
+          "months": {
+            "maximum": 120.0,
+            "minimum": 1.0,
+            "title": "Months",
+            "type": "integer"
+          },
+          "permissions": {
+            "items": {
+              "$ref": "#/components/schemas/Permission"
+            },
+            "maxItems": 40,
+            "title": "Permissions",
+            "type": "array"
+          },
+          "protected_balances": {
+            "items": {
+              "$ref": "#/components/schemas/ProtectedBalance"
+            },
+            "maxItems": 20,
+            "title": "Protected Balances",
+            "type": "array"
+          },
+          "recovery_confirmed_from": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recovery Confirmed From"
+          },
+          "reserve_floor": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Reserve Floor",
+            "type": "string"
+          },
+          "restorations": {
+            "items": {
+              "$ref": "#/components/schemas/RestorationRule"
+            },
+            "maxItems": 40,
+            "title": "Restorations",
+            "type": "array"
+          },
+          "review_month": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Month"
+          },
+          "start_month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "Start Month",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start_month",
+          "months",
+          "liquid_cash",
+          "reserve_floor",
+          "income",
+          "items"
+        ],
+        "title": "RecoveryInput",
+        "type": "object"
+      },
+      "RecoveryMonth": {
+        "additionalProperties": false,
+        "properties": {
+          "cash_change": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cash Change",
+            "type": "string"
+          },
+          "flexible_outflow": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Flexible Outflow",
+            "type": "string"
+          },
+          "floor_met": {
+            "title": "Floor Met",
+            "type": "boolean"
+          },
+          "goal_transfers": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Goal Transfers",
+            "type": "string"
+          },
+          "income": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Income",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ItemMonth"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "liquid_end": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Liquid End",
+            "type": "string"
+          },
+          "mandatory_outflow": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Mandatory Outflow",
+            "type": "string"
+          },
+          "mandatory_shortfall": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Mandatory Shortfall",
+            "type": "string"
+          },
+          "month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "Month",
+            "type": "string"
+          },
+          "net_worth_change": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Net Worth Change",
+            "type": "string"
+          }
+        },
+        "required": [
+          "month",
+          "income",
+          "mandatory_outflow",
+          "flexible_outflow",
+          "goal_transfers",
+          "cash_change",
+          "liquid_end",
+          "mandatory_shortfall",
+          "floor_met",
+          "net_worth_change",
+          "items"
+        ],
+        "title": "RecoveryMonth",
+        "type": "object"
+      },
+      "RecoverySearchRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "adjust_from": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adjust From"
+          },
+          "adjust_months": {
+            "anyOf": [
+              {
+                "maximum": 120.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adjust Months"
+          },
+          "excluded_item_ids": {
+            "items": {
+              "pattern": "^[A-Za-z0-9_-]{1,40}$",
+              "type": "string"
+            },
+            "maxItems": 40,
+            "title": "Excluded Item Ids",
+            "type": "array"
+          },
+          "input": {
+            "$ref": "#/components/schemas/RecoveryInput"
+          },
+          "limits": {
+            "$ref": "#/components/schemas/SearchLimits"
+          }
+        },
+        "required": [
+          "input"
+        ],
+        "title": "RecoverySearchRequest",
+        "type": "object"
+      },
+      "RecoverySearchResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "frontier_size": {
+            "title": "Frontier Size",
+            "type": "integer"
+          },
+          "infeasibility": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InfeasibilityReport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/PlanOption"
+            },
+            "title": "Options",
+            "type": "array"
+          },
+          "ranking_policy": {
+            "title": "Ranking Policy",
+            "type": "string"
+          },
+          "rejected": {
+            "items": {
+              "$ref": "#/components/schemas/RejectedAlternative"
+            },
+            "title": "Rejected",
+            "type": "array"
+          },
+          "search": {
+            "$ref": "#/components/schemas/SearchSummary"
+          },
+          "trade_off_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trade Off Note"
+          }
+        },
+        "required": [
+          "search",
+          "options",
+          "ranking_policy",
+          "trade_off_note",
+          "rejected",
+          "infeasibility",
+          "frontier_size"
+        ],
+        "title": "RecoverySearchResponse",
+        "type": "object"
+      },
+      "RecoveryViolation": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Amount",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "mandatory_shortfall",
+              "reserve_floor",
+              "pause_limit"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "Month",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "month",
+          "amount",
+          "message"
+        ],
+        "title": "RecoveryViolation",
+        "type": "object"
+      },
+      "RejectedAlternative": {
+        "additionalProperties": false,
+        "properties": {
+          "adjustments": {
+            "items": {
+              "$ref": "#/components/schemas/AdjustmentDescription"
+            },
+            "title": "Adjustments",
+            "type": "array"
+          },
+          "kind": {
+            "enum": [
+              "mandatory_shortfall",
+              "reserve_floor",
+              "pause_limit"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "Month",
+            "type": "string"
+          },
+          "sacrifice_total": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Sacrifice Total",
+            "type": "string"
+          }
+        },
+        "required": [
+          "adjustments",
+          "sacrifice_total",
+          "kind",
+          "month",
+          "message"
+        ],
+        "title": "RejectedAlternative",
         "type": "object"
       },
       "RescueAlternativeItem": {
@@ -6519,6 +7777,301 @@
           "assumptions"
         ],
         "title": "RescueResponse",
+        "type": "object"
+      },
+      "RestorationCondition": {
+        "additionalProperties": false,
+        "description": "One test that must hold before a paused or reduced item starts to come back.",
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount"
+          },
+          "month": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Month"
+          },
+          "type": {
+            "enum": [
+              "income_at_least",
+              "liquid_at_least",
+              "user_confirmed",
+              "date_reached"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "RestorationCondition",
+        "type": "object"
+      },
+      "RestorationOutcome": {
+        "additionalProperties": false,
+        "properties": {
+          "deferred_months": {
+            "title": "Deferred Months",
+            "type": "integer"
+          },
+          "final_monthly": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Final Monthly",
+            "type": "string"
+          },
+          "item_id": {
+            "pattern": "^[A-Za-z0-9_-]{1,40}$",
+            "title": "Item Id",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "not_triggered",
+              "deferred",
+              "partial",
+              "restored"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/RestorationStep"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "triggered_month": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Triggered Month"
+          }
+        },
+        "required": [
+          "item_id",
+          "status",
+          "triggered_month",
+          "steps",
+          "deferred_months",
+          "final_monthly"
+        ],
+        "title": "RestorationOutcome",
+        "type": "object"
+      },
+      "RestorationRule": {
+        "additionalProperties": false,
+        "description": "How an item that was paused or reduced \"until restored\" comes back.\n\nEvery condition must hold (a date can be one of them, never the only one). `steps` are the monthly\namounts to return to, in order; leave it empty to go straight back to the original amount. Each later step\nstarts `step_gap_months` after the one before. With `affordability_guard` a step that would take liquid\ncash below the floor is deferred, not applied.",
+        "properties": {
+          "affordability_guard": {
+            "default": true,
+            "title": "Affordability Guard",
+            "type": "boolean"
+          },
+          "conditions": {
+            "items": {
+              "$ref": "#/components/schemas/RestorationCondition"
+            },
+            "maxItems": 4,
+            "minItems": 1,
+            "title": "Conditions",
+            "type": "array"
+          },
+          "item_id": {
+            "pattern": "^[A-Za-z0-9_-]{1,40}$",
+            "title": "Item Id",
+            "type": "string"
+          },
+          "step_gap_months": {
+            "default": 1,
+            "maximum": 12.0,
+            "minimum": 1.0,
+            "title": "Step Gap Months",
+            "type": "integer"
+          },
+          "steps": {
+            "items": {
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            "maxItems": 6,
+            "title": "Steps",
+            "type": "array"
+          }
+        },
+        "required": [
+          "item_id",
+          "conditions"
+        ],
+        "title": "RestorationRule",
+        "type": "object"
+      },
+      "RestorationStep": {
+        "additionalProperties": false,
+        "properties": {
+          "month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "Month",
+            "type": "string"
+          },
+          "monthly": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Monthly",
+            "type": "string"
+          }
+        },
+        "required": [
+          "month",
+          "monthly"
+        ],
+        "title": "RestorationStep",
+        "type": "object"
+      },
+      "ReviewItem": {
+        "additionalProperties": false,
+        "properties": {
+          "item_id": {
+            "pattern": "^[A-Za-z0-9_-]{1,40}$",
+            "title": "Item Id",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "not_triggered",
+              "deferred",
+              "partial",
+              "restored"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "item_id",
+          "status"
+        ],
+        "title": "ReviewItem",
+        "type": "object"
+      },
+      "ReviewRequest": {
+        "additionalProperties": false,
+        "description": "What is true now. The review recalculates from `as_of_month` using only these updated figures.",
+        "properties": {
+          "as_of_month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "As Of Month",
+            "type": "string"
+          },
+          "liquid_cash": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Liquid Cash",
+            "type": "string"
+          },
+          "monthly_income": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Monthly Income",
+            "type": "string"
+          },
+          "recovery_confirmed": {
+            "default": false,
+            "title": "Recovery Confirmed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "as_of_month",
+          "liquid_cash",
+          "monthly_income"
+        ],
+        "title": "ReviewRequest",
+        "type": "object"
+      },
+      "ReviewResult": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of_month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "As Of Month",
+            "type": "string"
+          },
+          "evaluation": {
+            "$ref": "#/components/schemas/RecoveryEvaluation"
+          },
+          "fits": {
+            "title": "Fits",
+            "type": "boolean"
+          },
+          "messages": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Messages",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "still_fits",
+              "needs_recalculation"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "as_of_month",
+          "fits",
+          "status",
+          "evaluation",
+          "messages"
+        ],
+        "title": "ReviewResult",
+        "type": "object"
+      },
+      "ReviewSnapshot": {
+        "additionalProperties": false,
+        "description": "Where each restoration stood at the review month. The date itself restores nothing.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ReviewItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "Month",
+            "type": "string"
+          }
+        },
+        "required": [
+          "month",
+          "items"
+        ],
+        "title": "ReviewSnapshot",
         "type": "object"
       },
       "RiskAssessmentHistoryItem": {
@@ -6943,6 +8496,112 @@
           }
         },
         "title": "Scenario",
+        "type": "object"
+      },
+      "SearchLimits": {
+        "additionalProperties": false,
+        "description": "Explicit bounds on the search. Reaching `max_candidates` makes the answer incomplete, never \"no solution\".",
+        "properties": {
+          "max_candidates": {
+            "default": 1500,
+            "maximum": 20000.0,
+            "minimum": 1.0,
+            "title": "Max Candidates",
+            "type": "integer"
+          },
+          "max_options": {
+            "default": 3,
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Max Options",
+            "type": "integer"
+          },
+          "reduce_step": {
+            "default": "1000.00",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Reduce Step",
+            "type": "string"
+          }
+        },
+        "title": "SearchLimits",
+        "type": "object"
+      },
+      "SearchSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "best_not_proven": {
+            "title": "Best Not Proven",
+            "type": "boolean"
+          },
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "duplicates_skipped": {
+            "title": "Duplicates Skipped",
+            "type": "integer"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "integer"
+          },
+          "evaluated": {
+            "title": "Evaluated",
+            "type": "integer"
+          },
+          "feasible_found": {
+            "title": "Feasible Found",
+            "type": "integer"
+          },
+          "ignored_permissions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Ignored Permissions",
+            "type": "array"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "rejected_by_kind": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Rejected By Kind",
+            "type": "object"
+          },
+          "space_size": {
+            "title": "Space Size",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "found",
+              "infeasible",
+              "incomplete"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "complete",
+          "space_size",
+          "evaluated",
+          "duplicates_skipped",
+          "errors",
+          "feasible_found",
+          "best_not_proven",
+          "rejected_by_kind",
+          "ignored_permissions",
+          "notes"
+        ],
+        "title": "SearchSummary",
         "type": "object"
       },
       "SignupRequest": {
@@ -7615,6 +9274,66 @@
           "created_at"
         ],
         "title": "UserProfile",
+        "type": "object"
+      },
+      "VersionChange": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "title": "After",
+            "type": "string"
+          },
+          "before": {
+            "title": "Before",
+            "type": "string"
+          },
+          "field": {
+            "title": "Field",
+            "type": "string"
+          }
+        },
+        "required": [
+          "field",
+          "before",
+          "after"
+        ],
+        "title": "VersionChange",
+        "type": "object"
+      },
+      "VersionSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "change_note": {
+            "title": "Change Note",
+            "type": "string"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "selected_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selected Label"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "created_at",
+          "change_note",
+          "selected_label"
+        ],
+        "title": "VersionSummary",
         "type": "object"
       }
     },
@@ -10921,6 +12640,7 @@
     },
     "/api/v1/health": {
       "get": {
+        "description": "Liveness: the process is up. It does not touch the database.",
         "operationId": "health_api_v1_health_get",
         "responses": {
           "200": {
@@ -10935,6 +12655,38 @@
           }
         },
         "summary": "Health",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/api/v1/health/ready": {
+      "get": {
+        "description": "Readiness: the database answers and its schema is at the revision this code expects.\n\nA deploy whose migrations did not run, or a database that is unreachable, reports 503 here and a\ngeneric message only (never the connection string or the SQL error).",
+        "operationId": "ready_api_v1_health_ready_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Ready",
         "tags": [
           "health"
         ]
@@ -12681,6 +14433,710 @@
         "summary": "Compare Conservative Recommendations",
         "tags": [
           "recommendations"
+        ]
+      }
+    },
+    "/api/v1/recovery/agreements": {
+      "get": {
+        "operationId": "list_agreements_api_v1_recovery_agreements_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AgreementSummary"
+                  },
+                  "title": "Response List Agreements Api V1 Recovery Agreements Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Agreements",
+        "tags": [
+          "recovery"
+        ]
+      },
+      "post": {
+        "description": "Save the chosen plan as version 1. Sending the same `client_token` again returns the agreement already saved.",
+        "operationId": "create_agreement_api_v1_recovery_agreements_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgreementCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgreementOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Agreement",
+        "tags": [
+          "recovery"
+        ]
+      }
+    },
+    "/api/v1/recovery/agreements/{agreement_id}": {
+      "delete": {
+        "operationId": "delete_agreement_api_v1_recovery_agreements__agreement_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agreement_id",
+            "required": true,
+            "schema": {
+              "title": "Agreement Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Agreement",
+        "tags": [
+          "recovery"
+        ]
+      },
+      "get": {
+        "operationId": "get_agreement_api_v1_recovery_agreements__agreement_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agreement_id",
+            "required": true,
+            "schema": {
+              "title": "Agreement Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgreementOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Agreement",
+        "tags": [
+          "recovery"
+        ]
+      },
+      "put": {
+        "description": "Add a new version. The previous one is kept. `expected_version` must match the latest, or nothing is saved.",
+        "operationId": "revise_agreement_api_v1_recovery_agreements__agreement_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agreement_id",
+            "required": true,
+            "schema": {
+              "title": "Agreement Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgreementRevise"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgreementOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Revise Agreement",
+        "tags": [
+          "recovery"
+        ]
+      }
+    },
+    "/api/v1/recovery/agreements/{agreement_id}/review": {
+      "post": {
+        "description": "Check the latest version against today's figures. Nothing is saved or changed.",
+        "operationId": "review_api_v1_recovery_agreements__agreement_id__review_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agreement_id",
+            "required": true,
+            "schema": {
+              "title": "Agreement Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Review",
+        "tags": [
+          "recovery"
+        ]
+      }
+    },
+    "/api/v1/recovery/agreements/{agreement_id}/versions/{version}": {
+      "get": {
+        "operationId": "get_version_api_v1_recovery_agreements__agreement_id__versions__version__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agreement_id",
+            "required": true,
+            "schema": {
+              "title": "Agreement Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "required": true,
+            "schema": {
+              "title": "Version",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgreementOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Version",
+        "tags": [
+          "recovery"
+        ]
+      }
+    },
+    "/api/v1/recovery/evaluate": {
+      "post": {
+        "description": "Run one specified plan month by month.",
+        "operationId": "evaluate_api_v1_recovery_evaluate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoveryInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoveryEvaluation"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Evaluate",
+        "tags": [
+          "recovery"
+        ]
+      }
+    },
+    "/api/v1/recovery/search": {
+      "post": {
+        "description": "Search the changes you allow and compare the plans that satisfy every rule.",
+        "operationId": "search_api_v1_recovery_search_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoverySearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverySearchResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Search",
+        "tags": [
+          "recovery"
         ]
       }
     },

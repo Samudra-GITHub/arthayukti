@@ -29,6 +29,14 @@ import type {
   AIConsultResponse,
   EscalationCreateRequest,
   IncomeProjectionResponse,
+  AgreementDraft,
+  AgreementOut,
+  AgreementSummary,
+  RecoveryEvaluation,
+  RecoveryInput,
+  RecoverySearchRequest,
+  RecoverySearchResponse,
+  ReviewResult,
   CalculatorCompareEntry,
   CalculatorCompareResponse,
   CalculatorConfig,
@@ -190,6 +198,23 @@ export const api = {
     if (!response.ok) throw new ApiFailure('http_error', `Export failed (${response.status}).`, response.status)
     return response.blob()
   },
+  // Plan B
+  recoverySearch: (body: RecoverySearchRequest, signal?: AbortSignal) =>
+    post<RecoverySearchResponse>('/recovery/search', body, signal),
+  recoveryEvaluate: (body: RecoveryInput, signal?: AbortSignal) =>
+    post<RecoveryEvaluation>('/recovery/evaluate', body, signal),
+  agreements: (signal?: AbortSignal) => get<AgreementSummary[]>('/recovery/agreements', signal),
+  agreement: (id: string, signal?: AbortSignal) => get<AgreementOut>(`/recovery/agreements/${id}`, signal),
+  agreementVersion: (id: string, version: number, signal?: AbortSignal) =>
+    get<AgreementOut>(`/recovery/agreements/${id}/versions/${version}`, signal),
+  createAgreement: (name: string, draft: AgreementDraft, clientToken: string) =>
+    post<AgreementOut>('/recovery/agreements', { name, draft, client_token: clientToken }),
+  reviseAgreement: (id: string, draft: AgreementDraft, expectedVersion: number, changeNote: string) =>
+    send<AgreementOut>('PUT', `/recovery/agreements/${id}`, { draft, expected_version: expectedVersion, change_note: changeNote }),
+  reviewAgreement: (id: string, body: { as_of_month: string; liquid_cash: string; monthly_income: string; recovery_confirmed: boolean }) =>
+    post<ReviewResult>(`/recovery/agreements/${id}/review`, body),
+  deleteAgreement: (id: string) => request<void>(`/recovery/agreements/${id}`, { method: 'DELETE' }),
+
   // Investment calculators
   calcRun: (config: CalculatorConfig, signal?: AbortSignal) => post<CalculatorResult>('/calculators/run', config, signal),
   calcMaturityCheck: (config: CalculatorConfig, signal?: AbortSignal) =>

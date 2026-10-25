@@ -30,6 +30,7 @@ import {
   ScenarioComparisonPage,
 } from './pages/app/Outlook'
 import { AssetsPage, DebtsPage, InsurancePage } from './pages/app/Records'
+import { PlanBPage } from './pages/app/PlanB'
 import { RescuePage } from './pages/app/Rescue'
 import { CalculatorsPage } from './pages/app/Calculators'
 import { AdvisorPage, AlertsPage, FinancesPage, GoalsPage, ImportPage, ProfilePage, SettingsPage, TaxesPage } from './pages/app/Tools'
@@ -140,7 +141,9 @@ function Screens() {
     case 'outlook-scenarios':
       return <AppPage route={route} navigate={navigate}><ScenarioComparisonPage /></AppPage>
     case 'rescue':
-      return <AppPage route={route} navigate={navigate}><RescuePage /></AppPage>
+      return <AppPage route={route} navigate={navigate}><RescuePage navigate={navigate} /></AppPage>
+    case 'plan-b':
+      return <AppPage route={route} navigate={navigate}><PlanBPage /></AppPage>
     case 'advisor':
       return <AppPage route={route} navigate={navigate}><AdvisorPage /></AppPage>
     case 'import':

@@ -53,6 +53,9 @@ class User(Base):
     calculator_scenarios = relationship(
         "CalculatorScenario", back_populates="user", cascade="all, delete-orphan"
     )
+    recovery_agreements = relationship(
+        "RecoveryAgreement", back_populates="user", cascade="all, delete-orphan"
+    )
     risk_assessments = relationship(
         "RiskAssessment", back_populates="user", cascade="all, delete-orphan", order_by="desc(RiskAssessment.completed_at)"
     )
@@ -482,3 +485,58 @@ class CalculatorScenario(Base):
     )
 
     user = relationship("User", back_populates="calculator_scenarios")
+
+
+class RecoveryAgreement(Base):
+    """A saved Plan B Recovery Agreement. The content lives in its versions; this row names it and points at the latest."""
+
+    __tablename__ = "recovery_agreements"
+    __table_args__ = (
+        UniqueConstraint("user_id", "name", name="uq_recovery_agreement_user_name"),
+        UniqueConstraint("user_id", "client_token", name="uq_recovery_agreement_user_token"),
+    )
+
+    id = Column(String(36), primary_key=True, default=_gen_uuid)
+    user_id = Column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    name = Column(String(80), nullable=False)
+    current_version = Column(Integer, nullable=False, default=1)
+    # Lets a repeated submission of the same save return the agreement that already exists.
+    client_token = Column(String(64), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
+    updated_at = Column(
+        DateTime(timezone=True), default=_now_utc, onupdate=_now_utc, nullable=False
+    )
+
+    user = relationship("User", back_populates="recovery_agreements")
+    versions = relationship(
+        "RecoveryAgreementVersion",
+        back_populates="agreement",
+        cascade="all, delete-orphan",
+        order_by="RecoveryAgreementVersion.version",
+    )
+
+
+class RecoveryAgreementVersion(Base):
+    """One revision of an agreement. Rows are only ever added, so earlier versions are kept as they were."""
+
+    __tablename__ = "recovery_agreement_versions"
+    __table_args__ = (
+        UniqueConstraint("agreement_id", "version", name="uq_recovery_agreement_version"),
+    )
+
+    id = Column(String(36), primary_key=True, default=_gen_uuid)
+    agreement_id = Column(
+        String(36),
+        ForeignKey("recovery_agreements.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    version = Column(Integer, nullable=False)
+    draft_json = Column(Text, nullable=False)
+    change_note = Column(String(1000), nullable=False, default="")
+    selected_label = Column(String(80), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
+
+    agreement = relationship("RecoveryAgreement", back_populates="versions")
