@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { ExpenditureSection } from './Expenditure'
 import { IncomeSection } from './Income'
 import { api } from '../../api/client'
 import type { AIConsultResponse, CSVImportResponse, IntentSuggestions } from '../../api/types'
@@ -591,17 +592,7 @@ export function FinancesPage({ navigate }: PageProps) {
         <p className="text-muted">{shortcut.body}</p>
       </Panel>
       <IncomeSection />
-      <Panel title={t.expenses} aside={<button type="button" onClick={() => navigate('money-out')} className="text-[14px] font-semibold underline">{t.editSpending}</button>}>
-        {(plan.expenses ?? []).length === 0 ? (
-          <p className="text-muted">{t.empty}</p>
-        ) : (
-          <Table
-            caption={t.expenses}
-            head={[m.common.name, m.common.value, m.common.kind]}
-            rows={(plan.expenses ?? []).map((e) => [e.label, `${formatMoney(e.monthly)} ${m.common.perMonth}`, e.essential ? t.essential : t.flexible])}
-          />
-        )}
-      </Panel>
+      <ExpenditureSection />
       <Panel title={t.commitments}>
         {(plan.commitments ?? []).length === 0 ? (
           <p className="text-muted">{t.empty}</p>

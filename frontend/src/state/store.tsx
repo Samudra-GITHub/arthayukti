@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { api } from '../api/client'
 import { fromPaise, toPaise } from '../lib/money'
-import type { FixOption, Goal, IncomeStream, Plan, SampleDetail } from '../api/types'
+import type { Expense, FixOption, Goal, IncomeStream, Plan, SampleDetail } from '../api/types'
 import { copy } from '../i18n/copy'
 import type { Language } from '../lib/months'
 import { blankPlan, hasGoals, MAX_GOALS, newGoal } from '../lib/blank'
@@ -23,6 +23,13 @@ function readLanguage(): Language {
   } catch {
     return 'en'
   }
+}
+
+/** A scheduled line keeps its entered amount in step with the monthly figure typed elsewhere; a plain line just takes it. */
+function withMonthly(expense: Expense, monthly: string): Expense {
+  if (!expense.start_month) return { ...expense, monthly }
+  const months = expense.frequency === 'yearly' ? 12n : expense.frequency === 'quarterly' ? 3n : 1n
+  return { ...expense, monthly, amount: fromPaise(toPaise(monthly) * months) }
 }
 
 export function StoreProvider({ children }: { children: ReactNode }) {
@@ -244,9 +251,20 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       update((current) => ({
         ...current,
         expenses: (current.expenses ?? []).map((expense) =>
-          expense.id === expenseId ? { ...expense, monthly: amount } : expense,
+          expense.id === expenseId ? withMonthly(expense, amount) : expense,
         ),
       })),
+    [update],
+  )
+
+  const setExpenseLines = useCallback(
+    (lines: Expense[]) => update((current) => ({ ...current, expenses: lines })),
+    [update],
+  )
+
+  const setExpenseGrowth = useCallback(
+    (rate: string) =>
+      update((current) => ({ ...current, assumptions: { ...current.assumptions, expense_growth_annual: rate } })),
     [update],
   )
 
@@ -415,6 +433,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setIncome,
     setIncomeStreams,
     setExpense,
+    setExpenseLines,
+    setExpenseGrowth,
     setGoalAmount,
     setGoalDate,
     moveGoal,

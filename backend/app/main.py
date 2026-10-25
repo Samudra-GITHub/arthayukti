@@ -15,11 +15,13 @@ from app.api import (
     calculators,
     debt,
     emergency,
+    expenditure,
     financials,
     health,
     household,
     income,
     insurance,
+    ledger,
     market,
     plans,
     recommendations,
@@ -112,6 +114,8 @@ def create_app() -> FastAPI:
         recovery,
         ai_assist,
         emergency,
+        expenditure,
+        ledger,
     ):
         app.include_router(module.router, prefix="/api/v1")
 

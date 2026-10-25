@@ -59,6 +59,12 @@ import type {
   RiskAssessmentHistoryItem,
   ConservativeComparisonResponse,
   AIExplanation,
+  DebtTrajectory,
+  ApplyLedgerResult,
+  ExpenditureProjection,
+  HoldingPosition,
+  HoldingTransaction,
+  HoldingTransactionCreate,
   AmortizationRequest,
   AmortizationResponse,
   EmergencyAnalysis,
@@ -207,6 +213,42 @@ export const api = {
     if (!response.ok) throw new ApiFailure('http_error', `Export failed (${response.status}).`, response.status)
     return response.blob()
   },
+  expenditureProjection: (source: { planId: string } | { plan: Plan }, horizonMonths: number, signal?: AbortSignal) =>
+    post<ExpenditureProjection>('/expenditure/projection', incomeBody(source, horizonMonths), signal),
+  expenditureProjectionCsv: async (source: { planId: string } | { plan: Plan }, horizonMonths: number): Promise<Blob> => {
+    const headers = new Headers({ 'Content-Type': 'application/json' })
+    if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`)
+    let response: Response
+    try {
+      response = await fetch(`${PREFIX}/expenditure/projection/csv`, { method: 'POST', headers, body: JSON.stringify(incomeBody(source, horizonMonths)) })
+    } catch {
+      throw new ApiFailure('offline', 'The service is not reachable.')
+    }
+    if (!response.ok) throw new ApiFailure('http_error', `Export failed (${response.status}).`, response.status)
+    return response.blob()
+  },
+  debtTrajectory: (signal?: AbortSignal) => get<DebtTrajectory>('/debt/trajectory', signal),
+  // Holdings ledger
+  holdingTransactions: (holdingId: string, signal?: AbortSignal) =>
+    get<HoldingTransaction[]>(`/financials/investments/${holdingId}/transactions`, signal),
+  addHoldingTransaction: (holdingId: string, body: HoldingTransactionCreate) =>
+    post<HoldingTransaction>(`/financials/investments/${holdingId}/transactions`, body),
+  deleteHoldingTransaction: (holdingId: string, transactionId: string) =>
+    request<void>(`/financials/investments/${holdingId}/transactions/${transactionId}`, { method: 'DELETE' }),
+  holdingPosition: (holdingId: string, signal?: AbortSignal) => get<HoldingPosition>(`/financials/investments/${holdingId}/position`, signal),
+  applyHoldingLedger: (holdingId: string) => post<ApplyLedgerResult>(`/financials/investments/${holdingId}/apply-ledger`, {}),
+  holdingLedgerCsv: async (holdingId: string): Promise<Blob> => {
+    const headers = new Headers()
+    if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`)
+    let response: Response
+    try {
+      response = await fetch(`${PREFIX}/financials/investments/${holdingId}/ledger.csv`, { headers })
+    } catch {
+      throw new ApiFailure('offline', 'The service is not reachable.')
+    }
+    if (!response.ok) throw new ApiFailure('http_error', `Export failed (${response.status}).`, response.status)
+    return response.blob()
+  },
   // Settings that follow the person
   preferences: (signal?: AbortSignal) => get<Preferences>('/auth/preferences', signal),
   updatePreferences: (defaultInflationAnnual: string) =>
@@ -218,7 +260,7 @@ export const api = {
       '/emergency-fund/analyze',
       plan.goals.length > 0
         ? { plan, target_months: targetMonths }
-        : { expenses: plan.expenses ?? [], commitments: plan.commitments ?? [], target_months: targetMonths },
+        : { expenses: plan.expenses ?? [], commitments: plan.commitments ?? [], as_of: plan.as_of, target_months: targetMonths },
       signal,
     ),
   debtAmortize: (body: AmortizationRequest, signal?: AbortSignal) => post<AmortizationResponse>('/debt/amortize', body, signal),

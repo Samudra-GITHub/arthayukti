@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from decimal import Decimal
 
+from app.engine.expenditure import line_amount
 from app.engine.money import quantize
 from app.engine.setup import Resolved
 from app.timeline import month_to_index
@@ -24,7 +25,6 @@ def _step_up(rate: Decimal, t: int) -> Decimal:
 
 def month_flows(resolved: Resolved, t: int) -> Flows:
     income_factor = _step_up(resolved.income_growth, t)
-    expense_factor = _step_up(resolved.expense_growth, t)
 
     year = (resolved.as_of_index + t - 1) // 12
     income = Decimal(0)
@@ -46,9 +46,12 @@ def month_flows(resolved: Resolved, t: int) -> Flows:
                 amount *= cut.multiplier
         income += quantize(amount)
 
-    expenses = sum(
-        (quantize(item.monthly * expense_factor) for item in resolved.expenses), Decimal(0)
-    )
+    expenses = Decimal(0)
+    for item in resolved.expenses:
+        # A plain line is monthly x the plan-wide step-up, as always; a scheduled line follows its own dates and growth.
+        amount = line_amount(item, t, resolved.as_of_index, resolved.expense_growth)
+        if amount is not None:
+            expenses += quantize(amount)
     for shift in resolved.expense_shifts:
         if shift.from_t <= t <= shift.to_t:
             expenses += shift.delta

@@ -7,16 +7,20 @@ goal, so nothing is counted twice.
 
 from decimal import ROUND_HALF_UP, Decimal
 
+from app.engine.expenditure import is_running
 from app.engine.projection import project
 from app.schemas.emergency import EmergencyAnalysis, ReservePoint
 from app.schemas.plan import Commitment, Expense, Plan
+from app.timeline import month_to_index
 
 CENT = Decimal("0.01")
 ZERO = Decimal("0.00")
 
 
-def _essentials(expenses: list[Expense], commitments: list[Commitment]) -> Decimal:
-    spending = sum((e.monthly for e in expenses if e.essential), ZERO)
+def _essentials(expenses: list[Expense], commitments: list[Commitment], as_of: str | None) -> Decimal:
+    # A scheduled line that has not started yet (or has ended) is not part of what is spent today.
+    index = month_to_index(as_of) if as_of else None
+    spending = sum((e.monthly for e in expenses if e.essential and (index is None or is_running(e, index))), ZERO)
     loans = sum((c.monthly_payment for c in commitments), ZERO)
     return (spending + loans).quantize(CENT, rounding=ROUND_HALF_UP)
 
@@ -26,10 +30,11 @@ def analyze_emergency(
     target_months: int | None,
     expenses: list[Expense] | None = None,
     commitments: list[Commitment] | None = None,
+    as_of: str | None = None,
 ) -> EmergencyAnalysis:
     if plan is not None:
-        expenses, commitments = plan.expenses, plan.commitments
-    essentials = _essentials(expenses or [], commitments or [])
+        expenses, commitments, as_of = plan.expenses, plan.commitments, plan.as_of
+    essentials = _essentials(expenses or [], commitments or [], as_of)
     goals = sorted(plan.goals, key=lambda g: (g.priority, g.id)) if plan is not None else []
     goal = next((g for g in goals if g.type == "emergency_fund"), None)
     target = (essentials * target_months).quantize(CENT) if target_months else None

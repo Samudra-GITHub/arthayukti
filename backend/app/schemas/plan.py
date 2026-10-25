@@ -24,6 +24,7 @@ FREQUENCY_MONTHS: dict[str, int] = {"monthly": 1, "quarterly": 3, "yearly": 12}
 
 # Technical safeguards only (request size and validation cost), not product limits.
 MAX_INCOME_STREAMS = 200
+MAX_EXPENSE_LINES = 60
 MAX_STEP_UPS_PER_STREAM = 60
 YEAR_MIN, YEAR_MAX = 1990, 2200
 
@@ -103,11 +104,45 @@ def monthly_equivalent(amount: Decimal, frequency: str) -> Decimal:
 
 
 class Expense(ApiModel):
+    """A spending line.
+
+    A plain line has only `monthly` and behaves exactly as before: the plan-wide `expense_growth_annual` steps
+    it up once every 12 months from the plan's first month. Optional fields make it a schedule:
+
+    - `annual_growth` gives this line its own yearly growth instead of the plan-wide rate (a line can have one
+      without any other schedule field).
+    - `start_month` turns the line into a scheduled one with an `amount` in a `frequency` (monthly, quarterly or
+      yearly), an optional inclusive `end_month` (blank means ongoing) and optional `category`. `monthly` is then
+      derived (the amount's monthly equivalent) and any value sent is replaced.
+
+    A scheduled amount is spread evenly over its frequency, like income. It is the amount paid from the later of
+    its start month and the plan's first month, and grows once every 12 months after that.
+    """
+
     id: Id
     label: Label
     monthly: Money
     # Protected by default. Only expenses marked False can be trimmed by the rescue engine.
     essential: bool = True
+    category: Label | None = None
+    amount: PositiveMoney | None = None
+    frequency: IncomeFrequency | None = None  # absent means monthly
+    start_month: Month | None = None
+    end_month: Month | None = None
+    annual_growth: GrowthRate | None = None
+
+    @model_validator(mode="after")
+    def _check_schedule(self) -> "Expense":
+        if self.start_month is None:
+            if self.amount is not None or self.end_month is not None or self.frequency not in (None, "monthly"):
+                raise ValueError(f"expense {self.id}: amount, frequency and end_month need a start_month")
+            return self
+        if self.amount is None:
+            raise ValueError(f"expense {self.id}: a scheduled expense needs an amount")
+        if self.end_month is not None and month_to_index(self.end_month) < month_to_index(self.start_month):
+            raise ValueError(f"expense {self.id}: end_month is before start_month")
+        self.monthly = monthly_equivalent(self.amount, self.frequency or "monthly")
+        return self
 
 
 class Commitment(ApiModel):
@@ -155,7 +190,7 @@ class Plan(ApiModel):
     as_of: Month
     currency: Literal["INR"]
     income_streams: list[IncomeStream] = Field(min_length=1, max_length=MAX_INCOME_STREAMS)
-    expenses: list[Expense] = Field(default_factory=list, max_length=12)
+    expenses: list[Expense] = Field(default_factory=list, max_length=MAX_EXPENSE_LINES)
     commitments: list[Commitment] = Field(default_factory=list, max_length=6)
     unassigned_savings: Money = Decimal("0.00")
     goals: list[Goal] = Field(min_length=1, max_length=8)

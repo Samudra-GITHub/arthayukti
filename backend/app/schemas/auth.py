@@ -11,6 +11,7 @@ from app.schemas.financials import (
 )
 from app.schemas.household import HouseholdProfileResponse
 from app.schemas.insurance import PolicyResponse
+from app.schemas.ledger import TransactionCreate  # noqa: F401
 from app.schemas.plan import Plan
 from app.schemas.recovery_plan import AgreementDraft
 from app.schemas.types import ApiModel, Rate
@@ -129,6 +130,19 @@ class ExportCalculatorScenario(ApiModel):
     config: CalculatorConfig
 
 
+class ExportInvestmentTransaction(ApiModel):
+    id: str
+    holding_id: str
+    transaction_type: str
+    trade_date: str
+    quantity: str | None
+    price: str | None
+    fees: str
+    ratio_new: int | None
+    ratio_old: int | None
+    notes: str | None
+
+
 class ExportRecoveryAgreement(ApiModel):
     id: str
     name: str
@@ -147,3 +161,4 @@ class ExportResponse(ApiModel):
     household_profile: HouseholdProfileResponse
     calculator_scenarios: list[ExportCalculatorScenario] = []
     recovery_agreements: list[ExportRecoveryAgreement] = []
+    investment_transactions: list[ExportInvestmentTransaction] = []

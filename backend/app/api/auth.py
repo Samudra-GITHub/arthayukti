@@ -29,6 +29,7 @@ from app.db.models import (
     FinancialTransaction,
     HouseholdProfile,
     InsurancePolicy,
+    InvestmentTransaction,
     Liability,
     PasswordReset,
     RecoveryAgreement,
@@ -39,6 +40,7 @@ from app.schemas.auth import (
     AuthResponse,
     ExportAccount,
     ExportCalculatorScenario,
+    ExportInvestmentTransaction,
     ExportPlan,
     ExportPolicy,
     ExportRecoveryAgreement,
@@ -308,6 +310,7 @@ def export_user_data(
         .order_by(RecoveryAgreement.name)
         .all()
     )
+    ledger_rows = db.query(InvestmentTransaction).filter(InvestmentTransaction.user_id == uid).all()
     return ExportResponse(
         user=ExportUser(
             id=current_user.id,
@@ -342,6 +345,21 @@ def export_user_data(
         liabilities=[_to_liab_response(liab) for liab in liabilities],
         transactions=[_to_tx_response(t) for t in transactions],
         household_profile=_to_profile_response(household),
+        investment_transactions=[
+            ExportInvestmentTransaction(
+                id=x.id,
+                holding_id=x.holding_id,
+                transaction_type=x.transaction_type,
+                trade_date=x.trade_date,
+                quantity=None if x.quantity is None else str(x.quantity),
+                price=None if x.price is None else str(x.price),
+                fees=str(x.fees),
+                ratio_new=x.ratio_new,
+                ratio_old=x.ratio_old,
+                notes=x.notes,
+            )
+            for x in ledger_rows
+        ],
         recovery_agreements=[
             ExportRecoveryAgreement(
                 id=r.id,

@@ -14,4 +14,4 @@ router = APIRouter(prefix="/emergency-fund", tags=["emergency-fund"], responses=
 @router.post("/analyze", response_model=EmergencyAnalysis)
 def analyze(req: EmergencyRequest, user: User = Depends(get_current_user)) -> EmergencyAnalysis:
     """What is held, the target in months of essentials, progress, and how the engine grows the reserve."""
-    return analyze_emergency(req.plan, req.target_months, req.expenses, req.commitments)
+    return analyze_emergency(req.plan, req.target_months, req.expenses, req.commitments, req.as_of)

@@ -4,6 +4,7 @@ import { useRestructureCopy } from '../../state/useRestructureCopy'
 import type { Route } from '../../lib/route'
 import { CalculatorsPage } from './Calculators'
 import { DebtCalculator } from './DebtCalc'
+import { HoldingLedger } from './HoldingLedger'
 import { AssetsPage, DebtsPage, InsurancePage } from './Records'
 
 type Navigate = (route: Route) => void
@@ -97,7 +98,14 @@ export function EquitiesModule({ navigate, title }: { navigate: Navigate; title:
         ))}
       </div>
       <Notice>{t.note}</Notice>
-      {view === 'calculator' ? <CalculatorsPage /> : <AssetsPage />}
+      {view === 'calculator' ? (
+        <CalculatorsPage />
+      ) : (
+        <>
+          <AssetsPage />
+          <HoldingLedger />
+        </>
+      )}
     </>
   )
 }

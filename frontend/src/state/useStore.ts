@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react'
 import type {
+  Expense,
   IncomeStream,
   Goal,
   FixOption,
@@ -62,6 +63,10 @@ export interface Store {
   /** Replaces the whole list of planned income streams (the Income editor). */
   setIncomeStreams: (streams: IncomeStream[]) => void
   setExpense: (expenseId: string, amount: string) => void
+  /** Replaces the whole list of spending lines (the Expenditure editor). */
+  setExpenseLines: (lines: Expense[]) => void
+  /** Sets the plan-wide yearly growth of spending, for every line without a rate of its own. */
+  setExpenseGrowth: (rate: string) => void
   setGoalAmount: (goalId: string, amount: string) => void
   setGoalDate: (goalId: string, month: string) => void
   moveGoal: (goalId: string, direction: 'up' | 'down') => void

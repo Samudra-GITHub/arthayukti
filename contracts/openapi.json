@@ -912,6 +912,38 @@
         "title": "AmortizationScheduleItem",
         "type": "object"
       },
+      "ApplyLedgerOut": {
+        "additionalProperties": false,
+        "properties": {
+          "precision_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precision Note"
+          },
+          "purchase_price": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Purchase Price",
+            "type": "string"
+          },
+          "quantity": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Quantity",
+            "type": "string"
+          }
+        },
+        "required": [
+          "quantity",
+          "purchase_price"
+        ],
+        "title": "ApplyLedgerOut",
+        "type": "object"
+      },
       "AssumptionOverrides": {
         "additionalProperties": false,
         "properties": {
@@ -2294,6 +2326,217 @@
         "title": "DebtItemInput",
         "type": "object"
       },
+      "DebtTrajectoryLoan": {
+        "additionalProperties": false,
+        "properties": {
+          "annual_rate": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Annual Rate",
+            "type": "string"
+          },
+          "debt_free_month": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Debt Free Month"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "monthly_payment": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Monthly Payment",
+            "type": "string"
+          },
+          "months_to_payoff": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Months To Payoff"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "opening_balance": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Opening Balance",
+            "type": "string"
+          },
+          "paid_later_than_recorded": {
+            "title": "Paid Later Than Recorded",
+            "type": "boolean"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "total_interest": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Interest"
+          },
+          "total_paid": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Paid"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "reason",
+          "opening_balance",
+          "annual_rate",
+          "monthly_payment",
+          "months_to_payoff",
+          "debt_free_month",
+          "total_interest",
+          "total_paid",
+          "paid_later_than_recorded"
+        ],
+        "title": "DebtTrajectoryLoan",
+        "type": "object"
+      },
+      "DebtTrajectoryResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "debt_free_month": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Debt Free Month"
+          },
+          "loans": {
+            "items": {
+              "$ref": "#/components/schemas/DebtTrajectoryLoan"
+            },
+            "title": "Loans",
+            "type": "array"
+          },
+          "start_month": {
+            "title": "Start Month",
+            "type": "string"
+          },
+          "total_interest": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Interest",
+            "type": "string"
+          },
+          "total_paid": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Paid",
+            "type": "string"
+          },
+          "years": {
+            "items": {
+              "$ref": "#/components/schemas/DebtTrajectoryYear"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "start_month",
+          "loans",
+          "years",
+          "total_interest",
+          "total_paid",
+          "complete",
+          "debt_free_month"
+        ],
+        "title": "DebtTrajectoryResponse",
+        "type": "object"
+      },
+      "DebtTrajectoryYear": {
+        "additionalProperties": false,
+        "properties": {
+          "closing_balance": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Closing Balance",
+            "type": "string"
+          },
+          "interest": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Interest",
+            "type": "string"
+          },
+          "months_included": {
+            "title": "Months Included",
+            "type": "integer"
+          },
+          "payments": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Payments",
+            "type": "string"
+          },
+          "principal": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Principal",
+            "type": "string"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "months_included",
+          "payments",
+          "principal",
+          "interest",
+          "closing_balance"
+        ],
+        "title": "DebtTrajectoryYear",
+        "type": "object"
+      },
       "DependantDetail": {
         "additionalProperties": false,
         "properties": {
@@ -2525,6 +2768,18 @@
       "EmergencyRequest": {
         "additionalProperties": false,
         "properties": {
+          "as_of": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of"
+          },
           "commitments": {
             "items": {
               "$ref": "#/components/schemas/Commitment"
@@ -2537,7 +2792,7 @@
             "items": {
               "$ref": "#/components/schemas/Expense"
             },
-            "maxItems": 12,
+            "maxItems": 60,
             "title": "Expenses",
             "type": "array"
           },
@@ -3116,13 +3371,275 @@
         "title": "EscalationResponse",
         "type": "object"
       },
-      "Expense": {
+      "ExpenditureLine": {
         "additionalProperties": false,
         "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "essential": {
+            "title": "Essential",
+            "type": "boolean"
+          },
+          "id": {
+            "pattern": "^[A-Za-z0-9_-]{1,40}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "years": {
+            "items": {
+              "$ref": "#/components/schemas/ExpenditureLineYear"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "category",
+          "essential",
+          "years"
+        ],
+        "title": "ExpenditureLine",
+        "type": "object"
+      },
+      "ExpenditureLineYear": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Amount",
+            "type": "string"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "amount"
+        ],
+        "title": "ExpenditureLineYear",
+        "type": "object"
+      },
+      "ExpenditureProjectionRequest": {
+        "description": "`plan_id` uses the signed-in user's saved plan; `plan` projects an explicit hypothetical plan.",
+        "properties": {
+          "horizon_months": {
+            "default": 60,
+            "maximum": 600.0,
+            "minimum": 1.0,
+            "title": "Horizon Months",
+            "type": "integer"
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Plan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "plan_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Id"
+          }
+        },
+        "title": "ExpenditureProjectionRequest",
+        "type": "object"
+      },
+      "ExpenditureProjectionResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "first_month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "First Month",
+            "type": "string"
+          },
+          "horizon_months": {
+            "title": "Horizon Months",
+            "type": "integer"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/ExpenditureLine"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "plan_growth_annual": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Plan Growth Annual",
+            "type": "string"
+          },
+          "plan_source": {
+            "title": "Plan Source",
+            "type": "string"
+          },
+          "total_projected_expenditure": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Projected Expenditure",
+            "type": "string"
+          },
+          "years": {
+            "items": {
+              "$ref": "#/components/schemas/ExpenditureYear"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "plan_source",
+          "horizon_months",
+          "first_month",
+          "plan_growth_annual",
+          "total_projected_expenditure",
+          "years",
+          "lines"
+        ],
+        "title": "ExpenditureProjectionResponse",
+        "type": "object"
+      },
+      "ExpenditureYear": {
+        "additionalProperties": false,
+        "properties": {
+          "annual_expenditure": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Annual Expenditure",
+            "type": "string"
+          },
+          "cumulative_expenditure": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cumulative Expenditure",
+            "type": "string"
+          },
+          "discretionary": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Discretionary",
+            "type": "string"
+          },
+          "essential": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Essential",
+            "type": "string"
+          },
+          "months_included": {
+            "title": "Months Included",
+            "type": "integer"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "months_included",
+          "annual_expenditure",
+          "cumulative_expenditure",
+          "essential",
+          "discretionary"
+        ],
+        "title": "ExpenditureYear",
+        "type": "object"
+      },
+      "Expense": {
+        "additionalProperties": false,
+        "description": "A spending line.\n\nA plain line has only `monthly` and behaves exactly as before: the plan-wide `expense_growth_annual` steps\nit up once every 12 months from the plan's first month. Optional fields make it a schedule:\n\n- `annual_growth` gives this line its own yearly growth instead of the plan-wide rate (a line can have one\n  without any other schedule field).\n- `start_month` turns the line into a scheduled one with an `amount` in a `frequency` (monthly, quarterly or\n  yearly), an optional inclusive `end_month` (blank means ongoing) and optional `category`. `monthly` is then\n  derived (the amount's monthly equivalent) and any value sent is replaced.\n\nA scheduled amount is spread evenly over its frequency, like income. It is the amount paid from the later of\nits start month and the plan's first month, and grows once every 12 months after that.",
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount"
+          },
+          "annual_growth": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Growth"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "end_month": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Month"
+          },
           "essential": {
             "default": true,
             "title": "Essential",
             "type": "boolean"
+          },
+          "frequency": {
+            "anyOf": [
+              {
+                "enum": [
+                  "monthly",
+                  "quarterly",
+                  "yearly"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frequency"
           },
           "id": {
             "pattern": "^[A-Za-z0-9_-]{1,40}$",
@@ -3139,6 +3656,18 @@
             "pattern": "^-?\\d+(\\.\\d+)?$",
             "title": "Monthly",
             "type": "string"
+          },
+          "start_month": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Month"
           }
         },
         "required": [
@@ -3311,6 +3840,100 @@
         "title": "ExportCalculatorScenario",
         "type": "object"
       },
+      "ExportInvestmentTransaction": {
+        "additionalProperties": false,
+        "properties": {
+          "fees": {
+            "title": "Fees",
+            "type": "string"
+          },
+          "holding_id": {
+            "title": "Holding Id",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "ratio_new": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ratio New"
+          },
+          "ratio_old": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ratio Old"
+          },
+          "trade_date": {
+            "title": "Trade Date",
+            "type": "string"
+          },
+          "transaction_type": {
+            "title": "Transaction Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "holding_id",
+          "transaction_type",
+          "trade_date",
+          "quantity",
+          "price",
+          "fees",
+          "ratio_new",
+          "ratio_old",
+          "notes"
+        ],
+        "title": "ExportInvestmentTransaction",
+        "type": "object"
+      },
       "ExportPlan": {
         "additionalProperties": false,
         "properties": {
@@ -3415,6 +4038,14 @@
           },
           "household_profile": {
             "$ref": "#/components/schemas/HouseholdProfileResponse"
+          },
+          "investment_transactions": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ExportInvestmentTransaction"
+            },
+            "title": "Investment Transactions",
+            "type": "array"
           },
           "investments": {
             "items": {
@@ -5896,6 +6527,41 @@
         "title": "LoginRequest",
         "type": "object"
       },
+      "LotOut": {
+        "additionalProperties": false,
+        "properties": {
+          "acquired": {
+            "title": "Acquired",
+            "type": "string"
+          },
+          "cost": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cost",
+            "type": "string"
+          },
+          "origin": {
+            "enum": [
+              "buy",
+              "bonus"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "quantity": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Quantity",
+            "type": "string"
+          }
+        },
+        "required": [
+          "acquired",
+          "quantity",
+          "cost",
+          "origin"
+        ],
+        "title": "LotOut",
+        "type": "object"
+      },
       "MarketQuoteResponse": {
         "additionalProperties": false,
         "description": "A stored quote with its freshness, or an explicit \"unavailable\". Never an invented price.",
@@ -6400,7 +7066,7 @@
             "items": {
               "$ref": "#/components/schemas/Expense"
             },
-            "maxItems": 12,
+            "maxItems": 60,
             "title": "Expenses",
             "type": "array"
           },
@@ -6969,6 +7635,118 @@
         "title": "PolicyResponse",
         "type": "object"
       },
+      "PositionOut": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_name": {
+            "title": "Asset Name",
+            "type": "string"
+          },
+          "average_cost": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Cost"
+          },
+          "cost_basis": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cost Basis",
+            "type": "string"
+          },
+          "dividends_gross": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Dividends Gross",
+            "type": "string"
+          },
+          "dividends_net": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Dividends Net",
+            "type": "string"
+          },
+          "fees_paid": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Fees Paid",
+            "type": "string"
+          },
+          "holding_id": {
+            "title": "Holding Id",
+            "type": "string"
+          },
+          "lots": {
+            "items": {
+              "$ref": "#/components/schemas/LotOut"
+            },
+            "title": "Lots",
+            "type": "array"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "quantity": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "realised_gain": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Realised Gain",
+            "type": "string"
+          },
+          "reconciliation": {
+            "$ref": "#/components/schemas/Reconciliation"
+          },
+          "sales": {
+            "items": {
+              "$ref": "#/components/schemas/SaleLotOut"
+            },
+            "title": "Sales",
+            "type": "array"
+          },
+          "symbol": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symbol"
+          },
+          "valuation": {
+            "$ref": "#/components/schemas/Valuation"
+          }
+        },
+        "required": [
+          "holding_id",
+          "asset_name",
+          "symbol",
+          "quantity",
+          "cost_basis",
+          "average_cost",
+          "realised_gain",
+          "dividends_gross",
+          "dividends_net",
+          "fees_paid",
+          "lots",
+          "sales",
+          "valuation",
+          "reconciliation",
+          "notes"
+        ],
+        "title": "PositionOut",
+        "type": "object"
+      },
       "Preferences": {
         "additionalProperties": false,
         "description": "Settings that follow the person across the app.",
@@ -7367,6 +8145,43 @@
           "goals"
         ],
         "title": "RecommendationVariant",
+        "type": "object"
+      },
+      "Reconciliation": {
+        "additionalProperties": false,
+        "properties": {
+          "difference": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Difference",
+            "type": "string"
+          },
+          "has_ledger": {
+            "title": "Has Ledger",
+            "type": "boolean"
+          },
+          "ledger_quantity": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Ledger Quantity",
+            "type": "string"
+          },
+          "matches": {
+            "title": "Matches",
+            "type": "boolean"
+          },
+          "record_quantity": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Record Quantity",
+            "type": "string"
+          }
+        },
+        "required": [
+          "has_ledger",
+          "record_quantity",
+          "ledger_quantity",
+          "matches",
+          "difference"
+        ],
+        "title": "Reconciliation",
         "type": "object"
       },
       "RecoveryEvaluation": {
@@ -8724,6 +9539,37 @@
         "title": "RiskCapacityIndicatorResponse",
         "type": "object"
       },
+      "SaleLotOut": {
+        "additionalProperties": false,
+        "properties": {
+          "acquired": {
+            "title": "Acquired",
+            "type": "string"
+          },
+          "cost": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cost",
+            "type": "string"
+          },
+          "days_held": {
+            "title": "Days Held",
+            "type": "integer"
+          },
+          "quantity": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Quantity",
+            "type": "string"
+          }
+        },
+        "required": [
+          "acquired",
+          "quantity",
+          "cost",
+          "days_held"
+        ],
+        "title": "SaleLotOut",
+        "type": "object"
+      },
       "SampleDetail": {
         "additionalProperties": false,
         "properties": {
@@ -9566,6 +10412,102 @@
         "title": "TradeoffTotals",
         "type": "object"
       },
+      "TransactionCreate": {
+        "additionalProperties": false,
+        "description": "One actual, past transaction on a holding.\n\nbuy and sell: `quantity` and `price` (per unit). split and bonus: `ratio_new` and `ratio_old` (a 2-for-1 split is\n2 and 1; a 1-for-1 bonus is 1 and 1). dividend: `price` is the amount per unit held on that date. `fees` are\nbrokerage and charges (for a dividend, tax or charges withheld).",
+        "properties": {
+          "fees": {
+            "default": "0.00",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Fees",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "ratio_new": {
+            "anyOf": [
+              {
+                "maximum": 1000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ratio New"
+          },
+          "ratio_old": {
+            "anyOf": [
+              {
+                "maximum": 1000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ratio Old"
+          },
+          "trade_date": {
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "title": "Trade Date",
+            "type": "string"
+          },
+          "transaction_type": {
+            "enum": [
+              "buy",
+              "sell",
+              "split",
+              "bonus",
+              "dividend"
+            ],
+            "title": "Transaction Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "transaction_type",
+          "trade_date"
+        ],
+        "title": "TransactionCreate",
+        "type": "object"
+      },
       "TransactionCreateRequest": {
         "additionalProperties": false,
         "properties": {
@@ -9629,6 +10571,139 @@
           "category"
         ],
         "title": "TransactionCreateRequest",
+        "type": "object"
+      },
+      "TransactionOut": {
+        "additionalProperties": false,
+        "properties": {
+          "cash": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cash",
+            "type": "string"
+          },
+          "cost_basis_after": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cost Basis After",
+            "type": "string"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "fees": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Fees",
+            "type": "string"
+          },
+          "holding_id": {
+            "title": "Holding Id",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "quantity_after": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Quantity After",
+            "type": "string"
+          },
+          "ratio_new": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ratio New"
+          },
+          "ratio_old": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ratio Old"
+          },
+          "realised_gain": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Realised Gain",
+            "type": "string"
+          },
+          "trade_date": {
+            "title": "Trade Date",
+            "type": "string"
+          },
+          "transaction_type": {
+            "enum": [
+              "buy",
+              "sell",
+              "split",
+              "bonus",
+              "dividend"
+            ],
+            "title": "Transaction Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "holding_id",
+          "transaction_type",
+          "trade_date",
+          "quantity",
+          "price",
+          "fees",
+          "ratio_new",
+          "ratio_old",
+          "notes",
+          "created_at",
+          "quantity_after",
+          "cost_basis_after",
+          "realised_gain",
+          "cash"
+        ],
+        "title": "TransactionOut",
         "type": "object"
       },
       "TransactionResponse": {
@@ -9792,6 +10867,106 @@
           "created_at"
         ],
         "title": "UserProfile",
+        "type": "object"
+      },
+      "Valuation": {
+        "additionalProperties": false,
+        "description": "What the units are worth, and where that figure comes from. Never invented.",
+        "properties": {
+          "as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of"
+          },
+          "basis": {
+            "enum": [
+              "market_snapshot",
+              "manual",
+              "none"
+            ],
+            "title": "Basis",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "status": {
+            "enum": [
+              "fresh",
+              "stale",
+              "manual",
+              "unavailable",
+              "currency_mismatch"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "unit_price": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Price"
+          },
+          "unrealised_gain": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unrealised Gain"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "basis",
+          "status",
+          "value",
+          "unit_price",
+          "as_of",
+          "source",
+          "unrealised_gain",
+          "message"
+        ],
+        "title": "Valuation",
         "type": "object"
       },
       "VersionChange": {
@@ -11920,6 +13095,92 @@
         ]
       }
     },
+    "/api/v1/debt/trajectory": {
+      "get": {
+        "description": "Each recorded debt run to payoff on the amortization engine, with interest, principal and balance by year.\nA debt the record cannot support (no payment, or a payment below the interest) is listed with the reason and left\nout of the totals. Opening balances are the recorded current balances at the start of `start_month`.",
+        "operationId": "trajectory_api_v1_debt_trajectory_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "start_month",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start Month"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DebtTrajectoryResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Trajectory",
+        "tags": [
+          "debt"
+        ]
+      }
+    },
     "/api/v1/emergency-fund/analyze": {
       "post": {
         "description": "What is held, the target in months of essentials, progress, and how the engine grows the reserve.",
@@ -11994,6 +13255,153 @@
         "summary": "Analyze",
         "tags": [
           "emergency-fund"
+        ]
+      }
+    },
+    "/api/v1/expenditure/projection": {
+      "post": {
+        "description": "Annual and cumulative planned spending by calendar year, with each line's yearly amounts.",
+        "operationId": "expenditure_projection_api_v1_expenditure_projection_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpenditureProjectionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpenditureProjectionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Expenditure Projection",
+        "tags": [
+          "expenditure"
+        ]
+      }
+    },
+    "/api/v1/expenditure/projection/csv": {
+      "post": {
+        "description": "The same projection as CSV: UTF-8 with a byte-order mark so Excel opens it with the right columns.",
+        "operationId": "expenditure_projection_csv_api_v1_expenditure_projection_csv_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpenditureProjectionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Expenditure Projection Csv",
+        "tags": [
+          "expenditure"
         ]
       }
     },
@@ -12591,6 +13999,481 @@
         "summary": "Calculate Sip",
         "tags": [
           "financials"
+        ]
+      }
+    },
+    "/api/v1/financials/investments/{holding_id}/apply-ledger": {
+      "post": {
+        "description": "Copy the reconciled units and total cost basis onto the holding record. Only on request: the value the\nperson entered for the holding is never touched, so net worth does not move.",
+        "operationId": "apply_ledger_api_v1_financials_investments__holding_id__apply_ledger_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "holding_id",
+            "required": true,
+            "schema": {
+              "title": "Holding Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplyLedgerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Apply Ledger",
+        "tags": [
+          "holdings-ledger"
+        ]
+      }
+    },
+    "/api/v1/financials/investments/{holding_id}/ledger.csv": {
+      "get": {
+        "description": "The ledger as CSV (UTF-8 with a byte-order mark for Excel), with the running position after each line.",
+        "operationId": "ledger_csv_api_v1_financials_investments__holding_id__ledger_csv_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "holding_id",
+            "required": true,
+            "schema": {
+              "title": "Holding Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Ledger Csv",
+        "tags": [
+          "holdings-ledger"
+        ]
+      }
+    },
+    "/api/v1/financials/investments/{holding_id}/position": {
+      "get": {
+        "description": "Units, cost basis, realised gain and dividends from the recorded transactions, and a valuation that says\nwhere its figure comes from.",
+        "operationId": "position_api_v1_financials_investments__holding_id__position_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "holding_id",
+            "required": true,
+            "schema": {
+              "title": "Holding Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PositionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Position",
+        "tags": [
+          "holdings-ledger"
+        ]
+      }
+    },
+    "/api/v1/financials/investments/{holding_id}/transactions": {
+      "get": {
+        "description": "The recorded transactions in the order they are replayed, each with the position after it.",
+        "operationId": "list_transactions_api_v1_financials_investments__holding_id__transactions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "holding_id",
+            "required": true,
+            "schema": {
+              "title": "Holding Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TransactionOut"
+                  },
+                  "title": "Response List Transactions Api V1 Financials Investments  Holding Id  Transactions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Transactions",
+        "tags": [
+          "holdings-ledger"
+        ]
+      },
+      "post": {
+        "description": "Record one transaction. The whole history is replayed first: a sale of units that were not held, or a\nsplit on an empty position, is refused and nothing is saved.",
+        "operationId": "add_transaction_api_v1_financials_investments__holding_id__transactions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "holding_id",
+            "required": true,
+            "schema": {
+              "title": "Holding Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Transaction",
+        "tags": [
+          "holdings-ledger"
+        ]
+      }
+    },
+    "/api/v1/financials/investments/{holding_id}/transactions/{transaction_id}": {
+      "delete": {
+        "description": "Remove a transaction, unless the rest of the history would then stop making sense (for example deleting a\npurchase that later sales depend on).",
+        "operationId": "delete_transaction_api_v1_financials_investments__holding_id__transactions__transaction_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "holding_id",
+            "required": true,
+            "schema": {
+              "title": "Holding Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "transaction_id",
+            "required": true,
+            "schema": {
+              "title": "Transaction Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Transaction",
+        "tags": [
+          "holdings-ledger"
         ]
       }
     },

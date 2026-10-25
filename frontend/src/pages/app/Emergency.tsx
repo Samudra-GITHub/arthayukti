@@ -11,6 +11,7 @@ import { useRemote } from '../../state/useRemote'
 import { useRestructureCopy } from '../../state/useRestructureCopy'
 import { useStore } from '../../state/useStore'
 
+const DEFAULT_TARGET_MONTHS = 12
 const submit = 'min-h-12 self-start rounded-xl bg-brand px-6 font-semibold text-white disabled:opacity-60'
 const money = (amount: string) => formatMoney(amount, { paise: true })
 
@@ -35,7 +36,9 @@ export function EmergencyPage() {
 
   // The saved target is shown until the person types; after that the typing is theirs.
   const storedTarget = profile.data?.emergency_fund_months_target
-  const targetText = typed ?? (storedTarget != null ? String(storedTarget) : '')
+  // Until the person sets their own, the starting default of 12 months is used and said so.
+  const usingDefault = typed === null && storedTarget == null
+  const targetText = typed ?? (storedTarget != null ? String(storedTarget) : String(DEFAULT_TARGET_MONTHS))
   const profileKnown = profile.data !== null || profile.error !== null
 
   const target = parseTarget(targetText)
@@ -95,7 +98,7 @@ export function EmergencyPage() {
             void save()
           }}
         >
-          <TextField label={t.targetMonths} hint={t.targetHint} value={targetText} onChange={(value) => { setTyped(value); setSaved(false) }} inputMode="numeric" error={(tried || typedBadly) && target === null ? t.badTarget : null} />
+          <TextField label={t.targetMonths} hint={usingDefault ? `${t.targetHint} ${t.defaultNote}` : t.targetHint} value={targetText} onChange={(value) => { setTyped(value); setSaved(false) }} inputMode="numeric" error={(tried || typedBadly) && target === null ? t.badTarget : null} />
           <div className="flex items-end">
             <button type="submit" disabled={saveTarget.busy} className={submit}>
               {saveTarget.busy ? t.saving : t.saveTarget}

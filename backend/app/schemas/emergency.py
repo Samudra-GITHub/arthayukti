@@ -2,7 +2,7 @@
 
 from pydantic import Field
 
-from app.schemas.plan import Commitment, Expense, Plan
+from app.schemas.plan import MAX_EXPENSE_LINES, Commitment, Expense, Plan
 from app.schemas.types import Amount, ApiModel, Fraction, Id, Month
 
 
@@ -10,7 +10,8 @@ class EmergencyRequest(ApiModel):
     # A full plan, when it has goals (needed for the projection). Before any goal exists there is no valid plan,
     # so the spending can be sent on its own and only the essentials are worked out.
     plan: Plan | None = None
-    expenses: list[Expense] = Field(default_factory=list, max_length=12)
+    expenses: list[Expense] = Field(default_factory=list, max_length=MAX_EXPENSE_LINES)
+    as_of: Month | None = None  # lets scheduled lines that are not running yet be left out of today's essentials
     commitments: list[Commitment] = Field(default_factory=list, max_length=6)
     # The person's own target, in months of essential spending. Omitted means they have not set one.
     target_months: int | None = Field(default=None, ge=1, le=60)

@@ -1,3 +1,4 @@
+from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any
 
@@ -8,10 +9,12 @@ from app.api.common import AUTH_RESPONSES
 from app.api.deps import get_current_user, get_db
 from app.db.models import Liability, User
 from app.engine.debt import calculate_amortization_schedule, compare_payoff_strategies
+from app.engine.debt_trajectory import debt_trajectory
 from app.errors import ApiError
 from app.schemas.debt import (
     AmortizationRequest,
     AmortizationResponse,
+    DebtTrajectoryResponse,
     StrategyComparisonRequest,
     StrategyComparisonResponse,
 )
@@ -115,3 +118,34 @@ def get_user_debt_strategies(
     ]
     comparison = compare_payoff_strategies(debt_items, extra_budget)
     return StrategyComparisonResponse.model_validate(comparison)
+
+
+@router.get("/trajectory", response_model=DebtTrajectoryResponse)
+def trajectory(
+    start_month: str | None = Query(default=None, pattern=r"^\d{4}-(0[1-9]|1[0-2])$"),
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> DebtTrajectoryResponse:
+    """Each recorded debt run to payoff on the amortization engine, with interest, principal and balance by year.
+    A debt the record cannot support (no payment, or a payment below the interest) is listed with the reason and left
+    out of the totals. Opening balances are the recorded current balances at the start of `start_month`."""
+    liabilities = (
+        db.query(Liability)
+        .filter(Liability.user_id == user.id, Liability.current_balance > 0)
+        .order_by(Liability.liability_name, Liability.id)
+        .all()
+    )
+    month = start_month or datetime.now(UTC).strftime("%Y-%m")
+    items = [
+        {
+            "id": liab.id,
+            "name": liab.liability_name,
+            "balance": liab.current_balance,
+            "interest_rate": liab.interest_rate,
+            "monthly_emi": liab.monthly_emi,
+            "remaining_months": liab.remaining_months,
+        }
+        for liab in liabilities
+    ]
+    result = debt_trajectory(items, month)
+    return DebtTrajectoryResponse.model_validate({"start_month": month, **result})

@@ -203,6 +203,37 @@ class AssetInvestment(Base):
     )
 
     user = relationship("User", back_populates="investments")
+    transactions = relationship(
+        "InvestmentTransaction", back_populates="holding", cascade="all, delete-orphan"
+    )
+
+
+class InvestmentTransaction(Base):
+    """One actual, past transaction on a holding: a buy, sale, split, bonus or dividend."""
+
+    __tablename__ = "investment_transactions"
+
+    id = Column(String(36), primary_key=True, default=_gen_uuid)
+    user_id = Column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    holding_id = Column(
+        String(36),
+        ForeignKey("assets_investments.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    transaction_type = Column(String(20), nullable=False)  # buy, sell, split, bonus, dividend
+    trade_date = Column(String(10), nullable=False)  # YYYY-MM-DD
+    quantity = Column(Numeric(24, 6), nullable=True)
+    price = Column(Numeric(24, 4), nullable=True)  # per unit; for a dividend, the amount per unit
+    fees = Column(Numeric(20, 2), nullable=False, default=0)
+    ratio_new = Column(Integer, nullable=True)  # split and bonus: new units ...
+    ratio_old = Column(Integer, nullable=True)  # ... for this many held
+    notes = Column(String(255), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
+
+    holding = relationship("AssetInvestment", back_populates="transactions")
 
 
 class Liability(Base):

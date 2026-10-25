@@ -11,6 +11,7 @@ import { useExtrasCopy } from '../../state/useExtrasCopy'
 import { useModulesCopy } from '../../state/useModulesCopy'
 import { useRemote } from '../../state/useRemote'
 import { useStore } from '../../state/useStore'
+import { RecordedDebts } from './RecordedDebts'
 
 const HORIZONS = ['12', '24', '60'] as const
 
@@ -134,6 +135,8 @@ export function DebtTrajectoryPage() {
   if (!plan) return <Notice>{m.common.needsPlan}</Notice>
   const loans = plan.commitments ?? []
   return (
+    <>
+    <RecordedDebts />
     <Panel title={t.what}>
       {loans.length === 0 ? (
         <p className="text-muted">{t.empty}</p>
@@ -145,6 +148,7 @@ export function DebtTrajectoryPage() {
         />
       )}
     </Panel>
+    </>
   )
 }
 

@@ -7,6 +7,7 @@ import { formatMoney } from '../../lib/money'
 import { percentToRate } from '../../lib/onboarding'
 import { useAction } from '../../state/useAction'
 import { useModulesCopy } from '../../state/useModulesCopy'
+import { useRestructureCopy } from '../../state/useRestructureCopy'
 import { useRemote } from '../../state/useRemote'
 import { CoverGrowth, PolicyDetail } from './Cover'
 import { QuoteLookup } from './Market'
@@ -34,6 +35,8 @@ function Form({ onSubmit, children }: { onSubmit: () => void; children: React.Re
 export function AssetsPage() {
   const m = useModulesCopy()
   const a = m.assets
+  const symbolLabel = useRestructureCopy().holdings.symbolLabel
+  const symbolHint = useRestructureCopy().holdings.symbolHint
   const holdings = useRemote('holdings', (signal) => api.investments(signal))
   const balances = useRemote('balances', (signal) => api.accounts(signal))
 
@@ -42,6 +45,7 @@ export function AssetsPage() {
   const [value, setValue] = useState('')
   const [cost, setCost] = useState('')
   const [date, setDate] = useState('')
+  const [symbol, setSymbol] = useState('')
   const [quick, setQuick] = useState(true)
   const [tried, setTried] = useState(false)
   const save = useAction()
@@ -57,13 +61,14 @@ export function AssetsPage() {
     setTried(true)
     if (name.trim() === '' || value === '') return
     const ok = await save.run(() =>
-      api.createInvestment({ asset_name: name.trim(), asset_type: kind, quantity: '1.0000', purchase_price: cost || value, current_value: value, is_liquid: quick, last_valuation_date: date || null }),
+      api.createInvestment({ asset_name: name.trim(), asset_type: kind, quantity: '1.0000', purchase_price: cost || value, current_value: value, is_liquid: quick, last_valuation_date: date || null, ...(symbol.trim() ? { symbol: symbol.trim().toUpperCase() } : {}) }),
     )
     if (ok) {
       setName('')
       setValue('')
       setCost('')
       setDate('')
+      setSymbol('')
       setTried(false)
       holdings.reload()
     }
@@ -103,6 +108,7 @@ export function AssetsPage() {
           <SelectField label={m.common.kind} value={kind} onChange={setKind} options={options<InvestmentCreateRequest['asset_type']>(a.kinds)} />
           <AmountField label={a.current} value={value} onChange={setValue} error={tried && value === '' ? m.common.enterAmount : null} />
           <AmountField label={a.invested} value={cost} onChange={setCost} />
+          <TextField label={symbolLabel} hint={symbolHint} value={symbol} onChange={setSymbol} maxLength={20} />
           <DateField label={a.asOf} value={date} onChange={setDate} />
           <div className="flex items-end">
             <CheckField label={a.quick} checked={quick} onChange={setQuick} />

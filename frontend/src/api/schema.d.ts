@@ -490,6 +490,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/debt/trajectory": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Trajectory
+         * @description Each recorded debt run to payoff on the amortization engine, with interest, principal and balance by year.
+         *     A debt the record cannot support (no payment, or a payment below the interest) is listed with the reason and left
+         *     out of the totals. Opening balances are the recorded current balances at the start of `start_month`.
+         */
+        get: operations["trajectory_api_v1_debt_trajectory_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/emergency-fund/analyze": {
         parameters: {
             query?: never;
@@ -504,6 +526,46 @@ export interface paths {
          * @description What is held, the target in months of essentials, progress, and how the engine grows the reserve.
          */
         post: operations["analyze_api_v1_emergency_fund_analyze_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/expenditure/projection": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Expenditure Projection
+         * @description Annual and cumulative planned spending by calendar year, with each line's yearly amounts.
+         */
+        post: operations["expenditure_projection_api_v1_expenditure_projection_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/expenditure/projection/csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Expenditure Projection Csv
+         * @description The same projection as CSV: UTF-8 with a byte-order mark so Excel opens it with the right columns.
+         */
+        post: operations["expenditure_projection_csv_api_v1_expenditure_projection_csv_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -601,6 +663,114 @@ export interface paths {
          */
         post: operations["calculate_sip_api_v1_financials_investments_sip_calculator_post"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financials/investments/{holding_id}/apply-ledger": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Apply Ledger
+         * @description Copy the reconciled units and total cost basis onto the holding record. Only on request: the value the
+         *     person entered for the holding is never touched, so net worth does not move.
+         */
+        post: operations["apply_ledger_api_v1_financials_investments__holding_id__apply_ledger_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financials/investments/{holding_id}/ledger.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Ledger Csv
+         * @description The ledger as CSV (UTF-8 with a byte-order mark for Excel), with the running position after each line.
+         */
+        get: operations["ledger_csv_api_v1_financials_investments__holding_id__ledger_csv_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financials/investments/{holding_id}/position": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Position
+         * @description Units, cost basis, realised gain and dividends from the recorded transactions, and a valuation that says
+         *     where its figure comes from.
+         */
+        get: operations["position_api_v1_financials_investments__holding_id__position_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financials/investments/{holding_id}/transactions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Transactions
+         * @description The recorded transactions in the order they are replayed, each with the position after it.
+         */
+        get: operations["list_transactions_api_v1_financials_investments__holding_id__transactions_get"];
+        put?: never;
+        /**
+         * Add Transaction
+         * @description Record one transaction. The whole history is replayed first: a sale of units that were not held, or a
+         *     split on an empty position, is refused and nothing is saved.
+         */
+        post: operations["add_transaction_api_v1_financials_investments__holding_id__transactions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financials/investments/{holding_id}/transactions/{transaction_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Transaction
+         * @description Remove a transaction, unless the rest of the history would then stop making sense (for example deleting a
+         *     purchase that later sales depend on).
+         */
+        delete: operations["delete_transaction_api_v1_financials_investments__holding_id__transactions__transaction_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1786,6 +1956,15 @@ export interface components {
             /** Remaining Balance */
             remaining_balance: string;
         };
+        /** ApplyLedgerOut */
+        ApplyLedgerOut: {
+            /** Precision Note */
+            precision_note?: string | null;
+            /** Purchase Price */
+            purchase_price: string;
+            /** Quantity */
+            quantity: string;
+        };
         /** AssumptionOverrides */
         AssumptionOverrides: {
             /** Expense Growth Annual */
@@ -2259,6 +2438,65 @@ export interface components {
             /** Name */
             name: string;
         };
+        /** DebtTrajectoryLoan */
+        DebtTrajectoryLoan: {
+            /** Annual Rate */
+            annual_rate: string;
+            /** Debt Free Month */
+            debt_free_month: string | null;
+            /** Id */
+            id: string;
+            /** Monthly Payment */
+            monthly_payment: string;
+            /** Months To Payoff */
+            months_to_payoff: number | null;
+            /** Name */
+            name: string;
+            /** Opening Balance */
+            opening_balance: string;
+            /** Paid Later Than Recorded */
+            paid_later_than_recorded: boolean;
+            /** Reason */
+            reason: string | null;
+            /** Status */
+            status: string;
+            /** Total Interest */
+            total_interest: string | null;
+            /** Total Paid */
+            total_paid: string | null;
+        };
+        /** DebtTrajectoryResponse */
+        DebtTrajectoryResponse: {
+            /** Complete */
+            complete: boolean;
+            /** Debt Free Month */
+            debt_free_month: string | null;
+            /** Loans */
+            loans: components["schemas"]["DebtTrajectoryLoan"][];
+            /** Start Month */
+            start_month: string;
+            /** Total Interest */
+            total_interest: string;
+            /** Total Paid */
+            total_paid: string;
+            /** Years */
+            years: components["schemas"]["DebtTrajectoryYear"][];
+        };
+        /** DebtTrajectoryYear */
+        DebtTrajectoryYear: {
+            /** Closing Balance */
+            closing_balance: string;
+            /** Interest */
+            interest: string;
+            /** Months Included */
+            months_included: number;
+            /** Payments */
+            payments: string;
+            /** Principal */
+            principal: string;
+            /** Year */
+            year: number;
+        };
         /** DependantDetail */
         DependantDetail: {
             /** Age */
@@ -2313,6 +2551,8 @@ export interface components {
         };
         /** EmergencyRequest */
         EmergencyRequest: {
+            /** As Of */
+            as_of?: string | null;
             /** Commitments */
             commitments?: components["schemas"]["Commitment"][];
             /** Expenses */
@@ -2468,19 +2708,112 @@ export interface components {
             /** Updated At */
             updated_at: string;
         };
-        /** Expense */
+        /** ExpenditureLine */
+        ExpenditureLine: {
+            /** Category */
+            category: string | null;
+            /** Essential */
+            essential: boolean;
+            /** Id */
+            id: string;
+            /** Label */
+            label: string;
+            /** Years */
+            years: components["schemas"]["ExpenditureLineYear"][];
+        };
+        /** ExpenditureLineYear */
+        ExpenditureLineYear: {
+            /** Amount */
+            amount: string;
+            /** Year */
+            year: number;
+        };
+        /**
+         * ExpenditureProjectionRequest
+         * @description `plan_id` uses the signed-in user's saved plan; `plan` projects an explicit hypothetical plan.
+         */
+        ExpenditureProjectionRequest: {
+            /**
+             * Horizon Months
+             * @default 60
+             */
+            horizon_months: number;
+            plan?: components["schemas"]["Plan"] | null;
+            /** Plan Id */
+            plan_id?: string | null;
+        };
+        /** ExpenditureProjectionResponse */
+        ExpenditureProjectionResponse: {
+            /** First Month */
+            first_month: string;
+            /** Horizon Months */
+            horizon_months: number;
+            /** Lines */
+            lines: components["schemas"]["ExpenditureLine"][];
+            /** Plan Growth Annual */
+            plan_growth_annual: string;
+            /** Plan Source */
+            plan_source: string;
+            /** Total Projected Expenditure */
+            total_projected_expenditure: string;
+            /** Years */
+            years: components["schemas"]["ExpenditureYear"][];
+        };
+        /** ExpenditureYear */
+        ExpenditureYear: {
+            /** Annual Expenditure */
+            annual_expenditure: string;
+            /** Cumulative Expenditure */
+            cumulative_expenditure: string;
+            /** Discretionary */
+            discretionary: string;
+            /** Essential */
+            essential: string;
+            /** Months Included */
+            months_included: number;
+            /** Year */
+            year: number;
+        };
+        /**
+         * Expense
+         * @description A spending line.
+         *
+         *     A plain line has only `monthly` and behaves exactly as before: the plan-wide `expense_growth_annual` steps
+         *     it up once every 12 months from the plan's first month. Optional fields make it a schedule:
+         *
+         *     - `annual_growth` gives this line its own yearly growth instead of the plan-wide rate (a line can have one
+         *       without any other schedule field).
+         *     - `start_month` turns the line into a scheduled one with an `amount` in a `frequency` (monthly, quarterly or
+         *       yearly), an optional inclusive `end_month` (blank means ongoing) and optional `category`. `monthly` is then
+         *       derived (the amount's monthly equivalent) and any value sent is replaced.
+         *
+         *     A scheduled amount is spread evenly over its frequency, like income. It is the amount paid from the later of
+         *     its start month and the plan's first month, and grows once every 12 months after that.
+         */
         Expense: {
+            /** Amount */
+            amount?: string | null;
+            /** Annual Growth */
+            annual_growth?: string | null;
+            /** Category */
+            category?: string | null;
+            /** End Month */
+            end_month?: string | null;
             /**
              * Essential
              * @default true
              */
             essential: boolean;
+            /** Frequency */
+            frequency?: ("monthly" | "quarterly" | "yearly") | null;
             /** Id */
             id: string;
             /** Label */
             label: string;
             /** Monthly */
             monthly: string;
+            /** Start Month */
+            start_month?: string | null;
         };
         /** ExpenseChange */
         ExpenseChange: {
@@ -2547,6 +2880,29 @@ export interface components {
             /** Name */
             name: string;
         };
+        /** ExportInvestmentTransaction */
+        ExportInvestmentTransaction: {
+            /** Fees */
+            fees: string;
+            /** Holding Id */
+            holding_id: string;
+            /** Id */
+            id: string;
+            /** Notes */
+            notes: string | null;
+            /** Price */
+            price: string | null;
+            /** Quantity */
+            quantity: string | null;
+            /** Ratio New */
+            ratio_new: number | null;
+            /** Ratio Old */
+            ratio_old: number | null;
+            /** Trade Date */
+            trade_date: string;
+            /** Transaction Type */
+            transaction_type: string;
+        };
         /** ExportPlan */
         ExportPlan: {
             /** As Of */
@@ -2587,6 +2943,11 @@ export interface components {
              */
             calculator_scenarios: components["schemas"]["ExportCalculatorScenario"][];
             household_profile: components["schemas"]["HouseholdProfileResponse"];
+            /**
+             * Investment Transactions
+             * @default []
+             */
+            investment_transactions: components["schemas"]["ExportInvestmentTransaction"][];
             /** Investments */
             investments: components["schemas"]["InvestmentResponse"][];
             /** Liabilities */
@@ -3255,6 +3616,20 @@ export interface components {
             /** Password */
             password: string;
         };
+        /** LotOut */
+        LotOut: {
+            /** Acquired */
+            acquired: string;
+            /** Cost */
+            cost: string;
+            /**
+             * Origin
+             * @enum {string}
+             */
+            origin: "buy" | "bonus";
+            /** Quantity */
+            quantity: string;
+        };
         /**
          * MarketQuoteResponse
          * @description A stored quote with its freshness, or an explicit "unavailable". Never an invented price.
@@ -3612,6 +3987,37 @@ export interface components {
             /** Updated At */
             updated_at: string;
         };
+        /** PositionOut */
+        PositionOut: {
+            /** Asset Name */
+            asset_name: string;
+            /** Average Cost */
+            average_cost: string | null;
+            /** Cost Basis */
+            cost_basis: string;
+            /** Dividends Gross */
+            dividends_gross: string;
+            /** Dividends Net */
+            dividends_net: string;
+            /** Fees Paid */
+            fees_paid: string;
+            /** Holding Id */
+            holding_id: string;
+            /** Lots */
+            lots: components["schemas"]["LotOut"][];
+            /** Notes */
+            notes: string[];
+            /** Quantity */
+            quantity: string;
+            /** Realised Gain */
+            realised_gain: string;
+            reconciliation: components["schemas"]["Reconciliation"];
+            /** Sales */
+            sales: components["schemas"]["SaleLotOut"][];
+            /** Symbol */
+            symbol: string | null;
+            valuation: components["schemas"]["Valuation"];
+        };
         /**
          * Preferences
          * @description Settings that follow the person across the app.
@@ -3742,6 +4148,19 @@ export interface components {
             recommended_reserve_months: number;
             /** Total Monthly Required */
             total_monthly_required: string;
+        };
+        /** Reconciliation */
+        Reconciliation: {
+            /** Difference */
+            difference: string;
+            /** Has Ledger */
+            has_ledger: boolean;
+            /** Ledger Quantity */
+            ledger_quantity: string;
+            /** Matches */
+            matches: boolean;
+            /** Record Quantity */
+            record_quantity: string;
         };
         /** RecoveryEvaluation */
         RecoveryEvaluation: {
@@ -4199,6 +4618,17 @@ export interface components {
              */
             risk_capacity_level: "Low" | "Moderate" | "High" | "Not assessed";
         };
+        /** SaleLotOut */
+        SaleLotOut: {
+            /** Acquired */
+            acquired: string;
+            /** Cost */
+            cost: string;
+            /** Days Held */
+            days_held: number;
+            /** Quantity */
+            quantity: string;
+        };
         /** SampleDetail */
         SampleDetail: {
             /** Description */
@@ -4491,6 +4921,38 @@ export interface components {
             /** Total Shortfall Today */
             total_shortfall_today: string;
         };
+        /**
+         * TransactionCreate
+         * @description One actual, past transaction on a holding.
+         *
+         *     buy and sell: `quantity` and `price` (per unit). split and bonus: `ratio_new` and `ratio_old` (a 2-for-1 split is
+         *     2 and 1; a 1-for-1 bonus is 1 and 1). dividend: `price` is the amount per unit held on that date. `fees` are
+         *     brokerage and charges (for a dividend, tax or charges withheld).
+         */
+        TransactionCreate: {
+            /**
+             * Fees
+             * @default 0.00
+             */
+            fees: string;
+            /** Notes */
+            notes?: string | null;
+            /** Price */
+            price?: string | null;
+            /** Quantity */
+            quantity?: string | null;
+            /** Ratio New */
+            ratio_new?: number | null;
+            /** Ratio Old */
+            ratio_old?: number | null;
+            /** Trade Date */
+            trade_date: string;
+            /**
+             * Transaction Type
+             * @enum {string}
+             */
+            transaction_type: "buy" | "sell" | "split" | "bonus" | "dividend";
+        };
         /** TransactionCreateRequest */
         TransactionCreateRequest: {
             /** Account Id */
@@ -4513,6 +4975,42 @@ export interface components {
              * @enum {string}
              */
             transaction_type: "credit" | "debit";
+        };
+        /** TransactionOut */
+        TransactionOut: {
+            /** Cash */
+            cash: string;
+            /** Cost Basis After */
+            cost_basis_after: string;
+            /** Created At */
+            created_at: string;
+            /** Fees */
+            fees: string;
+            /** Holding Id */
+            holding_id: string;
+            /** Id */
+            id: string;
+            /** Notes */
+            notes: string | null;
+            /** Price */
+            price: string | null;
+            /** Quantity */
+            quantity: string | null;
+            /** Quantity After */
+            quantity_after: string;
+            /** Ratio New */
+            ratio_new: number | null;
+            /** Ratio Old */
+            ratio_old: number | null;
+            /** Realised Gain */
+            realised_gain: string;
+            /** Trade Date */
+            trade_date: string;
+            /**
+             * Transaction Type
+             * @enum {string}
+             */
+            transaction_type: "buy" | "sell" | "split" | "bonus" | "dividend";
         };
         /** TransactionResponse */
         TransactionResponse: {
@@ -4565,6 +5063,34 @@ export interface components {
             id: string;
             /** Is Active */
             is_active: boolean;
+        };
+        /**
+         * Valuation
+         * @description What the units are worth, and where that figure comes from. Never invented.
+         */
+        Valuation: {
+            /** As Of */
+            as_of: string | null;
+            /**
+             * Basis
+             * @enum {string}
+             */
+            basis: "market_snapshot" | "manual" | "none";
+            /** Message */
+            message: string;
+            /** Source */
+            source: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "fresh" | "stale" | "manual" | "unavailable" | "currency_mismatch";
+            /** Unit Price */
+            unit_price: string | null;
+            /** Unrealised Gain */
+            unrealised_gain: string | null;
+            /** Value */
+            value: string | null;
         };
         /** VersionChange */
         VersionChange: {
@@ -6239,6 +6765,64 @@ export interface operations {
             };
         };
     };
+    trajectory_api_v1_debt_trajectory_get: {
+        parameters: {
+            query?: {
+                start_month?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DebtTrajectoryResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     analyze_api_v1_emergency_fund_analyze_post: {
         parameters: {
             query?: never;
@@ -6260,6 +6844,124 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["EmergencyAnalysis"];
                 };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    expenditure_projection_api_v1_expenditure_projection_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExpenditureProjectionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExpenditureProjectionResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    expenditure_projection_csv_api_v1_expenditure_projection_csv_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExpenditureProjectionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Sign in required, or the token is missing, malformed or expired. */
             401: {
@@ -6728,6 +7430,355 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["SipProjectionResponse"];
                 };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    apply_ledger_api_v1_financials_investments__holding_id__apply_ledger_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                holding_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplyLedgerOut"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    ledger_csv_api_v1_financials_investments__holding_id__ledger_csv_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                holding_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    position_api_v1_financials_investments__holding_id__position_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                holding_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PositionOut"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_transactions_api_v1_financials_investments__holding_id__transactions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                holding_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TransactionOut"][];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    add_transaction_api_v1_financials_investments__holding_id__transactions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                holding_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TransactionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TransactionOut"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_transaction_api_v1_financials_investments__holding_id__transactions__transaction_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                holding_id: string;
+                transaction_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Sign in required, or the token is missing, malformed or expired. */
             401: {
