@@ -139,4 +139,4 @@ assumptions, links, the ledger and sources.
 - Goal savings recorded on a goal and an account balance that holds the same money are counted twice; the tab says so.
 - Age views use the age on the profile (whole years), not a date of birth.
 - A shortfall is never repaid by later surplus: it stays as an unfunded line (the same convention as the goal engine).
-- Not checked in a real browser against a hosted database; no deployment, migration or production change was made.
+- Checked in the in-app browser against a local API and a scratch SQLite database (seeded account: accounts, a fixed deposit, gold, a priced-but-stale holding, two debts, a policy, a profile age): figures matched hand calculations, and 375 px and 320 px widths showed no horizontal overflow. Not checked on a physical device, in dark mode or in Hindi, nor against a hosted database. No deployment, migration or production change was made by this work.

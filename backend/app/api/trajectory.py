@@ -99,7 +99,7 @@ def _holding_in(db: Session, holding: AssetInvestment) -> HoldingIn:
         value=valuation.value,
         basis=valuation.basis,
         status=valuation.status,
-        as_of=str(valuation.as_of) if valuation.as_of else None,
+        as_of=str(valuation.as_of)[:10] if valuation.as_of else None,  # the date, not the time of day
         source=valuation.source,
         message=valuation.message,
     )

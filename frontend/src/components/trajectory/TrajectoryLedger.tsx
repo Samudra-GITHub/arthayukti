@@ -30,8 +30,8 @@ export function TrajectoryLedger({ rows, copy, language }: { rows: TrajectoryLed
           <thead className="text-[13px] text-muted">
             <tr>
               {[t.month, t.opening, t.closing, t.cash, ''].map((label, index) => (
-                <th key={index} scope="col" className="border-b border-line py-2 pr-4 font-normal">
-                  {label || <span className="sr-only">{t.expand}</span>}
+                <th key={index} scope="col" aria-label={label ? undefined : t.expand} className="border-b border-line py-2 pr-4 font-normal">
+                  {label}
                 </th>
               ))}
             </tr>
