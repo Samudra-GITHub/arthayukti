@@ -3,6 +3,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { json, mockApi } from '../../test/mockApi'
 import { SpendingDashboard } from './SpendingDashboard'
 
+const storeState = vi.hoisted(() => ({ plan: null as unknown, replacePlan: undefined as unknown as (plan: unknown) => void }))
+vi.mock('../../state/useStore', () => ({ useStore: () => storeState }))
+
 const settings = (extra: Record<string, unknown> = {}) => ({
   base_inflation: '0.060000',
   current_inflation: '0.060000',
@@ -37,6 +40,7 @@ const plan = {
 afterEach(() => {
   cleanup()
   vi.unstubAllGlobals()
+  storeState.plan = null
 })
 
 function serve(extra: Record<string, () => Response> = {}, shown = trajectory) {
@@ -109,5 +113,30 @@ describe('SpendingDashboard', () => {
     expect(await screen.findByText('Choose a category.')).toBeInTheDocument()
     expect(screen.getByText('Enter an amount above zero.')).toBeInTheDocument()
     expect(calls.some((c) => c.method === 'POST')).toBe(false)
+  })
+
+  it('offers to use the plans for goals only when a plan is open, and puts the returned plan back in the store', async () => {
+    const applied = { name: 'Mine', spending_schedule: [{ month: '2026-10', amount: '6000.00' }] }
+    storeState.replacePlan = vi.fn()
+    const { calls } = serve({ 'POST /expenditure/apply-to-plan': () => json(applied) })
+    render(<SpendingDashboard />)
+    await screen.findByText('Cumulative spending with inflation')
+    expect(screen.queryByText('Use these plans for your goals')).not.toBeInTheDocument() // no plan open: nothing to apply to
+    cleanup()
+    storeState.plan = { name: 'Mine', spending_schedule: [] }
+    render(<SpendingDashboard />)
+    fireEvent.click(await screen.findByRole('button', { name: 'Use these plans' }))
+    await waitFor(() => expect(storeState.replacePlan).toHaveBeenCalledWith(applied))
+    expect(calls.find((c) => c.path === '/expenditure/apply-to-plan')?.body).toEqual({ plan: { name: 'Mine', spending_schedule: [] }, months: 240 })
+  })
+
+  it('says when the goals already read these plans, and can go back to the own expense lines', async () => {
+    storeState.replacePlan = vi.fn()
+    storeState.plan = { name: 'Mine', spending_schedule: [{ month: '2026-10', amount: '6000.00' }] }
+    serve()
+    render(<SpendingDashboard />)
+    expect(await screen.findByText(/now read the spending from these plans for 1 months, starting 2026-10/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /Go back to my plan/ }))
+    expect(storeState.replacePlan).toHaveBeenCalledWith({ name: 'Mine', spending_schedule: [] })
   })
 })

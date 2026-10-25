@@ -532,6 +532,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/expenditure/apply-to-plan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Apply To Plan
+         * @description The plan with its spending taken month by month from the person's Expenditure plans, so the goals, scenarios, fixes and
+         *     comparisons all read the same spending. It is a snapshot: apply it again after the plans change.
+         */
+        post: operations["apply_to_plan_api_v1_expenditure_apply_to_plan_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/expenditure/categories": {
         parameters: {
             query?: never;
@@ -2380,6 +2401,15 @@ export interface components {
             purchase_price: string;
             /** Quantity */
             quantity: string;
+        };
+        /** ApplyToPlanRequest */
+        ApplyToPlanRequest: {
+            /**
+             * Months
+             * @default 240
+             */
+            months: number;
+            plan: components["schemas"]["Plan"];
         };
         /** AssumptionOverrides */
         AssumptionOverrides: {
@@ -4690,6 +4720,8 @@ export interface components {
             income_streams: components["schemas"]["IncomeStream"][];
             /** Name */
             name: string;
+            /** Spending Schedule */
+            spending_schedule?: components["schemas"]["SpendingMonth"][];
             /**
              * Unassigned Savings
              * @default 0.00
@@ -6010,6 +6042,16 @@ export interface components {
             invested: string;
             /** Market Value */
             market_value: string;
+        };
+        /**
+         * SpendingMonth
+         * @description What the person's Expenditure plans say they spend in one month.
+         */
+        SpendingMonth: {
+            /** Amount */
+            amount: string;
+            /** Month */
+            month: string;
         };
         /** StrategyComparisonRequest */
         StrategyComparisonRequest: {
@@ -8314,6 +8356,66 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EmergencyAnalysis"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    apply_to_plan_api_v1_expenditure_apply_to_plan_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApplyToPlanRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Plan"];
                 };
             };
             /** @description Sign in required, or the token is missing, malformed or expired. */

@@ -404,7 +404,8 @@ def _simulate(inp: Inputs, view: str, prepay: dict[str, dict[int, Decimal]]) -> 
     plan_flows = plan.model_copy(update={"goals": chosen_goals, "commitments": commitments})
     scenario = inp.scenario if view == "scenario" else None
     base = resolve(plan_flows, scenario)
-    base.spending_override = inp.spending_override
+    if inp.spending_override is not None:
+        base.spending_override = inp.spending_override
     flows = [month_flows(base, t) for t in range(1, horizon + 1)]
 
     schedules = {loan.id: loan_schedule(loan, horizon, prepay.get(loan.id)) for loan in inp.loans}

@@ -11,6 +11,7 @@ from datetime import date
 from decimal import Decimal
 
 from fastapi import APIRouter, Depends, Query
+from pydantic import Field
 from fastapi.responses import Response
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -36,6 +37,9 @@ from app.engine.spending import (
     trajectory,
 )
 from app.errors import ApiError
+from app.schemas.types import ApiModel
+from app.timeline import MAX_HORIZON_MONTHS
+from app.schemas.plan import Plan, SpendingMonth
 from app.schemas.spending import (
     HORIZON_PRESETS,
     MAX_CHANGES_PER_PLAN,
@@ -690,6 +694,28 @@ def _compute(db: Session, user: User):  # noqa: ANN202
     today = _today()
     result = trajectory(_specs(plans), schedule, today, settings.horizon_years)
     return today, settings, plans, schedule, result
+
+
+class ApplyToPlanRequest(ApiModel):
+    plan: Plan
+    months: int = Field(default=240, ge=1, le=MAX_HORIZON_MONTHS)
+
+
+@router.post("/apply-to-plan", response_model=Plan, responses=VALIDATION_RESPONSES)
+def apply_to_plan(
+    body: ApplyToPlanRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)
+) -> Plan:
+    """The plan with its spending taken month by month from the person's Expenditure plans, so the goals, scenarios, fixes and
+    comparisons all read the same spending. It is a snapshot: apply it again after the plans change."""
+    loaded = load_spending(db, user, body.plan.as_of, body.months)
+    if loaded is None:
+        raise ApiError(422, "no_expenditure_plans", "You have no active plans on the Expenditure page. Add one first.")
+    amounts, _has_insurance = loaded
+    first = month_index(int(body.plan.as_of[:4]), int(body.plan.as_of[5:7]))
+    schedule = [
+        SpendingMonth(month="%04d-%02d" % index_year_month(first + t - 1), amount=amount) for t, amount in sorted(amounts.items())
+    ]
+    return body.plan.model_copy(update={"spending_schedule": schedule})
 
 
 @router.get("/trajectory", response_model=TrajectoryOut)

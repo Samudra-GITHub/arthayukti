@@ -103,7 +103,7 @@ def _store_quotes(db: Session, quotes: dict[str, provider.Quote | None]) -> None
                     asset_type="equity",
                     price=quote.price,
                     currency="INR",
-                    source=provider.SOURCE_NAME,
+                    source=provider.source_name(),
                     fetched_at=now,
                     is_stale=False,
                     metadata_json=meta,
@@ -112,7 +112,7 @@ def _store_quotes(db: Session, quotes: dict[str, provider.Quote | None]) -> None
         else:
             row.price = quote.price
             row.currency = "INR"
-            row.source = provider.SOURCE_NAME
+            row.source = provider.source_name()
             row.fetched_at = now
             row.is_stale = False
             row.metadata_json = meta

@@ -21,7 +21,9 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from decimal import Decimal, InvalidOperation
 from typing import Any
 
@@ -39,7 +41,13 @@ TICKER_RE = re.compile(r"^[A-Z0-9][A-Z0-9&\-]{0,19}\.(NS|BO)$")
 EXCHANGE_SUFFIX = {"NSE": ".NS", "BSE": ".BO"}
 SUFFIX_EXCHANGE = {".NS": "NSE", ".BO": "BSE"}
 
+YAHOO_BASE = "https://query1.finance.yahoo.com"
 SOURCE_NAME = "Indian-Stock-Market-API (Yahoo Finance)"
+YAHOO_SOURCE_NAME = "Yahoo Finance (public quote endpoint)"
+
+
+def source_name() -> str:
+    return YAHOO_SOURCE_NAME if settings.MARKET_PROVIDER == "yahoo" else SOURCE_NAME
 
 
 class ProviderError(Exception):
@@ -101,7 +109,8 @@ def reset_for_tests() -> None:
 
 
 def _http_get(path: str, params: dict[str, str]) -> tuple[int, Any]:
-    url = f"{settings.MARKET_API_BASE_URL}{path}?{urllib.parse.urlencode(params)}"
+    base = YAHOO_BASE if settings.MARKET_PROVIDER == "yahoo" else settings.MARKET_API_BASE_URL
+    url = f"{base}{path}?{urllib.parse.urlencode(params)}"
     request = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": "ArthaYukti/1.0"})  # noqa: S310
     try:
         with urllib.request.urlopen(request, timeout=settings.MARKET_API_TIMEOUT_SECONDS) as response:  # noqa: S310
@@ -171,6 +180,48 @@ def _text(value: Any, limit: int = 80) -> str | None:
     return value.strip()[:limit] if isinstance(value, str) and value.strip() and value.strip() != "N/A" else None
 
 
+def _yahoo_search(query: str) -> list[SearchHit]:
+    status, body = _call("/v1/finance/search", {"q": query.strip(), "quotesCount": "15", "newsCount": "0"})
+    if status != 200 or not isinstance(body, dict) or not isinstance(body.get("quotes"), list):
+        raise ProviderError("bad_response", "The price service answered search in an unexpected way.")
+    results: list[SearchHit] = []
+    seen: set[str] = set()
+    for item in body["quotes"]:
+        if not isinstance(item, dict) or item.get("quoteType") not in ("EQUITY", "ETF"):
+            continue
+        ticker = item.get("symbol")
+        if not isinstance(ticker, str) or not TICKER_RE.match(ticker.upper()):
+            continue
+        symbol = ticker.upper()[:-3]
+        if symbol in seen:
+            continue
+        seen.add(symbol)
+        results.append(SearchHit(symbol, _text(item.get("longname")) or _text(item.get("shortname")) or symbol))
+    return results
+
+
+def _yahoo_quote(ticker: str) -> Quote | None:
+    status, body = _call(f"/v8/finance/chart/{urllib.parse.quote(ticker)}", {"range": "1d", "interval": "1d"})
+    if status == 404:
+        return None
+    if status != 200 or not isinstance(body, dict):
+        raise ProviderError("bad_response", "The price service answered in an unexpected way.")
+    chart = body.get("chart")
+    result = chart.get("result") if isinstance(chart, dict) else None
+    meta = result[0].get("meta") if isinstance(result, list) and result and isinstance(result[0], dict) else None
+    if not isinstance(meta, dict) or meta.get("symbol") != ticker:  # never trust a symbol we did not ask about
+        return None
+    price = _price(meta.get("regularMarketPrice"))
+    if price is None:
+        return None
+    moment = meta.get("regularMarketTime")
+    market_date = None
+    if isinstance(moment, int) and not isinstance(moment, bool) and 0 < moment < 4_102_444_800:
+        market_date = datetime.fromtimestamp(moment, UTC).date().isoformat()
+    symbol, exchange = split_ticker(ticker)
+    return Quote(ticker, symbol, exchange, _text(meta.get("longName")) or _text(meta.get("shortName")), price, market_date)
+
+
 def search(query: str) -> list[SearchHit]:
     """Companies matching a name or symbol. A provider 'no results' answer is an empty list, not an error."""
     key = query.strip().lower()
@@ -179,6 +230,11 @@ def search(query: str) -> list[SearchHit]:
         hit = _search_cache.get(key)
         if hit and now - hit[0] < SEARCH_TTL_SECONDS:
             return hit[1]
+    if settings.MARKET_PROVIDER == "yahoo":
+        found = _yahoo_search(query)
+        with _lock:
+            _search_cache[key] = (now, found)
+        return found[:15]
     status, body = _call("/search", {"q": query.strip()})
     if status == 404:
         results: list[SearchHit] = []
@@ -220,6 +276,17 @@ def fetch_quotes(tickers: list[str]) -> dict[str, Quote | None]:
                 out[ticker] = cached[1]
             else:
                 missing.append(ticker)
+    if settings.MARKET_PROVIDER == "yahoo":
+        # Yahoo prices one symbol per request, so ask a few at a time. A failure of the service as a whole raises.
+        with ThreadPoolExecutor(max_workers=6) as pool:
+            fetched = list(pool.map(_yahoo_quote, missing))
+        with _lock:
+            stamp = time.monotonic()
+            for ticker, quote in zip(missing, fetched, strict=True):
+                out[ticker] = quote
+                if quote is not None:
+                    _quote_cache[ticker] = (stamp, quote)
+        return {ticker: out.get(ticker) for ticker in wanted}
     for start in range(0, len(missing), MAX_BATCH):
         batch = missing[start : start + MAX_BATCH]
         status, body = _call("/stock/list", {"symbols": ",".join(batch), "res": "num"})

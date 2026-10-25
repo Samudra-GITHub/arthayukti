@@ -166,3 +166,18 @@ describe('draftFromConfig', () => {
     expect(again.config).toEqual(built.config)
   })
 })
+
+describe('tax method and rate convention', () => {
+  it('sends the chosen options and reads them back from a saved calculator', () => {
+    const built = buildConfig(draft(investment({ taxPercent: '10', taxMethod: 'total_amount', rateConvention: 'effective_annual' })))
+    expect(built.problems).toBeNull()
+    expect(built.config?.investments[0]).toMatchObject({ tax_rate: '0.1000', tax_method: 'total_amount', rate_convention: 'effective_annual' })
+    const back = draftFromConfig(built.config!)
+    expect(back.investments[0]).toMatchObject({ taxMethod: 'total_amount', rateConvention: 'effective_annual' })
+  })
+  it('keeps the product defaults for a calculator saved before these options existed', () => {
+    const built = buildConfig(draft(investment()))
+    const old = { ...built.config!, investments: built.config!.investments.map(({ tax_method: _a, rate_convention: _b, ...rest }) => rest) }
+    expect(draftFromConfig(old as never).investments[0]).toMatchObject({ taxMethod: 'gains', rateConvention: 'nominal_monthly' })
+  })
+})

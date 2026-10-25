@@ -175,6 +175,17 @@ def resolve(plan: Plan, scenario: Scenario | None) -> Resolved:
             sign = Decimal(-1) if isinstance(event, OneTimeExpense) else Decimal(1)
             one_offs[t] = one_offs.get(t, Decimal(0)) + sign * event.amount
 
+    schedule = {
+        month_to_index(item.month) - as_of_index + 1: item.amount for item in plan.spending_schedule
+    }
+    schedule = {t: amount for t, amount in schedule.items() if 1 <= t <= horizon}
+    if plan.spending_schedule and any(t not in schedule for t in range(1, horizon + 1)):
+        warnings.append(
+            PlanWarning(
+                code="spending_schedule_short",
+                message="The spending taken from your Expenditure plans does not cover every month. Months it leaves out use your plan's expense lines.",
+            )
+        )
     return Resolved(
         as_of=plan.as_of,
         as_of_index=as_of_index,
@@ -193,4 +204,5 @@ def resolve(plan: Plan, scenario: Scenario | None) -> Resolved:
         one_offs=one_offs,
         warnings=warnings,
         stream_bases=stream_tables(plan.income_streams, as_of_index),
+        spending_override=schedule or None,
     )

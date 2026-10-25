@@ -203,6 +203,13 @@ class FixLimits(ApiModel):
     extra_savings_cap_pct_of_income: Fraction = Decimal("0.20")
 
 
+class SpendingMonth(ApiModel):
+    """What the person's Expenditure plans say they spend in one month."""
+
+    month: Month
+    amount: Money
+
+
 class Plan(ApiModel):
     name: Label
     as_of: Month
@@ -215,6 +222,9 @@ class Plan(ApiModel):
     goals: list[Goal] = Field(max_length=8)
     assumptions: Assumptions
     fix_limits: FixLimits = Field(default_factory=FixLimits)
+    # Month-by-month spending taken from the Expenditure plans (see POST /expenditure/apply-to-plan). For a month it
+    # covers, it is the spending and the expense lines are not added; any other month uses the expense lines.
+    spending_schedule: list[SpendingMonth] = Field(default_factory=list, max_length=MAX_HORIZON_MONTHS)
 
     @model_validator(mode="after")
     def _check_consistency(self) -> "Plan":
@@ -222,6 +232,7 @@ class Plan(ApiModel):
         _require_unique("expense", [e.id for e in self.expenses])
         _require_unique("commitment", [c.id for c in self.commitments])
         _require_unique("goal", [g.id for g in self.goals])
+        _require_unique("spending month", [s.month for s in self.spending_schedule])
 
         priorities = sorted(g.priority for g in self.goals)
         if priorities != list(range(1, len(self.goals) + 1)):

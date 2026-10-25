@@ -944,6 +944,26 @@
         "title": "ApplyLedgerOut",
         "type": "object"
       },
+      "ApplyToPlanRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "months": {
+            "default": 240,
+            "maximum": 600.0,
+            "minimum": 1.0,
+            "title": "Months",
+            "type": "integer"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/Plan"
+          }
+        },
+        "required": [
+          "plan"
+        ],
+        "title": "ApplyToPlanRequest",
+        "type": "object"
+      },
       "AssumptionOverrides": {
         "additionalProperties": false,
         "properties": {
@@ -8626,6 +8646,14 @@
             "title": "Name",
             "type": "string"
           },
+          "spending_schedule": {
+            "items": {
+              "$ref": "#/components/schemas/SpendingMonth"
+            },
+            "maxItems": 600,
+            "title": "Spending Schedule",
+            "type": "array"
+          },
           "unassigned_savings": {
             "default": "0.00",
             "pattern": "^-?\\d+(\\.\\d+)?$",
@@ -12635,6 +12663,28 @@
           "complete"
         ],
         "title": "SnapshotPoint",
+        "type": "object"
+      },
+      "SpendingMonth": {
+        "additionalProperties": false,
+        "description": "What the person's Expenditure plans say they spend in one month.",
+        "properties": {
+          "amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Amount",
+            "type": "string"
+          },
+          "month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "Month",
+            "type": "string"
+          }
+        },
+        "required": [
+          "month",
+          "amount"
+        ],
+        "title": "SpendingMonth",
         "type": "object"
       },
       "StrategyComparisonRequest": {
@@ -16684,6 +16734,83 @@
         "summary": "Analyze",
         "tags": [
           "emergency-fund"
+        ]
+      }
+    },
+    "/api/v1/expenditure/apply-to-plan": {
+      "post": {
+        "description": "The plan with its spending taken month by month from the person's Expenditure plans, so the goals, scenarios, fixes and\ncomparisons all read the same spending. It is a snapshot: apply it again after the plans change.",
+        "operationId": "apply_to_plan_api_v1_expenditure_apply_to_plan_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplyToPlanRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plan"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Apply To Plan",
+        "tags": [
+          "expenditure-plans"
         ]
       }
     },

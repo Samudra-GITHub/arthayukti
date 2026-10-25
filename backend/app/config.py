@@ -65,6 +65,10 @@ class Settings(BaseSettings):
     # Stock prices for the portfolio tracker (https://github.com/0xramm/Indian-Stock-Market-API). The backend is the
     # only caller; the browser never sees this address. The project's published address is plain HTTP and was not
     # reachable when this was written: point this at an instance you run (ideally behind HTTPS).
+    # Where Indian share prices come from. "indian_api": the Indian-Stock-Market-API service at MARKET_API_BASE_URL (its
+    # published address has not answered). "yahoo": Yahoo Finance's public quote endpoints directly, the same upstream data
+    # that service wraps (unofficial, not for financial decisions).
+    MARKET_PROVIDER: Literal["indian_api", "yahoo"] = "indian_api"
     MARKET_API_BASE_URL: str = "http://65.0.104.9"
     MARKET_API_TIMEOUT_SECONDS: float = 8.0
 

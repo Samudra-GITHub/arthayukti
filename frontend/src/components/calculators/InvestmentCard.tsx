@@ -51,6 +51,20 @@ export function InvestmentCard({ index, draft, problems, showProblems, canRemove
         <TextField label={t.growthRate} value={draft.growthPercent} onChange={(value) => set('growthPercent', value)} inputMode="decimal" hint={t.growthRateHint} error={error('growthPercent')} />
         <TextField label={t.growthYears} value={draft.growthYears} onChange={(value) => set('growthYears', value)} inputMode="numeric" hint={t.growthHint} error={error('growthYears')} />
         <TextField label={t.tax} value={draft.taxPercent} onChange={(value) => set('taxPercent', value)} inputMode="decimal" hint={t.taxHint} error={error('taxPercent')} />
+        <SelectField
+          label={t.taxMethod}
+          value={draft.taxMethod}
+          onChange={(value) => set('taxMethod', value)}
+          options={[{ value: 'gains', label: t.taxMethods.gains }, { value: 'total_amount', label: t.taxMethods.total_amount }]}
+          hint={t.taxMethodHint}
+        />
+        <SelectField
+          label={t.rateConvention}
+          value={draft.rateConvention}
+          onChange={(value) => set('rateConvention', value)}
+          options={[{ value: 'nominal_monthly', label: t.rateConventions.nominal_monthly }, { value: 'effective_annual', label: t.rateConventions.effective_annual }]}
+          hint={t.rateConventionHint}
+        />
         <TextField label={t.inflation} value={draft.inflationPercent} onChange={(value) => set('inflationPercent', value)} inputMode="decimal" hint={t.inflationHint} error={error('inflationPercent')} />
       </div>
 

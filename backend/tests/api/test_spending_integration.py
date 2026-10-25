@@ -63,3 +63,47 @@ def test_it_reads_only_the_signed_in_persons_plans():
     owner, other = authed_client("spend-owner"), authed_client("spend-other")
     add_plan(owner)
     assert project(other, spending_source="expenditure_plans").status_code == 422
+
+
+# ---- the goal engine and the plan-based endpoints -----------------------------------------------------------------------------------
+
+
+def goal_plan(**extra):
+    plan = plan_body(income="100000.00", expenses=[("Rent", "20000.00")], goals=True, as_of="2026-10")
+    plan.update(extra)
+    return plan
+
+
+def test_a_spending_schedule_replaces_the_expense_lines_only_for_the_months_it_covers():
+    from app.engine.projection import project
+    from app.schemas.plan import Plan
+
+    plan = Plan.model_validate(
+        goal_plan(spending_schedule=[{"month": "2026-10", "amount": "5000.00"}, {"month": "2026-11", "amount": "6000.00"}])
+    )
+    months = project(plan, None, True).monthly
+    assert [m.expenses for m in months[:3]] == [D("5000.00"), D("6000.00"), D("20000.00")]  # then the plan's own line again
+    assert any(w.code == "spending_schedule_short" for w in project(plan, None, False).warnings)
+
+
+def test_apply_to_plan_fills_the_schedule_from_the_expenditure_plans_and_the_goal_engine_reads_it():
+    client = authed_client("spend-apply")
+    add_plan(client)
+    add_plan(client, category="sys:groceries", amount="1000.00")
+    applied = client.post("/api/v1/expenditure/apply-to-plan", json={"plan": goal_plan(), "months": 24})
+    assert applied.status_code == 200, applied.text
+    schedule = applied.json()["spending_schedule"]
+    assert len(schedule) == 24 and schedule[0] == {"month": "2026-10", "amount": "6000.00"} and schedule[-1]["month"] == "2028-09"
+    result = client.post("/api/v1/projections", json={"plan": applied.json(), "include_monthly": True}).json()
+    assert result["monthly"][0]["expenses"] == "6000.00" and result["monthly"][23]["expenses"] == "6000.00"
+    plain = client.post("/api/v1/projections", json={"plan": goal_plan(), "include_monthly": True}).json()
+    assert plain["monthly"][0]["expenses"] == "20000.00"  # without applying, nothing changes
+
+
+def test_apply_to_plan_refuses_without_active_plans_and_for_a_bad_horizon():
+    client = authed_client("spend-apply-none")
+    assert client.post("/api/v1/expenditure/apply-to-plan", json={"plan": goal_plan()}).json()["error"]["code"] == "no_expenditure_plans"
+    add_plan(client)
+    assert client.post("/api/v1/expenditure/apply-to-plan", json={"plan": goal_plan(), "months": 601}).status_code == 422
+    duplicate = goal_plan(spending_schedule=[{"month": "2026-10", "amount": "1.00"}, {"month": "2026-10", "amount": "2.00"}])
+    assert client.post("/api/v1/projections", json={"plan": duplicate}).status_code == 422

@@ -259,6 +259,7 @@ export const api = {
   spendingHideCategory: (key: string, hidden: boolean) => put<SpendingCategory>(`/expenditure/categories/system/${key}`, { hidden }),
   spendingDeleteCategory: (id: string, reassignTo?: string) =>
     remove(`/expenditure/categories/${id}${reassignTo ? `?reassign_to=${encodeURIComponent(reassignTo)}` : ''}`),
+  spendingApplyToPlan: (plan: Plan, months = 240) => post<Plan>('/expenditure/apply-to-plan', { plan, months }),
   spendingSettings: (signal?: AbortSignal) => get<SpendingSettings>('/expenditure/settings', signal),
   spendingSetHorizon: (years: number) => put<SpendingSettings>('/expenditure/settings', { horizon_years: years }),
   spendingSetInflation: (body: SpendingInflationInput) => post<SpendingSettings>('/expenditure/settings/inflation', body),

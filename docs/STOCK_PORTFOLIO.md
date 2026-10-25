@@ -82,3 +82,13 @@ Open **Equities > Stock portfolio**: search "reliance", pick NSE, enter shares, 
 Tests: `cd backend && pytest tests/test_portfolio_engine.py tests/test_stock_provider.py tests/api/test_portfolio_api.py` and
 `cd frontend && npx vitest run src/lib/portfolio.test.ts src/pages/app/StockPortfolio.test.tsx`. All external calls are mocked
 (the adapter's HTTP layer is also tested against a local server).
+
+## Update: Yahoo Finance mode (live prices)
+
+The published provider address did not answer, so the adapter has a second mode: `MARKET_PROVIDER=yahoo` reads Yahoo Finance's public
+quote endpoints directly (`/v1/finance/search`, `/v8/finance/chart/{ticker}`), the same unofficial upstream the other service wraps.
+It prices one symbol per request (a few at a time), keeps the same strictness (a price is a finite number above zero; an answer for
+a symbol that was not asked for is refused), the same caches and the same back-off (a 429 or 5xx stops further calls for 30 s). The price
+date is the provider's own market time. The default stays `indian_api`; set `MARKET_PROVIDER=yahoo` in `backend/.env` (done locally).
+Verified live: RELIANCE.NS, TCS.NS and INFY.BO returned prices dated 2026-10-23 (the last close), and an unknown symbol returned none.
+Yahoo's data is unofficial, can be delayed, and carries its own terms; it is for planning, not financial decisions.

@@ -9,6 +9,7 @@ import { CompiledComparison } from '../../components/investment-calculator/Compi
 import { useAuth } from '../../state/useAuth'
 import { useStore } from '../../state/useStore'
 import { rateToPercent } from '../../lib/inflation'
+import { CalculatorsPage } from './Calculators'
 
 const STORAGE_PREFIX = 'arthayukti.investment_calculators'
 
@@ -16,7 +17,7 @@ function getStorageKey(userId?: string): string {
   return `${STORAGE_PREFIX}.${userId || 'guest'}`
 }
 
-export function InvestmentCalculatorPage() {
+function QuickCalculators() {
   const auth = useAuth()
   const { inflation } = useStore()
   const defaultInflation = inflation ? rateToPercent(inflation.rate) : '6.0'
@@ -172,6 +173,35 @@ export function InvestmentCalculatorPage() {
         </span>
         Add Calculator
       </button>
+    </div>
+  )
+}
+
+/**
+ * Two ways to the same idea. Quick calculators keep their own state in this browser. Detailed calculators are valued by the
+ * server's one engine (tax on the gain or the whole value, effective or monthly-compounded rates, step-ups, valuation on a
+ * common date, comparison) and can be saved to your account.
+ */
+export function InvestmentCalculatorPage() {
+  const [view, setView] = useState<'quick' | 'detailed'>('quick')
+  const tab = (value: 'quick' | 'detailed', label: string) => (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={view === value}
+      onClick={() => setView(value)}
+      className={`min-h-11 rounded-xl px-4 text-[15px] font-semibold ${view === value ? 'bg-ink text-white' : 'border border-line text-muted hover:text-ink'}`}
+    >
+      {label}
+    </button>
+  )
+  return (
+    <div className="flex flex-col gap-4">
+      <div role="tablist" aria-label="Calculator type" className="flex flex-wrap gap-2">
+        {tab('quick', 'Quick calculators')}
+        {tab('detailed', 'Detailed calculators (saved to your account)')}
+      </div>
+      {view === 'quick' ? <QuickCalculators /> : <CalculatorsPage />}
     </div>
   )
 }

@@ -26,6 +26,7 @@ os.environ["SECRET_KEY"] = "test-signing-key-" + "k" * 40
 os.environ["RATE_LIMIT_ENABLED"] = "false"
 os.environ["MAIL_BACKEND"] = "memory"
 os.environ["SEED_DEMO_USER"] = "false"
+os.environ["MARKET_PROVIDER"] = "indian_api"  # the tests stub the Indian-Stock-Market-API contract; a developer's .env may choose yahoo
 
 from alembic.config import Config  # noqa: E402
 

@@ -87,3 +87,9 @@ account. A user can keep 50.
 - Saved calculators without these fields keep their old behaviour.
 - Not done: scenarios saved under a single calculator (use Compare, which values each configuration alone), and default
   "Investment 1, 2..." names, which belong to the page rather than the engine.
+
+## Update: where to find it in the app
+
+Investment Calculator now has two tabs. "Quick calculators" is the original page (its own state in the browser). "Detailed calculators"
+is this module: server-valued, saved to the account, with tax on the gain or the whole value, effective or monthly-compounded rates, step-ups,
+common-date valuation, comparison and CSV.

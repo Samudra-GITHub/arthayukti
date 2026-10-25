@@ -6,6 +6,7 @@ import { formatMoney } from '../../lib/money'
 import { ratePercentText } from '../../lib/spending'
 import { useAction } from '../../state/useAction'
 import { useRemote } from '../../state/useRemote'
+import { useStore } from '../../state/useStore'
 import { FormError, TextField } from '../forms'
 import { Notice, Panel, Stat } from '../panel'
 import { CategoriesPanel } from './CategoriesPanel'
@@ -56,6 +57,7 @@ export function SpendingDashboard() {
         </Panel>
       ) : (
         <>
+          <UseForGoals onChanged={refresh} />
           <AnnualBars trajectory={t} />
           <YearTable trajectory={t} />
         </>
@@ -136,6 +138,39 @@ function Summary({ trajectory, settings, onChanged }: { trajectory: SpendingTraj
       <Notice>
         Spending starts from this month. A plan with its own rate ignores the global one. The projection is a deterministic estimate from the plans you enter, not a forecast.
       </Notice>
+    </Panel>
+  )
+}
+
+/** Lets the goals, scenarios and fixes read these spending plans instead of the plan's own expense lines. */
+function UseForGoals({ onChanged }: { onChanged: () => void }) {
+  const { plan, replacePlan } = useStore()
+  const action = useAction()
+  if (!plan) return null
+  const active = (plan.spending_schedule?.length ?? 0) > 0
+  const apply = () =>
+    void action.run(async () => {
+      replacePlan(await api.spendingApplyToPlan(plan))
+      onChanged()
+    })
+  return (
+    <Panel id="spending-use" title="Use these plans for your goals">
+      <p className="text-muted">
+        {active
+          ? `Your goals, scenarios and fixes now read the spending from these plans for ${plan.spending_schedule?.length} months, starting ${plan.spending_schedule?.[0]?.month}. Months after that use your plan's own expense lines. If you change a plan here, apply it again.`
+          : 'Your goals, scenarios and fixes read the expense lines in your plan. You can have them read these spending plans instead. The expense lines are not added on top for the months these plans cover.'}
+      </p>
+      <div className="flex flex-wrap gap-3">
+        <button type="button" disabled={action.busy} onClick={apply} className="min-h-11 rounded-xl bg-ink px-5 font-semibold text-white disabled:opacity-50">
+          {active ? 'Apply again' : 'Use these plans'}
+        </button>
+        {active ? (
+          <button type="button" disabled={action.busy} onClick={() => replacePlan({ ...plan, spending_schedule: [] })} className="min-h-11 rounded-xl border border-ink px-5 font-semibold disabled:opacity-50">
+            Go back to my plan's expense lines
+          </button>
+        ) : null}
+      </div>
+      {action.failure ? <FormError>{failureText(action.failure)}</FormError> : null}
     </Panel>
   )
 }

@@ -279,3 +279,54 @@ def test_the_base_url_setting_must_be_http_or_https():
     assert Settings(_env_file=None, MARKET_API_BASE_URL=" https://example.com/ ").MARKET_API_BASE_URL == "https://example.com"
     with pytest.raises(ValueError):
         Settings(_env_file=None, MARKET_API_BASE_URL="ftp://example.com")
+
+
+# ---- the Yahoo Finance mode ----------------------------------------------------------------------------------------------------
+
+
+def chart(ticker, price, moment=1792749506, name="Acme Limited"):
+    return (200, {"chart": {"result": [{"meta": {"symbol": ticker, "regularMarketPrice": price, "regularMarketTime": moment, "longName": name}}], "error": None}})
+
+
+@pytest.fixture()
+def yahoo(monkeypatch):
+    monkeypatch.setattr(settings, "MARKET_PROVIDER", "yahoo")
+
+
+def test_yahoo_prices_are_read_strictly_one_symbol_at_a_time(monkeypatch, yahoo):
+    answers = {"A.NS": chart("A.NS", 1190.0), "B.NS": chart("B.NS", 0), "C.NS": chart("OTHER.NS", 50.0), "D.NS": (404, None)}
+    calls = serve(monkeypatch, lambda path, params: answers[path.rsplit("/", 1)[1]])
+    got = sp.fetch_quotes(["A.NS", "B.NS", "C.NS", "D.NS"])
+    assert got["A.NS"].price == D("1190.00") and got["A.NS"].market_date == "2026-10-23" and got["A.NS"].company_name == "Acme Limited"
+    assert got["B.NS"] is None  # a zero price is no price
+    assert got["C.NS"] is None  # an answer about a symbol we did not ask for is refused
+    assert got["D.NS"] is None  # unknown symbol
+    assert sorted(path for path, _ in calls) == sorted(f"/v8/finance/chart/{t}" for t in answers)
+
+
+def test_yahoo_search_keeps_only_indian_equities_and_deduplicates(monkeypatch, yahoo):
+    body = {"quotes": [
+        {"symbol": "RELIANCE.NS", "quoteType": "EQUITY", "longname": "Reliance Industries Limited"},
+        {"symbol": "RELIANCE.BO", "quoteType": "EQUITY", "shortname": "RELIANCE"},
+        {"symbol": "RELI", "quoteType": "EQUITY", "longname": "A US company"},
+        {"symbol": "RELIANCE-FUT.NS", "quoteType": "FUTURE"},
+        {"symbol": "TCS.NS", "quoteType": "EQUITY", "shortname": "TATA CONSULTANCY"},
+    ]}
+    serve(monkeypatch, lambda path, params: (200, body))
+    assert [(h.symbol, h.company_name) for h in sp.search("rel")] == [("RELIANCE", "Reliance Industries Limited"), ("TCS", "TATA CONSULTANCY")]
+
+
+def test_a_yahoo_rate_limit_is_a_service_failure_and_backs_off(monkeypatch, yahoo):
+    calls = serve(monkeypatch, lambda path, params: (429, None))
+    with pytest.raises(sp.ProviderError) as first:
+        sp.fetch_quotes(["A.NS"])
+    assert first.value.code == "unavailable"
+    with pytest.raises(sp.ProviderError):
+        sp.fetch_quotes(["B.NS"])
+    assert len(calls) == 1  # the second call failed fast without asking again
+
+
+def test_the_source_name_follows_the_provider(monkeypatch, yahoo):
+    assert "Yahoo" in sp.source_name() and "Indian-Stock-Market-API" not in sp.source_name()
+    monkeypatch.setattr(settings, "MARKET_PROVIDER", "indian_api")
+    assert "Indian-Stock-Market-API" in sp.source_name()

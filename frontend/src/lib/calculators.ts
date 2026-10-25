@@ -22,6 +22,8 @@ export interface InvestmentDraft {
   growthYears: string
   growthPercent: string
   taxPercent: string
+  taxMethod: 'gains' | 'total_amount'
+  rateConvention: 'nominal_monthly' | 'effective_annual'
   inflationPercent: string
   afterAction: '' | 'hold' | 'continue' | 'reinvest'
   reinvestPercent: string
@@ -77,6 +79,8 @@ export function blankInvestment(startMonth: string = currentMonth(), inflationPe
     growthYears: '10',
     growthPercent: '12',
     taxPercent: '0',
+    taxMethod: 'gains',
+    rateConvention: 'nominal_monthly',
     inflationPercent,
     afterAction: '',
     reinvestPercent: '',
@@ -202,8 +206,8 @@ function buildInvestment(draft: InvestmentDraft, problems: Problems): Calculator
     growth_years: growthYears as number,
     annual_growth: growth as string,
     tax_rate: fourPlaces(tax as string),
-    tax_method: 'gains',
-    rate_convention: 'nominal_monthly',
+    tax_method: draft.taxMethod,
+    rate_convention: draft.rateConvention,
     inflation_rate: inflation as string,
     ...(afterMaturity ? { after_maturity: afterMaturity } : {}),
   }
@@ -259,6 +263,8 @@ export function draftFromConfig(config: CalculatorConfig): CalculatorDraft {
       growthYears: String(item.growth_years),
       growthPercent: percent(item.annual_growth),
       taxPercent: percent(item.tax_rate ?? '0'),
+      taxMethod: item.tax_method ?? 'gains',
+      rateConvention: item.rate_convention ?? 'nominal_monthly',
       inflationPercent: percent(item.inflation_rate ?? '0'),
       afterAction: item.after_maturity?.action ?? '',
       reinvestPercent: item.after_maturity?.rate ? percent(item.after_maturity.rate) : '',

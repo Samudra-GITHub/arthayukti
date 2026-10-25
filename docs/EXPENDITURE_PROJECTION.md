@@ -80,3 +80,12 @@ categories, settings, CSV reconciliation, isolation), `frontend/src/lib/spending
 - The goal engine, scenarios and the other plan-based endpoints still read the plan's own expense lines. Choosing one source for
   every screen is a product decision that has not been made.
 - The account data export now includes the plans, categories and settings (`expenditure`), and deleting the account removes them.
+
+## Update: one spending source for goals, scenarios, fixes and comparisons
+
+`Plan.spending_schedule` (optional, up to 600 months) holds spending by month. For a month it covers, every engine (projection, trade-offs,
+fixes, comparison, rescue, trajectory) uses that figure and does not add the plan's expense lines; any month it leaves out uses the lines,
+with a `spending_schedule_short` warning. `POST /expenditure/apply-to-plan {plan, months}` (signed in) returns the plan with the schedule
+filled from the person's active Expenditure plans, month by month, from the plan's `as_of`. It is a snapshot: apply again after changing a plan.
+The Expenditure page has "Use these plans" / "Apply again" / "Go back to my plan's expense lines". The emergency-fund and Plan B logic still
+classify essential spending from the plan's expense lines, because Expenditure plans carry no essential flag by design.
