@@ -4,7 +4,7 @@
 
 <br>
 
-[**Live site**](https://arthayukti.vercel.app) · [**Project report**](docs/PROJECT_REPORT.md) · [Financial model](docs/FINANCIAL_MODEL.md) · [AI advisor](docs/AI_ADVISOR.md) · [API](docs/API.md) · [Deployment](docs/DEPLOYMENT.md)
+[**Live site**](https://arthayukti.vercel.app) · [**Project report**](docs/PROJECT_REPORT.md) ([PDF](docs/ArthaYukti_Project_Report.pdf)) · [Financial model](docs/FINANCIAL_MODEL.md) · [AI advisor](docs/AI_ADVISOR.md) · [API](docs/API.md) · [Deployment](docs/DEPLOYMENT.md)
 
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
@@ -79,7 +79,7 @@ Details: [docs/AI_ADVISOR.md](docs/AI_ADVISOR.md).
 
 ## Run it on your computer
 
-You need **Python 3.12**, **Node 22 or newer**, and `make`.
+You need **Python 3.12**, **Node 22 or newer**, and `make`. Dependencies are pinned in [`backend/pyproject.toml`](backend/pyproject.toml) and [`frontend/package.json`](frontend/package.json) (with `package-lock.json`); `make setup` installs both.
 
 ```bash
 make setup      # virtualenv, backend and frontend dependencies
