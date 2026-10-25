@@ -75,4 +75,4 @@ Date: 25 Oct 2026. Branch `feat/tradeoffs`, latest commit `e8563d9` (pushed to `
 3. Prepare the 2 to 3 minute demo.
 
 ## Untracked files left out of commits
-`ARTHAYUKTI_LIVE_DEMO_AUDIT.md`, `ARTHAYUKTI_USER_DATA_INVENTORY.md`, `docs/ArthaYukti_Master_Specification.txt`.
+`docs/reports/ARTHAYUKTI_LIVE_DEMO_AUDIT.md`, `docs/reports/ARTHAYUKTI_USER_DATA_INVENTORY.md`, `docs/spec/ArthaYukti_Master_Specification.txt`.

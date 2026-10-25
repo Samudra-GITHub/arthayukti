@@ -387,8 +387,8 @@ const en: Copy = {
       { title: 'Try a different order', body: 'Put another goal first and see what happens to every goal before you change anything.' },
       { title: 'Find the smallest fix', body: 'Each fix is checked against your whole plan before it is shown.' },
     ],
-    soonTitle: 'Not built yet',
-    soon: ['Accounts and sign-in', 'Saved plans', 'Insurance', 'Documents and receipts'],
+    soonTitle: 'Also inside once you sign in',
+    soon: ['Saved plans', 'Plan B for a disruption', 'AI advisor', 'Insurance, debts and equities'],
   },
   income: {
     title: 'What comes in each month?',
@@ -738,8 +738,8 @@ const hi: Copy = {
       { title: 'दूसरा क्रम आज़माएँ', body: 'कुछ बदलने से पहले देखें कि कोई दूसरा लक्ष्य पहले आने पर हर लक्ष्य का क्या होता है।' },
       { title: 'सबसे छोटा उपाय खोजें', body: 'हर उपाय दिखाने से पहले आपकी पूरी योजना पर जाँचा जाता है।' },
     ],
-    soonTitle: 'अभी बना नहीं है',
-    soon: ['खाते और साइन-इन', 'सेव की गई योजनाएँ', 'बीमा', 'दस्तावेज़ और रसीदें'],
+    soonTitle: 'साइन-इन के बाद और भी',
+    soon: ['सेव की गई योजनाएँ', 'रुकावट के लिए प्लान B', 'AI सलाहकार', 'बीमा, कर्ज़ और इक्विटी'],
   },
   income: {
     title: 'हर महीने कितना आता है?',

@@ -149,9 +149,19 @@ docs/        financial model, API, Plan B, AI, trajectory, modules, deployment, 
 - On the hosted demo, saved data may be wiped when the server restarts until a permanent database is connected ([deployment](docs/DEPLOYMENT.md), [readiness](docs/PRODUCTION_READINESS.md)).
 - Advisor debt paths don't show how goals change, and spending cuts need lines marked optional in the plan.
 
+## Repository layout
+
+```
+backend/     FastAPI app, calculation engine, Alembic migrations, tests
+frontend/    React app, English and Hindi copy, generated API types, tests
+contracts/   openapi.json (generated) and sample plans
+docs/        guides and module notes; spec/ (specification), reports/ (audits and history), assets/ (README graphics)
+render.yaml  Render blueprint for the API       Makefile  common tasks
+```
+
 ## More documentation
 
-[Financial model](docs/FINANCIAL_MODEL.md) · [Plan B](docs/PLAN_B.md) · [AI advisor](docs/AI_ADVISOR.md) · [Gemini setup](docs/AI_GEMINI.md) · [Trajectory](docs/FINANCIAL_TRAJECTORY.md) · [Income](docs/INCOME_MODULE.md) · [Expenditure](docs/EXPENDITURE_MODULE.md) · [Stock portfolio](docs/STOCK_PORTFOLIO.md) · [API](docs/API.md) · [Deployment](docs/DEPLOYMENT.md)
+Start at the [documentation index](docs/README.md): [financial model](docs/FINANCIAL_MODEL.md) · [Plan B](docs/PLAN_B.md) · [AI advisor](docs/AI_ADVISOR.md) · [trajectory](docs/FINANCIAL_TRAJECTORY.md) · [stock portfolio](docs/STOCK_PORTFOLIO.md) · [API](docs/API.md) · [deployment](docs/DEPLOYMENT.md).
 
 ## Disclaimer
 

@@ -1,6 +1,6 @@
 # ArthaYukti requirement traceability
 
-Audit of the repository against the master specification (`docs/ArthaYukti_Master_Specification.txt`, cited as M), the UI restructuring brief (U) and the audit and implementation brief (A). Written against baseline `7410951` and the code commit `d9a853a` of this pass; see the final report.
+Audit of the repository against the master specification (`docs/spec/ArthaYukti_Master_Specification.txt`, cited as M), the UI restructuring brief (U) and the audit and implementation brief (A). Written against baseline `7410951` and the code commit `d9a853a` of this pass; see the final report.
 
 Status means: **PASS** works end to end and has test or browser evidence; **PARTIAL** exists but misses part of the requirement; **FAIL** not implemented; **BLOCKED** needs a credential, provider or decision outside the repository; **UNVERIFIED** may be true but was not checked; **CONFLICT** two sources disagree (see the conflict register). A requirement is never PASS because a page, route or test name exists.
 
@@ -157,7 +157,7 @@ The master specification describes a target product of about sixty tables, named
 
 ## F. Plan B audit (audit section 4)
 
-Verified with docs/PLAN_B_STAGE7_AUDIT.md and an independent integer-paise script, rerun this pass: ledger and API agree on every month of all four scenarios.
+Verified with docs/reports/PLAN_B_STAGE7_AUDIT.md and an independent integer-paise script, rerun this pass: ledger and API agree on every month of all four scenarios.
 
 | ID | Source | Requirement | Status | Evidence | Gap or next action |
 | --- | --- | --- | --- | --- | --- |

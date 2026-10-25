@@ -1,8 +1,8 @@
 # Frontend and backend gap analysis
 
 Findings from auditing the repository against the master specification and the two later briefs. Companion to
-`docs/ARTHAYUKTI_REQUIREMENT_TRACEABILITY.md` (requirement by requirement) and
-`docs/ARTHAYUKTI_FINAL_IMPLEMENTATION_REPORT.md` (what changed and how it was verified). Items marked *closed this pass* were
+`docs/reports/ARTHAYUKTI_REQUIREMENT_TRACEABILITY.md` (requirement by requirement) and
+`docs/reports/ARTHAYUKTI_FINAL_IMPLEMENTATION_REPORT.md` (what changed and how it was verified). Items marked *closed this pass* were
 fixed in the same pass that found them.
 
 ## 1. Architecture and integration

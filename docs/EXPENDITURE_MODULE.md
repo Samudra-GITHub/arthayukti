@@ -44,7 +44,7 @@ projection: a goal is inflated once (its own rate or the plan rate), a spending 
 ### The 6% question (a recorded conflict)
 
 The audit brief refers to a "default expenditure inflation of 6% as specified in the master requirements". The master specification
-in this repository (`docs/ArthaYukti_Master_Specification.txt`, section 4.3) says the opposite: *do not silently apply a default
+in this repository (`docs/spec/ArthaYukti_Master_Specification.txt`, section 4.3) says the opposite: *do not silently apply a default
 expenditure inflation rate; if a setup default is required, label it and let the user choose before a projection is treated as
 complete*. An "Expenditure module" specification that the earlier status report says was never found may contain the 6%. Until
 that is supplied, spending growth starts at an explicit 0% that the person can see and change, and nothing is applied silently.

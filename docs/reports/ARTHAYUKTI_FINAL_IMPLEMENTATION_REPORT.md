@@ -19,7 +19,7 @@ start of this one, only superseded by the results below.
 ## 2. What was audited
 
 159 requirements from the master specification, the UI restructuring brief and the audit brief, listed one by one in
-`docs/ARTHAYUKTI_REQUIREMENT_TRACEABILITY.md` with evidence and a status. Result: **95 PASS, 38 PARTIAL, 19 FAIL, 3 BLOCKED,
+`docs/reports/ARTHAYUKTI_REQUIREMENT_TRACEABILITY.md` with evidence and a status. Result: **95 PASS, 38 PARTIAL, 19 FAIL, 3 BLOCKED,
 2 UNVERIFIED, 2 CONFLICT**. Seven conflicts between sources are recorded with the interpretation used. This report does not claim
 the specification is complete: the master specification describes a target product that is much larger than the MVP in the
 repository (see section 9).
@@ -122,7 +122,7 @@ Full lists are in the traceability matrix. The largest:
 
 ## 10. Known limitations and risks
 
-See `docs/FRONTEND_BACKEND_GAP_ANALYSIS.md`. The ones to know before a demo: recorded debts and the plan's own loan payments are
+See `docs/reports/FRONTEND_BACKEND_GAP_ANALYSIS.md`. The ones to know before a demo: recorded debts and the plan's own loan payments are
 two separate sources (a loan entered twice would count twice); periodic spending is spread evenly, so a month-specific cash dip is
 smoothed away; the ledger computes no tax; several compute endpoints are public by design; the hosted site's persistence was
 not rechecked; projections need at least one goal, so a new account sees explanatory notes until it adds one.

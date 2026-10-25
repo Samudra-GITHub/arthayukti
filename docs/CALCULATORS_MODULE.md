@@ -6,7 +6,7 @@ scenario comparison and the CSV all read the same result, so they cannot disagre
 
 > **Source of requirements.** The brief referred to an attached calculators specification, but no such
 > file was available (not in the repository, the message, or the downloads folder). This module was built
-> from the written brief plus sections 4.7 to 4.9 of `ArthaYukti_Master_Specification.txt`
+> from the written brief plus sections 4.7 to 4.9 of `docs/spec/ArthaYukti_Master_Specification.txt`
 > (expected returns, SIP step-ups, scenario tabs). Anything the brief left open is listed under
 > "Conventions" and was chosen to match the rest of the product. If the missing document says otherwise,
 > compare it against that list.
