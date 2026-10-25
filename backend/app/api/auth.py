@@ -1,10 +1,13 @@
 import hashlib
 import logging
 import secrets
+import sqlite3
 import uuid
+from contextlib import closing
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from functools import lru_cache
+from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import func
@@ -21,7 +24,7 @@ from app.api.financials import (
 )
 from app.api.household import _to_profile_response
 from app.api.insurance import _to_policy_response
-from app.config import settings
+from app.config import BACKEND_DIR, settings
 from app.db.models import (
     AssetInvestment,
     AuditLog,
@@ -132,6 +135,59 @@ def signup(req: SignupRequest, request: Request, db: Session = Depends(get_db)) 
     return AuthResponse(access_token=create_access_token(user.id, user.email), user=_profile(user))
 
 
+def _legacy_db_path() -> Path:
+    return BACKEND_DIR / "arthayukti_dev.db"
+
+
+def _fallback_dev_db_user(email: str, password: str, db: Session) -> User | None:
+    """Local development only: sign in with an account that lives in `arthayukti_dev.db`, the file an older run of
+    the app used (two dev databases ended up side by side).
+
+    The password must match the one stored there. The legacy file is opened read-only and never changed. The account
+    is copied into the current database (or, if the same e-mail already exists, takes the legacy password), so the
+    next sign-in works normally. It does nothing outside development: where real accounts live, a password stored
+    in some other file must never be able to replace the current one."""
+    if settings.ENVIRONMENT != "development":
+        return None
+    path = _legacy_db_path()
+    if not path.is_file():
+        return None
+    try:
+        with closing(sqlite3.connect(f"file:{path.as_posix()}?mode=ro", uri=True)) as conn:
+            row = conn.execute(
+                "SELECT id, email, hashed_password, full_name, is_active FROM users WHERE lower(email) = ?",
+                (email.lower(),),
+            ).fetchone()
+        if not row:
+            return None
+        dev_id, _dev_email, dev_hash, dev_name, dev_active = row
+        if not verify_password(password, dev_hash):
+            return None
+
+        existing = db.query(User).filter(func.lower(User.email) == email.lower()).first()
+        if existing:
+            existing.hashed_password = dev_hash
+            db.commit()
+            db.refresh(existing)
+            return existing
+        new_user = User(
+            id=dev_id,
+            email=email.lower().strip(),
+            hashed_password=dev_hash,
+            full_name=dev_name or "",
+            is_active=bool(dev_active),
+            is_verified=False,
+        )
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+        return new_user
+    except Exception as error:
+        db.rollback()  # a failed copy must not leave the session unusable
+        logger.warning("Error checking legacy dev db: %s", type(error).__name__)
+        return None
+
+
 @router.post("/login", response_model=AuthResponse)
 def login(req: LoginRequest, request: Request, db: Session = Depends(get_db)) -> AuthResponse:
     """Authenticate with email and password and receive a signed JWT."""
@@ -140,6 +196,12 @@ def login(req: LoginRequest, request: Request, db: Session = Depends(get_db)) ->
     ratelimit.enforce(request, "login", 10, LOGIN_WINDOW, normalized_email)
     user = db.query(User).filter(func.lower(User.email) == normalized_email).first()
     password_ok = verify_password(req.password, user.hashed_password if user else _dummy_hash())
+    if not password_ok:
+        legacy_user = _fallback_dev_db_user(normalized_email, req.password, db)
+        if legacy_user:
+            user = legacy_user
+            password_ok = True
+
     if not user or not password_ok:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
