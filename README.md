@@ -1,162 +1,142 @@
-# ArthaYukti
+<div align="center">
 
-**See which goal you lose when money runs short, and the smallest change that fixes it.**
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="frontend/public/brand/lockup-on-dark.svg">
+  <img src="frontend/public/brand/lockup-on-light.svg" alt="ArthaYukti" width="360">
+</picture>
 
-ArthaYukti is a planning tool for people and households with several money goals at once: an emergency fund, a home, a child's education, retirement, a vehicle. When your income can't cover every goal, it shows which goal slips, by how long, and what the smallest fix is. Everything is calculated from your own numbers by a fixed set of written rules, so the same inputs always give the same answer.
+### See which goal you lose when money runs short, and the smallest change that fixes it.
 
-Built for Srujana Hackathon 2026 (Finance track, problem F-02: Multi-Goal Financial Planning Under Uncertainty).
+Multi-goal financial planning under uncertainty, calculated from your own numbers by written rules, so the same inputs always give the same answer.
 
-Live site: https://arthayukti.vercel.app
+[**Live site**](https://arthayukti.vercel.app) · [Financial model](docs/FINANCIAL_MODEL.md) · [AI advisor](docs/AI_ADVISOR.md) · [API](docs/API.md) · [Deployment](docs/DEPLOYMENT.md)
 
-> **Not financial advice.** ArthaYukti works only from the numbers you enter. It does not predict markets, recommend investments, or model taxes. The example households are fictional.
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Tailwind](https://img.shields.io/badge/Tailwind-06B6D4?logo=tailwindcss&logoColor=white)
+![Tests](https://img.shields.io/badge/tests-1%2C132%20backend%20%7C%20390%20frontend-2e7d32)
+![Languages](https://img.shields.io/badge/English%20%7C%20%E0%A4%B9%E0%A4%BF%E0%A4%A8%E0%A5%8D%E0%A4%A6%E0%A5%80-informational)
+
+</div>
+
+> **Not financial advice.** ArthaYukti works from the numbers you enter. It does not predict markets or recommend investments, and it does not model taxes beyond what a calculator states. The example households are fictional.
+
+Built for **Srujana Hackathon 2026**, Finance track, problem **F-02: Multi-Goal Financial Planning Under Uncertainty**.
 
 ---
 
-## Using the web app for the first time
+## What it does
 
-### 1. Try it without an account
+When your income can't cover every goal (an emergency fund, a home, a child's education, retirement), ArthaYukti shows **which goal slips, by how long, and the smallest fix**. Every fix is re-checked by the engine before you see it.
 
-Open the site and choose **Look at an example household**. You get a made-up family with real results, and nothing you do is saved. Refreshing clears it.
-
-### 2. Make your own plan
-
-Choose **Start with my numbers** (to try it without saving) or **Create an account** to keep your work. An account needs only a name, an email and a password, and takes you straight to the Dashboard. You can then add your numbers in any order, or use the optional **guided setup**, which walks through three short steps:
-
-1. **Money in:** your income.
-2. **Money out:** your monthly spending.
-3. **Dreams:** your goals, how much each needs, by when, and in which order they matter to you.
-
-Then you land on the **Dashboard**: where you stand, and for each goal whether it is **on time** or **late** (and by how many months).
-
-### 3. Find your way around
-
-The top bar groups the app. The left menu lists the pages.
-
-| Page | What it is for |
+| | |
 | --- | --- |
-| **Dashboard** | Your position at a glance. A new account lands here with a short "where to start" guide: nothing is filled in for you. |
-| **User Profile** | Your details, the household context used for planning, and your risk comfort. |
-| **Income and Expenditures** | Your incomes, your monthly spending, and a place to record transactions or import a CSV file. |
-| **Calculators** | Three modules, each worked out by the same engine as the rest of the app: **Insurance** (policies, premiums, cover over time, reminders), **Debts** (a loan repayment calculator, the effect of extra payments, and which debt to pay first) and **Equities** (the investment calculator with growth, tax and inflation, plus your holdings and balances). |
-| **Emergency Funds** | What you hold, your own target in months of essential spending, progress, and how the plan grows the reserve. |
-| **Financial goals** | Your goals in funding order, the tools below, and the Plan B banner. |
-| **Financial outlook** | Trajectories, goal feasibility and scenario comparison. |
-| **Plan B and Rescue** | Replan around a disruption while protecting what you choose (see below). |
-| **Alerts** | Reminders such as insurance renewals. |
-| **Settings** | Language, the **Default Inflation Rate**, data export and account deletion. |
+| **Goals and trade-offs** | Put a different goal first and see what happens to the others. Smallest-fix search, plan comparison, rescue analysis with your own limits. |
+| **Plan B** | Income dropped or a new cost arrived? You choose what is protected and what may change; it searches only those changes and saves your pick as a versioned Recovery Agreement. |
+| **Financial Trajectory** | One monthly timeline of cash, assets, debts, insurance and the goals you choose, with a year-by-year table and net worth in today's money. |
+| **AI Financial Advisor** | Reads your records, assesses **every goal at its saved date and exactly three years later**, tries alternative paths, and explains the trade-offs. Gemini words it; the engine calculates it. |
+| **Income and Expenditures** | Scheduled incomes with raises and step-ups, spending plans with scheduled changes, categories and inflation. |
+| **Insurance, Debts, Equities** | Policies and premiums, loan repayment and prepayment effects, an investment calculator, a holdings ledger and an Indian stock portfolio tracker. |
+| **Emergency Funds and Alerts** | A reserve target in months of essential spending, progress, and renewal reminders. |
 
-The **Default Inflation Rate** (Settings) is the starting annual inflation for new plans and new investments. Saved calculations, saved plans and Recovery Agreements keep the rate they were saved with, and you can still override it for a single investment.
+English and हिन्दी throughout, light and dark themes, and a **Listen** option that reads a page aloud.
 
-Handy extras: **English / हिन्दी** in the top bar, a light/dark theme toggle, and **Listen** to hear a page read aloud.
+## The AI Financial Advisor
 
-### 4. The tools on the Financial goals page
+```
+ your records ──► snapshot (hashed) ──► engine: every goal at its date and +3 years
+                                                │
+              Gemini proposes paths ──► approved scenario tools ──► engine calculates
+                                                │
+                  checked: invented ids, unsupported figures, contradictions removed
+                                                │
+                  you compare, then accept ──► you confirm the exact edits ──► plan updated
+```
 
-Open **Financial goals** and look under **Explore**:
+- **Calculation before explanation.** Gemini never does arithmetic; every figure comes from the engine.
+- **Your saved goal dates are never changed.** The later date is only an alternative to consider.
+- **Nothing changes without you.** Accepting shows the exact edits; they apply only on a second, explicit confirmation.
+- **Stale advice is flagged.** Change income, spending, debts or goals and the analysis says it is out of date.
+- **It works without AI too.** With no key, the engine still finds and ranks paths and writes the report.
+- **The key stays on the server.** It is never sent to the browser, logged or put in a prompt.
 
-- **Which goal goes first?** Put a different goal first and see what happens to the others.
-- **What if life changes?** Try a drop in income or a surprise expense.
-- **Smallest fixes:** options that bring late goals back on time, smallest change first. Each one is re-checked before it is shown.
-- **Compare a fix:** two plans side by side.
-- **Rescue analysis:** set your own limits (for example "never save more than X a month") and see what still works.
-- **Goal feasibility:** a plain yes or no for each goal, with the reason.
+Details: [docs/AI_ADVISOR.md](docs/AI_ADVISOR.md).
 
-### 5. Plan B: when income drops or a new cost arrives
+## Try it
 
-At the top of **Financial goals** is the **Plan B** banner. Use it when something has actually changed: your income fell, you lost it for a while, or a new recurring cost started. Plan B is built around a simple idea: *you* decide what is protected.
+1. Open the [live site](https://arthayukti.vercel.app) and choose **Look at an example household**. Nothing you do is saved.
+2. Or **Create an account**, then add numbers in any order, or use the three-step guided setup (money in, money out, goals).
+3. Open **AI advisor** and choose **Analyse my finances**.
 
-1. **Something changed:** pick which of the three situations applies.
-2. **Describe it:** dates, how long it lasts, your cash and your safety floor (the cash level you never want to fall below).
-3. **Protect what matters:** mark the things that must not change, like a loan EMI, insurance, or a goal contribution.
-4. **Allowed changes:** say what *may* be reduced or paused, and by how much.
-
-Plan B then searches only the changes you allowed and shows you up to three plans, what each one gives up, and what would break it. You can say "I can't change this one" and it searches again without it. It tells you honestly when **no plan works**, and separately when **the search did not finish** (so it never calls something impossible that it simply didn't finish checking).
-
-Pick a plan and **save it as a Recovery Agreement**. An agreement records your chosen plan, a review month, and the conditions for returning to normal (for example "income back to X and I confirm I've recovered"). A date alone never restores anything. You can reopen it later, **review it against today's figures**, and edit it. Every edit adds a new version, and the older ones stay viewable.
-
-Optional AI help (only if the server has a key; otherwise you will see a short note): describe your situation in your own words and the form is filled in for you to check, or get a plain-language explanation of a plan. The AI never calculates and never decides what is feasible. See [docs/AI_GEMINI.md](docs/AI_GEMINI.md).
-
----
-
-## What you can trust, and what you can't
-
-What you can check for yourself:
-
-- **Every number is reproducible.** No randomness, no black-box model.
-- **The rules are written down:** [docs/FINANCIAL_MODEL.md](docs/FINANCIAL_MODEL.md) and [docs/PLAN_B.md](docs/PLAN_B.md). The tests include hand-checked cases and checks that money is conserved every month.
-- **Money is exact.** Amounts are decimals, never floating-point.
-- **Assumptions are visible.** Interest, inflation and growth are explicit inputs, set to zero in the sample household.
-- **Plain words.** Short sentences, Hindi and English.
-
-What it deliberately does not do: predict markets, recommend investments, model taxes, or give advice. Plan B does not calculate how long a goal is delayed; it shows the rupees deferred instead.
-
-**Known limits**
-
-- A Plan B review rebuilds the past from the saved plan; it can't take your real past figures.
-- Hindi text has not been reviewed by a native speaker, and a few server-written sentences are English only.
-- Optional AI help has been tested only against a stand-in, not a live Gemini key.
-- On the hosted demo, saved data may be wiped when the server restarts until a permanent database is connected (see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) and [docs/PRODUCTION_READINESS.md](docs/PRODUCTION_READINESS.md)).
-
----
-
-## Run it on your own computer
+## Run it on your computer
 
 You need **Python 3.12**, **Node 22 or newer**, and `make`.
 
 ```bash
-make setup      # creates the virtualenv and installs backend and frontend dependencies
+make setup      # virtualenv, backend and frontend dependencies
 make dev-api    # API on http://127.0.0.1:8000
-make dev-web    # app on http://localhost:5173  (run in a second terminal)
+make dev-web    # app on http://localhost:5173 (second terminal)
 ```
-
-Open http://localhost:5173. On Windows, `make setup` uses `py -3.12`; override with `make setup BOOTSTRAP_PYTHON="path/to/python.exe"`.
-
-Other commands:
 
 ```bash
 make check      # lint, types and tests for both halves
 make gen-api    # regenerate contracts/openapi.json and the frontend types
 ```
 
+On Windows, `make setup` uses `py -3.12`; override with `make setup BOOTSTRAP_PYTHON="path/to/python.exe"`.
+
 ### Configuration
 
-Copy `.env.example` to `backend/.env` and edit. The defaults work for local use (SQLite file, a temporary signing key). Never commit the real `.env`.
+Copy `.env.example` to `backend/.env`. The defaults work locally (SQLite, a temporary signing key). Never commit the real `.env`.
 
 | Setting | Purpose |
 | --- | --- |
-| `DATABASE_URL` | SQLite by default; use a PostgreSQL URL for a real deployment. Run `cd backend && alembic upgrade head` to create or update the schema. |
+| `DATABASE_URL` | SQLite by default; PostgreSQL for a real deployment. Run `cd backend && alembic upgrade head`. |
 | `SECRET_KEY` | Required outside development: at least 32 random characters. |
 | `ALLOWED_ORIGINS` | Web addresses allowed to call the API. |
-| `GEMINI_API_KEY` | Optional. Turns on the AI help in Plan B. Backend only; never put it in a frontend file. |
+| `GEMINI_API_KEY` | Optional. Turns on AI wording in the advisor and Plan B. Backend only. |
+| `MARKET_PROVIDER` | Optional. `yahoo` reads live Indian share prices; the default uses the configured price service. |
 
-The frontend reads `VITE_API_BASE_URL` to find the API when it is not on the same address.
+The frontend reads `VITE_API_BASE_URL` when the API is on another address.
 
 ## How it is built
 
 ```
-backend/     FastAPI + Pydantic + SQLAlchemy/Alembic; the calculation engine is in app/engine
-frontend/    React 19, TypeScript, Vite, Tailwind; English and Hindi copy; API client
-contracts/   openapi.json (generated) and sample plans
-docs/        financial model, API notes, Plan B, AI help, deployment, readiness
+backend/     FastAPI + Pydantic + SQLAlchemy/Alembic; the calculation engine lives in app/engine
+frontend/    React 19, TypeScript, Vite, Tailwind; English and Hindi copy; generated API client types
+contracts/   openapi.json (generated, checked by a test) and sample plans
+docs/        financial model, API, Plan B, AI, trajectory, modules, deployment, readiness
 ```
 
-- The calculation engine is plain, deterministic Python. The API and the screens only present its results.
-- The API contract in `contracts/openapi.json` is generated from the backend and checked by a test, and the frontend types are generated from it.
-- Deployed from `main`: the API on Render, the site on Vercel.
+- The engine is plain, deterministic Python on exact decimals; the API and screens only present its results.
+- The API contract is generated from the backend, checked by a test, and the frontend types are generated from it.
+- Deployed from `main`: the API on **Render**, the site on **Vercel**.
+
+## What you can trust
+
+- **Reproducible.** No randomness, no black-box model.
+- **Written rules.** [Financial model](docs/FINANCIAL_MODEL.md), [Plan B](docs/PLAN_B.md), [Trajectory](docs/FINANCIAL_TRAJECTORY.md). Tests include hand-checked cases and checks that money is conserved every month.
+- **Exact money.** Decimals, never floating point.
+- **Visible assumptions.** Interest, inflation, growth and returns are explicit inputs; nothing is assumed silently.
+- **Unknown stays unknown.** A missing price or balance is shown as unavailable, never as zero.
 
 ## Tests
 
-`make check` runs everything. At the time of writing: **634 backend tests** (on SQLite and on PostgreSQL) and **200 frontend tests** pass, with ruff, TypeScript, oxlint and the production build clean.
+`make check` runs everything: **1,132 backend tests** and **390 frontend tests** pass, with ruff, TypeScript, oxlint and the production build clean. Highlights: `tests/engine/test_golden.py` (hand-checked cases written before the engine), `test_projection.py` (shocks and seeded random plans), `test_trajectory_engine.py` (accounting invariants), `test_advisor_engine.py` and `tests/api/test_advisor_api.py` (goal dates, scenarios, model-output checks, ownership). All AI calls in the suite are faked; a live check is opt-in (`RUN_LIVE_GEMINI=1`).
 
-The most important ones: `backend/tests/engine/test_golden.py` (hand-checked cases written before the engine), `test_projection.py` (income-loss and expense shocks, and seeded random plans: money conserved every month, balances never negative, deterministic results, extra savings never delay a goal), and the `test_recovery_*` files (Plan B month-by-month arithmetic, search, restoration, review and agreements).
+## Known limits
+
+- Hindi text is a first draft awaiting a native reader, and some server-written sentences are English only.
+- The price service is unofficial and can be delayed or unavailable; the app then shows the last price with its age, never zero.
+- On the hosted demo, saved data may be wiped when the server restarts until a permanent database is connected ([deployment](docs/DEPLOYMENT.md), [readiness](docs/PRODUCTION_READINESS.md)).
+- Advisor debt paths don't show how goals change, and spending cuts need lines marked optional in the plan.
 
 ## More documentation
 
-- [docs/FINANCIAL_MODEL.md](docs/FINANCIAL_MODEL.md): the allocation rules
-- [docs/PLAN_B.md](docs/PLAN_B.md) and [docs/PLAN_B_STAGE7_AUDIT.md](docs/PLAN_B_STAGE7_AUDIT.md): Plan B conventions and the verification audit
-- [docs/AI_GEMINI.md](docs/AI_GEMINI.md): optional AI help, its safeguards and setup
-- [docs/API.md](docs/API.md): endpoints
-- [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) and [docs/PRODUCTION_READINESS.md](docs/PRODUCTION_READINESS.md): going live
+[Financial model](docs/FINANCIAL_MODEL.md) · [Plan B](docs/PLAN_B.md) · [AI advisor](docs/AI_ADVISOR.md) · [Gemini setup](docs/AI_GEMINI.md) · [Trajectory](docs/FINANCIAL_TRAJECTORY.md) · [Income](docs/INCOME_MODULE.md) · [Expenditure](docs/EXPENDITURE_MODULE.md) · [Stock portfolio](docs/STOCK_PORTFOLIO.md) · [API](docs/API.md) · [Deployment](docs/DEPLOYMENT.md)
 
 ## Disclaimer
 
-Illustrative decision support under the user's own assumptions. Not financial advice. No taxes are modelled. Sample households are fictional.
+Illustrative decision support under the user's own assumptions. Not financial advice. Sample households are fictional.
