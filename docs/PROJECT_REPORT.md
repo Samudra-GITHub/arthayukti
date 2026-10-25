@@ -4,7 +4,7 @@
 
 Repository: <https://github.com/Samudra-GITHub/arthayukti> · Live site: <https://arthayukti.vercel.app> · Written 26 October 2026
 
-> This report separates what is **demonstrated and tested** from what is **partial or planned**. Section 11 lists every limit, including the one that matters most for the jury: at the time of writing the hosted API on Render was not answering (see 11.1). Everything in this report was run and verified locally; screenshots are from that local run.
+> This report separates what is **demonstrated and tested** from what is **partial or planned**. Section 11 lists every limit, including the state of the hosted deployment (11.1). The advisor's end-to-end run and the screenshots are from a local run; the hosted API's health and routes were checked directly.
 
 ---
 
@@ -115,7 +115,7 @@ Built and working locally: the full list in section 3, with a measurable footpri
 
 ## 11. Limitations and incomplete work
 
-1. **Hosted deployment (most important).** The code and database migration were verified locally and the Vercel site serves the current build, but at the time of writing the Render API did not respond (its address resolved but connections hung; Render's free plan sleeps and cold-starts, and we could not read the deploy log from the dashboard). Until it is confirmed up, the hosted advisor and sign-in cannot be demonstrated live; the local run is demonstrated. The hosted advisor also needs `GEMINI_API_KEY` set in Render's dashboard, otherwise it runs engine-only.
+1. **Hosted deployment.** The Render API is live at `https://arthayukti-api-y7ah.onrender.com` (its deploy log shows all 12 migrations including the advisor's applied, a clean start and passing health checks; its OpenAPI lists the 8 advisor routes and its CORS allows the Vercel site). The Vercel site had been built with an older API address that no longer answers, so the hosted site could not reach the API; the frontend now maps that old address to the live one, which takes effect when Vercel redeploys from `main`. Render's free plan sleeps when idle, so the first request after a pause can take a minute. The hosted advisor uses Gemini only if `GEMINI_API_KEY` is set in Render's dashboard; otherwise it runs engine-only and says so.
 2. Hindi text is a first draft awaiting a native reader; server-written advisor sentences are English unless Gemini is asked for Hindi.
 3. Advisor limits: debt paths do not model how goals change; spending cuts need lines marked optional (when spending comes from Expenditure plans the advisor says it cannot tell which part is optional); no income-change tool; retirement is assessed only on the saving side (retirement period and spending are not modelled, and the card says so); applying an accepted spending cut edits the plan's lines for every month, not only the months modelled.
 4. No probability of success is given: there is no validated probability model, and no Monte Carlo.

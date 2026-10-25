@@ -97,7 +97,13 @@ import type {
   PortfolioHoldingSaved,
 } from './types'
 
-const BASE = import.meta.env.VITE_API_BASE_URL ?? ''
+// The hosted API's first address (arthayukti-api.onrender.com) belongs to a service that no longer answers; the live one
+// is arthayukti-api-y7ah.onrender.com. A site still built with the old address is pointed at the live one, so it never
+// calls a dead host. Anywhere else the setting is used as given.
+const RETIRED_API_HOST = /^https?:\/\/arthayukti-api\.onrender\.com\/?$/
+const LIVE_API_HOST = 'https://arthayukti-api-y7ah.onrender.com'
+const configured = import.meta.env.VITE_API_BASE_URL ?? ''
+const BASE = RETIRED_API_HOST.test(configured) ? LIVE_API_HOST : configured.replace(/\/$/, '')
 const PREFIX = `${BASE}/api/v1`
 
 export class ApiFailure extends Error {

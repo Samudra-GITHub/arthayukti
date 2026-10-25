@@ -18,7 +18,7 @@ The API runs on Render and the frontend on Vercel. Neither needs a secret: the o
 | Render (API) | `DATABASE_URL` | Optional but recommended: a managed PostgreSQL address. `postgres://` and `postgresql://` both work (the API uses the psycopg 3 driver). Left empty, the API uses SQLite, which Render's free plan erases on every restart. |
 | Render (API) | `FRONTEND_BASE_URL` | The Vercel site address, used to build the link in password-reset e-mails. No trailing slash. |
 | Render (API) | `MAIL_BACKEND`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `MAIL_FROM` | Only if password reset by e-mail is wanted. `MAIL_BACKEND=smtp` plus the SMTP values. Without them, reset requests return 503 "not available yet". |
-| Vercel (frontend) | `VITE_API_BASE_URL` | The Render API address, such as `https://arthayukti-api.onrender.com`. No trailing slash. It is read when the site is built, so change it and redeploy. |
+| Vercel (frontend) | `VITE_API_BASE_URL` | The Render API address, such as `https://arthayukti-api-y7ah.onrender.com` (the live service's address; check the Render dashboard for yours). No trailing slash. It is read when the site is built, so change it and redeploy. |
 
 ## Order of steps
 
