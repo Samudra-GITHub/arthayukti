@@ -230,11 +230,18 @@
 
   /* Solid, for menus that sit over content and must stay readable. */
   .surface-solid {
-    background: rgb(255 255 255 / 0.9);
-    -webkit-backdrop-filter: blur(24px) saturate(1.6);
-    backdrop-filter: blur(24px) saturate(1.6);
-    border: 1px solid rgb(255 255 255 / 0.85);
+    /* Fully opaque, with no blur: a blur nested inside a frosted card shows the text behind the menu through it. */
+    background: #ffffff;
+    border: 1px solid rgb(12 28 53 / 0.1);
     box-shadow: 0 18px 40px -16px rgb(12 28 53 / 0.35);
+  }
+
+  /* A frosted card is its own stacking layer, so an open drop-down inside it would be painted under the next card.
+     Lift the card that holds an open list above its neighbours. */
+  .glass:has([role='listbox']),
+  .glass-bar:has([role='listbox']) {
+    position: relative;
+    z-index: 30;
   }
 
   .hatch {
@@ -421,11 +428,6 @@ html::after {
   }
 }
 
-/* The page frame behind the whole workspace. */
-.shell-frame {
-  border: 1px solid rgb(255 255 255 / 0.5);
-  background: rgb(255 255 255 / 0.1);
-}
 
 /* ---- Dark theme -------------------------------------------------------------------------------
    Same tokens, new values: every component already reads colour from them, so the switch is only
@@ -450,10 +452,6 @@ html::after {
 }
 :root[data-theme='dark'] .text-brand {
   color: var(--color-brand-light);
-}
-:root[data-theme='dark'] .shell-frame {
-  border-color: rgb(126 165 255 / 0.16);
-  background: rgb(8 18 40 / 0.35);
 }
 :root[data-theme='dark'] body::before {
   background:
@@ -497,7 +495,9 @@ html::after {
     0 12px 32px -18px rgb(0 0 0 / 0.6);
 }
 :root[data-theme='dark'] .surface-solid {
-  background: rgb(18 38 74 / 0.96);
+  background: #12264a;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
   border-color: rgb(126 165 255 / 0.22);
   box-shadow: 0 18px 40px -16px rgb(0 0 0 / 0.7);
 }

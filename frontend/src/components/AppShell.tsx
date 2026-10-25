@@ -209,7 +209,7 @@ export function AppShell({ route, navigate: goTo, speak, children }: ShellProps)
       <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-3 focus:py-2 focus:text-cream">
         {c.header.skip}
       </a>
-      <div className="shell-frame mx-auto max-w-[1560px] rounded-[22px] p-2 shadow-[0_30px_80px_-40px_rgb(12_28_53/0.4)] sm:p-4">
+      <div className="mx-auto max-w-[1560px]">
         <header className="glass-bar sticky top-2 z-30 flex items-center gap-1.5 rounded-2xl px-2 py-1.5 sm:gap-2.5 sm:px-4">
           <button type="button" onClick={() => setDrawer(true)} aria-label={c.header.menu} className={`${circle} border border-line bg-surface/70 lg:hidden`}>
             <Menu size={17} aria-hidden="true" />
