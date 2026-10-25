@@ -7,6 +7,7 @@ from decimal import Decimal
 from functools import lru_cache
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app import mail, ratelimit
@@ -102,7 +103,8 @@ def _profile(user: User) -> UserProfile:
 def signup(req: SignupRequest, request: Request, db: Session = Depends(get_db)) -> AuthResponse:
     """Register a new user account with secure password hashing."""
     ratelimit.enforce(request, "signup", 10, SIGNUP_WINDOW)
-    if db.query(User).filter(User.email == req.email).first():
+    normalized_email = req.email.strip().lower()
+    if db.query(User).filter(func.lower(User.email) == normalized_email).first():
         # Deliberately vague. Fully hiding whether an address is registered needs e-mail
         # verification, which does not exist yet.
         raise HTTPException(
@@ -112,9 +114,9 @@ def signup(req: SignupRequest, request: Request, db: Session = Depends(get_db)) 
 
     user = User(
         id=str(uuid.uuid4()),
-        email=req.email,
+        email=normalized_email,
         hashed_password=hash_password(req.password),
-        full_name=req.full_name,
+        full_name=req.full_name.strip(),
         is_active=True,
         is_verified=False,
     )
@@ -133,9 +135,10 @@ def signup(req: SignupRequest, request: Request, db: Session = Depends(get_db)) 
 @router.post("/login", response_model=AuthResponse)
 def login(req: LoginRequest, request: Request, db: Session = Depends(get_db)) -> AuthResponse:
     """Authenticate with email and password and receive a signed JWT."""
+    normalized_email = req.email.strip().lower()
     ratelimit.enforce(request, "login-address", 60, LOGIN_WINDOW)
-    ratelimit.enforce(request, "login", 10, LOGIN_WINDOW, req.email)
-    user = db.query(User).filter(User.email == req.email).first()
+    ratelimit.enforce(request, "login", 10, LOGIN_WINDOW, normalized_email)
+    user = db.query(User).filter(func.lower(User.email) == normalized_email).first()
     password_ok = verify_password(req.password, user.hashed_password if user else _dummy_hash())
     if not user or not password_ok:
         raise HTTPException(
@@ -205,9 +208,14 @@ def request_password_reset(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Password reset by e-mail is not available yet.",
         )
+    normalized_email = req.email.strip().lower()
     ratelimit.enforce(request, "reset-request-address", 20, RESET_WINDOW)
-    ratelimit.enforce(request, "reset-request", 5, RESET_WINDOW, req.email)
-    user = db.query(User).filter(User.email == req.email, User.is_active.is_(True)).first()
+    ratelimit.enforce(request, "reset-request", 5, RESET_WINDOW, normalized_email)
+    user = (
+        db.query(User)
+        .filter(func.lower(User.email) == normalized_email, User.is_active.is_(True))
+        .first()
+    )
     if user:
         token = secrets.token_urlsafe(32)
         db.add(
