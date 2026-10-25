@@ -100,7 +100,7 @@ describe('rescue analysis', () => {
 
 describe('stored prices', () => {
   it('shows an unavailable price as unavailable, with no number', async () => {
-    window.location.hash = '/assets'
+    window.location.hash = '/equities'
     const { calls } = backend({
       'GET /financials/investments': () => json([]),
       'GET /financials/accounts': () => json([]),
@@ -108,6 +108,7 @@ describe('stored prices', () => {
       'GET /market/quotes/ABC': () => json({ symbol: 'ABC', status: 'unavailable', price: null, currency: null, asset_type: null, source: null, fetched_at: null, message: 'No stored price for ABC.', metadata: {} }),
     })
     render(<App />)
+    fireEvent.click(await screen.findByRole('button', { name: 'Holdings and balances' }))
     fireEvent.change(await screen.findByLabelText('Symbol'), { target: { value: 'ABC' } })
     fireEvent.click(screen.getByRole('button', { name: 'Look up' }))
     expect(await screen.findByText('No stored price for ABC.')).toBeInTheDocument()
@@ -117,9 +118,10 @@ describe('stored prices', () => {
   })
 
   it('refuses a symbol the server would reject', async () => {
-    window.location.hash = '/assets'
+    window.location.hash = '/equities'
     const { calls } = backend({ 'GET /financials/investments': () => json([]), 'GET /financials/accounts': () => json([]) })
     render(<App />)
+    fireEvent.click(await screen.findByRole('button', { name: 'Holdings and balances' }))
     fireEvent.change(await screen.findByLabelText('Symbol'), { target: { value: 'a/b' } })
     fireEvent.click(screen.getByRole('button', { name: 'Look up' }))
     expect(await screen.findByText(/Use letters, numbers/)).toBeInTheDocument()
@@ -129,7 +131,7 @@ describe('stored prices', () => {
 
 describe('ledger entry and import', () => {
   it('saves one transaction as typed and says what CSV import really does', async () => {
-    window.location.hash = '/import'
+    window.location.hash = '/finances'
     const { calls } = backend({
       'GET /financials/transactions': () => json([]),
       'GET /financials/accounts': () => json([]),
@@ -153,7 +155,7 @@ describe('ledger entry and import', () => {
   })
 
   it('checks the entry before sending', async () => {
-    window.location.hash = '/import'
+    window.location.hash = '/finances'
     const { calls } = backend({ 'GET /financials/transactions': () => json([]), 'GET /financials/accounts': () => json([]) })
     render(<App />)
     fireEvent.click(await screen.findByRole('button', { name: 'Save transaction' }))

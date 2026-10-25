@@ -3,7 +3,7 @@ import { IncomeSection } from './Income'
 import { api } from '../../api/client'
 import type { AIConsultResponse, CSVImportResponse, IntentSuggestions } from '../../api/types'
 import { AmountField, CheckField, DateField, FormError, SelectField, TextField } from '../../components/forms'
-import { Loaded, Notice, Panel, Table, Unavailable } from '../../components/panel'
+import { Loaded, Notice, Panel, Table } from '../../components/panel'
 import { formatMoney } from '../../lib/money'
 import type { Route } from '../../lib/route'
 import { monthLabelLong } from '../../lib/months'
@@ -14,6 +14,9 @@ import { useExtrasCopy } from '../../state/useExtrasCopy'
 import { usePlanBCopy } from '../../state/usePlanBCopy'
 import { useModulesCopy } from '../../state/useModulesCopy'
 import { useRemote } from '../../state/useRemote'
+import { useRestructureCopy } from '../../state/useRestructureCopy'
+import { rateToPercent } from '../../lib/inflation'
+import { percentToRate } from '../../lib/onboarding'
 import { useShellCopy } from '../../state/useShellCopy'
 import { useStore } from '../../state/useStore'
 import type { PageProps } from '../types'
@@ -111,7 +114,7 @@ function TransactionForm({ onSaved }: { onSaved: () => void }) {
   )
 }
 
-export function ImportPage() {
+function LedgerSection() {
   const m = useModulesCopy()
   const extras = useExtrasCopy()
   const t = m.importPage
@@ -243,6 +246,96 @@ export function AlertsPage() {
   )
 }
 
+/** The person's default annual inflation. It starts new plans and new investments; saved work keeps its own rate. */
+function InflationSettings() {
+  const t = useRestructureCopy().inflation
+  const { inflation, setInflation, applyInflationToPlan, plan } = useStore()
+  const [text, setText] = useState('')
+  const [edited, setEdited] = useState(false)
+  const [tried, setTried] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const [applied, setApplied] = useState(false)
+  const save = useAction()
+
+  // The saved rate is shown once it arrives; after the person types, their text is theirs.
+  const shown = edited ? text : inflation ? rateToPercent(inflation.rate) : ''
+  const rate = percentToRate(shown)
+
+  async function submit() {
+    setTried(true)
+    setSaved(false)
+    setApplied(false)
+    if (rate === null) return
+    const ok = await save.run(async () => {
+      if (!(await setInflation(rate))) throw new Error('not saved')
+    })
+    if (ok) setSaved(true)
+  }
+
+  return (
+    <Panel id="settings-inflation" title={t.title}>
+      <p className="text-muted">{t.help}</p>
+      <form
+        noValidate
+        className="grid gap-3 sm:grid-cols-2"
+        onSubmit={(event) => {
+          event.preventDefault()
+          void submit()
+        }}
+      >
+        <TextField
+          label={t.label}
+          hint={inflation ? (inflation.isDefault ? `${t.hint} ${t.startValue}` : `${t.hint} ${t.own}`) : t.hint}
+          value={shown}
+          onChange={(value) => {
+            setEdited(true)
+            setSaved(false)
+            setText(value)
+          }}
+          inputMode="decimal"
+          error={tried && rate === null ? t.bad : null}
+        />
+        <div className="flex items-end">
+          <button type="submit" disabled={save.busy} className="min-h-12 rounded-xl bg-brand px-6 font-semibold text-white disabled:opacity-60">
+            {save.busy ? t.saving : t.save}
+          </button>
+        </div>
+        {save.failure ? (
+          <div className="sm:col-span-2">
+            <FormError>{t.failed}</FormError>
+          </div>
+        ) : null}
+        {saved ? (
+          <p role="status" className="rounded-xl bg-sage px-4 py-3 font-semibold sm:col-span-2">
+            {t.saved}
+          </p>
+        ) : null}
+      </form>
+      {plan ? (
+        <div className="flex flex-col gap-2 rounded-2xl border border-line p-4">
+          <h3 className="font-semibold">{t.applyTitle}</h3>
+          <p className="text-[14px] text-muted">{t.applyBody}</p>
+          <p className="text-[14px]">
+            {t.planNow}: <strong>{rateToPercent(plan.assumptions.general_inflation_annual)}% {t.perYear}</strong>
+          </p>
+          <button
+            type="button"
+            disabled={!inflation}
+            onClick={() => {
+              applyInflationToPlan()
+              setApplied(true)
+            }}
+            className="min-h-11 self-start rounded-xl border border-line px-4 font-semibold disabled:opacity-60"
+          >
+            {t.apply}
+          </button>
+          {applied ? <p role="status" className="rounded-xl bg-sage px-4 py-3 font-semibold">{t.applied}</p> : null}
+        </div>
+      ) : null}
+    </Panel>
+  )
+}
+
 export function SettingsPage() {
   const m = useModulesCopy()
   const t = m.settings
@@ -280,6 +373,7 @@ export function SettingsPage() {
           ))}
         </div>
       </Panel>
+      <InflationSettings />
       <Panel title={t.account}>
         <p className="text-muted">{auth.user?.email}</p>
         <h3 className="font-semibold">{t.privacy}</h3>
@@ -302,33 +396,6 @@ export function SettingsPage() {
         <button type="button" disabled={word !== t.deleteWord || deleting.busy} onClick={() => void remove()} className="min-h-12 self-start rounded-xl bg-late px-5 font-semibold text-paper disabled:opacity-50">
           {deleting.busy ? t.deleting : t.deleteButton}
         </button>
-      </Panel>
-    </>
-  )
-}
-
-export function TaxesPage() {
-  const t = useModulesCopy().taxes
-  const x = useExtrasCopy().taxForm
-  return (
-    <>
-      <Unavailable title={t.title}>
-        <p>{t.body}</p>
-        <ul className="list-disc pl-5">
-          {t.needs.map((line) => (
-            <li key={line}>{line}</li>
-          ))}
-        </ul>
-      </Unavailable>
-      <Panel title={x.title}>
-        <Notice tone="warn">{x.banner}</Notice>
-        <fieldset disabled className="grid gap-3 opacity-70 sm:grid-cols-2">
-          <SelectField label={x.year} value="" onChange={() => undefined} options={[{ value: '', label: x.none }]} />
-          <TextField label={x.rule} value="" onChange={() => undefined} placeholder={x.none} />
-          <TextField label={x.source} value="" onChange={() => undefined} placeholder={x.none} />
-          <TextField label={x.override} value="" onChange={() => undefined} placeholder={x.none} />
-        </fieldset>
-        <Table caption={x.title} head={['', x.pre, x.post]} rows={[[x.year, x.none, x.none]]} />
       </Panel>
     </>
   )
@@ -468,6 +535,7 @@ export function GoalsPage({ navigate }: PageProps) {
   return (
     <>
       <Panel title={t.list}>
+        {ordered.length === 0 ? <p className="text-muted">{text.needGoals.body}</p> : null}
         <Loaded remote={projection}>
           {(result) => (
             <Table
@@ -514,10 +582,14 @@ export function GoalsPage({ navigate }: PageProps) {
 export function FinancesPage({ navigate }: PageProps) {
   const m = useModulesCopy()
   const t = m.finances
+  const shortcut = useRestructureCopy().shortcut
   const { plan } = useStore()
   if (!plan) return <Notice>{m.common.needsPlan}</Notice>
   return (
     <>
+      <Panel id="finances-calculators" title={shortcut.title} aside={<button type="button" onClick={() => navigate('calculators')} className="min-h-10 rounded-xl bg-brand px-4 font-semibold text-white">{m.common.open}<span className="sr-only"> {shortcut.title}</span></button>}>
+        <p className="text-muted">{shortcut.body}</p>
+      </Panel>
       <IncomeSection />
       <Panel title={t.expenses} aside={<button type="button" onClick={() => navigate('money-out')} className="text-[14px] font-semibold underline">{t.editSpending}</button>}>
         {(plan.expenses ?? []).length === 0 ? (
@@ -538,6 +610,7 @@ export function FinancesPage({ navigate }: PageProps) {
         )}
       </Panel>
       <Notice>{t.note}</Notice>
+      <LedgerSection />
     </>
   )
 }

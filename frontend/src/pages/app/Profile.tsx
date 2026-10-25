@@ -56,7 +56,7 @@ export function ProfilePage({ navigate }: { navigate?: PageProps['navigate'] }) 
           }`}
         >
           <Users size={18} />
-          {isHi ? 'व्यक्तिगत और पारिवारिक प्रोफ़ाइल' : 'Personal & Household Profile'}
+          {isHi ? 'उपयोगकर्ता प्रोफ़ाइल' : 'User Profile'}
         </button>
 
         <button

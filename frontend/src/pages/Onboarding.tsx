@@ -18,6 +18,7 @@ import {
   preview,
   type Draft,
 } from '../lib/onboarding'
+import { isBlankPlan } from '../lib/blank'
 import { goalNameById, statusText, toneOf, usualRow } from '../lib/outcome'
 import { useAuth } from '../state/useAuth'
 import { useStore } from '../state/useStore'
@@ -92,7 +93,7 @@ const safeCode = (value: string, fallback: string) => {
 export function OnboardingPage({ navigate }: PageProps) {
   const { language, text, plan, savePlan, replacePlan } = useStore()
   // Someone who already has a plan is not asked to start again, which would duplicate their records.
-  const [hadPlan] = useState(() => plan !== null)
+  const [hadPlan] = useState(() => plan !== null && !isBlankPlan(plan))
   useEffect(() => {
     if (hadPlan) navigate('dashboard')
   }, [hadPlan, navigate])

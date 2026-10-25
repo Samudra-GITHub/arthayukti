@@ -8,6 +8,7 @@ from app.api.common import AUTH_RESPONSES
 from app.api.deps import get_current_user, get_db
 from app.db.models import Liability, User
 from app.engine.debt import calculate_amortization_schedule, compare_payoff_strategies
+from app.errors import ApiError
 from app.schemas.debt import (
     AmortizationRequest,
     AmortizationResponse,
@@ -21,13 +22,25 @@ router = APIRouter(prefix="/debt", tags=["debt"], responses=AUTH_RESPONSES)
 @router.post("/amortize", response_model=AmortizationResponse)
 def calculate_amortization(req: AmortizationRequest) -> AmortizationResponse:
     """Calculate complete loan amortization schedule with prepayment acceleration and interest savings."""
-    res = calculate_amortization_schedule(
-        principal=req.principal,
-        annual_rate=req.annual_interest_rate,
-        tenure_months=req.tenure_months,
-        monthly_emi=req.monthly_emi,
-        extra_monthly_payment=req.extra_monthly_payment,
-    )
+    try:
+        res = calculate_amortization_schedule(
+            principal=req.principal,
+            annual_rate=req.annual_interest_rate,
+            tenure_months=req.tenure_months,
+            monthly_emi=req.monthly_emi,
+            extra_monthly_payment=req.extra_monthly_payment,
+        )
+    except ValueError as error:
+        # A zero balance or similar input the engine refuses is the person's input, not a server fault.
+        raise ApiError(422, "debt_invalid", str(error)) from error
+    if res["schedule"] and Decimal(str(res["schedule"][-1]["remaining_balance"])) > 0:
+        # The schedule stops with a balance left: the payment does not cover the interest, or is too low to
+        # finish the loan in a sensible time. Say so instead of showing a schedule that never ends.
+        raise ApiError(
+            422,
+            "payment_too_low",
+            "This payment is too low to pay the loan off. Raise the monthly payment above the monthly interest.",
+        )
     return AmortizationResponse.model_validate(res)
 
 

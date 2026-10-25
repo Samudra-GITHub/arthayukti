@@ -14,6 +14,7 @@ from app.api import (
     auth,
     calculators,
     debt,
+    emergency,
     financials,
     health,
     household,
@@ -110,6 +111,7 @@ def create_app() -> FastAPI:
         calculators,
         recovery,
         ai_assist,
+        emergency,
     ):
         app.include_router(module.router, prefix="/api/v1")
 

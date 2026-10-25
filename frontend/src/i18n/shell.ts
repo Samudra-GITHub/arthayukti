@@ -9,14 +9,14 @@ export interface ShellCopy {
     profile: string
     finances: string
     goals: string
-    assets: string
     debts: string
     insurance: string
-    taxes: string
+    equities: string
+    emergency: string
+    planb: string
     calculators: string
     outlook: string
     advisor: string
-    import: string
     alerts: string
     settings: string
     outlookItems: {
@@ -108,17 +108,17 @@ export const shellCopy: Record<'en' | 'hi', ShellCopy> = {
     nav: {
       label: 'Main menu',
       dashboard: 'Dashboard',
-      profile: 'Household profile',
-      finances: 'Income & expenses',
+      profile: 'User Profile',
+      finances: 'Income and Expenditures',
       goals: 'Financial goals',
-      assets: 'Assets & investments',
-      debts: 'Debt & liabilities',
+      debts: 'Debts',
       insurance: 'Insurance',
-      taxes: 'Taxes',
+      equities: 'Equities',
+      emergency: 'Emergency Funds',
+      planb: 'Plan B and Rescue',
       calculators: 'Calculators',
       outlook: 'Financial outlook',
       advisor: 'AI advisor',
-      import: 'Import & transactions',
       alerts: 'Alerts & events',
       settings: 'Settings',
       outlookItems: {
@@ -176,7 +176,7 @@ export const shellCopy: Record<'en' | 'hi', ShellCopy> = {
       needEmail: 'Enter a valid email address.',
       needPassword: 'Enter your password.',
       signupTitle: 'Create your account.',
-      signupSubtitle: 'Next, we will ask a few questions about your money, one step at a time.',
+      signupSubtitle: 'Just a name, an email and a password. You add your finances later, when you are ready.',
       name: 'Your name',
       nameHint: 'What should we call you? Optional.',
       passwordRules: 'At least 10 characters, with at least one letter and one number.',
@@ -214,17 +214,17 @@ export const shellCopy: Record<'en' | 'hi', ShellCopy> = {
     nav: {
       label: 'मुख्य मेन्यू',
       dashboard: 'डैशबोर्ड',
-      profile: 'परिवार की जानकारी',
-      finances: 'आमदनी और खर्च',
+      profile: 'उपयोगकर्ता प्रोफ़ाइल',
+      finances: 'आय और व्यय',
       goals: 'आर्थिक लक्ष्य',
-      assets: 'संपत्ति और निवेश',
-      debts: 'कर्ज़ और देनदारियाँ',
+      debts: 'कर्ज़',
       insurance: 'बीमा',
-      taxes: 'कर',
+      equities: 'इक्विटी',
+      emergency: 'आपातकालीन निधि',
+      planb: 'प्लान B और रेस्क्यू',
       calculators: 'कैलकुलेटर',
       outlook: 'आर्थिक अनुमान',
       advisor: 'AI सलाहकार',
-      import: 'आयात और लेन-देन',
       alerts: 'सूचनाएँ और घटनाएँ',
       settings: 'सेटिंग',
       outlookItems: {
@@ -282,7 +282,7 @@ export const shellCopy: Record<'en' | 'hi', ShellCopy> = {
       needEmail: 'सही ई-मेल पता भरें।',
       needPassword: 'अपना पासवर्ड भरें।',
       signupTitle: 'अपना खाता बनाएँ।',
-      signupSubtitle: 'इसके बाद हम आपके पैसों के बारे में एक-एक कदम में कुछ सवाल पूछेंगे।',
+      signupSubtitle: 'बस नाम, ई-मेल और पासवर्ड। अपने पैसों की जानकारी आप बाद में, तैयार होने पर जोड़ें।',
       name: 'आपका नाम',
       nameHint: 'हम आपको क्या कहकर बुलाएँ? वैकल्पिक।',
       passwordRules: 'कम से कम 10 अक्षर, जिसमें कम से कम एक अक्षर और एक अंक हो।',

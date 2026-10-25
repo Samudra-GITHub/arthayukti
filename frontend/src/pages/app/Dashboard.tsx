@@ -6,6 +6,8 @@ import { MonthlyBars } from '../../components/MonthlyBars'
 import { Money } from '../../components/Money'
 import { PageActions } from '../../components/PageActions'
 import { SectionNavigator } from '../../components/SectionNavigator'
+import { GettingStarted } from './GettingStarted'
+import { isBlankPlan } from '../../lib/blank'
 import { Loaded, Notice, Panel, Stat, Table } from '../../components/panel'
 import { addMoney, atLeastZero, formatMoney, isNegative, subMoney } from '../../lib/money'
 import { monthLabel, monthLabelLong } from '../../lib/months'
@@ -16,7 +18,7 @@ import { useShellCopy } from '../../state/useShellCopy'
 import { useStore } from '../../state/useStore'
 import type { PageProps } from '../types'
 
-const SECTIONS = ['summary', 'cashflow', 'goals', 'emergency', 'investments', 'debt', 'insurance', 'tax', 'trajectory', 'scenario', 'alerts'] as const
+const SECTIONS = ['summary', 'cashflow', 'goals', 'emergency', 'investments', 'debt', 'insurance', 'trajectory', 'scenario', 'alerts'] as const
 
 type Range = '12' | '24' | 'all'
 
@@ -102,6 +104,7 @@ export function DashboardPage({ navigate }: PageProps) {
       <PageActions>
         <SectionNavigator label={d.jump} sections={SECTIONS.map((id) => ({ id: `dash-${id}`, label: d.sections[id] }))} />
       </PageActions>
+      {isBlankPlan(plan) ? <GettingStarted navigate={navigate} /> : null}
 
       <div className="grid gap-5 lg:grid-cols-12">
         <section id="dash-summary" aria-labelledby="dash-summary-title" className="water-card relative flex min-w-0 scroll-mt-24 flex-col justify-between gap-6 overflow-hidden rounded-3xl p-6 text-white lg:col-span-5">
@@ -199,7 +202,7 @@ export function DashboardPage({ navigate }: PageProps) {
             </Loaded>
           </Panel>
 
-          <Panel id="dash-investments" title={d.sections.investments} aside={<button type="button" onClick={() => navigate('assets')} className={link}>{m.common.open}</button>}>
+          <Panel id="dash-investments" title={d.sections.investments} aside={<button type="button" onClick={() => navigate('equities')} className={link}>{m.common.open}</button>}>
             <Loaded remote={holdings}>
               {(list) =>
                 list.length === 0 ? (
@@ -273,10 +276,6 @@ export function DashboardPage({ navigate }: PageProps) {
                 </div>
               )}
             </Loaded>
-          </Panel>
-
-          <Panel id="dash-tax" title={d.sections.tax}>
-            <Notice>{d.taxNote}</Notice>
           </Panel>
 
           <Panel id="dash-scenario" title={d.sections.scenario}>

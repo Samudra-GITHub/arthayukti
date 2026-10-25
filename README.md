@@ -20,7 +20,7 @@ Open the site and choose **Look at an example household**. You get a made-up fam
 
 ### 2. Make your own plan
 
-Choose **Start with my numbers** (or **Create an account** to keep your work). You are walked through three short steps:
+Choose **Start with my numbers** (to try it without saving) or **Create an account** to keep your work. An account needs only a name, an email and a password, and takes you straight to the Dashboard. You can then add your numbers in any order, or use the optional **guided setup**, which walks through three short steps:
 
 1. **Money in:** your income.
 2. **Money out:** your monthly spending.
@@ -34,15 +34,18 @@ The top bar groups the app. The left menu lists the pages.
 
 | Page | What it is for |
 | --- | --- |
-| **Dashboard** | Your position at a glance: net worth, money left for goals each month, goal status. |
-| **Household profile** | Who is in the household, and your comfort with risk. |
-| **Income & expenses** | Salary and other income (including planned changes), spending, and a ledger you can fill by hand or import from CSV. |
-| **Financial goals** | Your goals in funding order, plus the tools below. |
-| **Assets & investments**, **Debt & liabilities**, **Insurance**, **Taxes** | Your records. Assets are not treated as money available for goals unless you say so. |
-| **Calculators** | SIP, lump sum, and similar investment calculators, with saved scenarios you can compare. |
-| **Financial outlook** | Feasibility of each goal, and scenario comparison. |
+| **Dashboard** | Your position at a glance. A new account lands here with a short "where to start" guide: nothing is filled in for you. |
+| **User Profile** | Your details, the household context used for planning, and your risk comfort. |
+| **Income and Expenditures** | Your incomes, your monthly spending, and a place to record transactions or import a CSV file. |
+| **Calculators** | Three modules, each worked out by the same engine as the rest of the app: **Insurance** (policies, premiums, cover over time, reminders), **Debts** (a loan repayment calculator, the effect of extra payments, and which debt to pay first) and **Equities** (the investment calculator with growth, tax and inflation, plus your holdings and balances). |
+| **Emergency Funds** | What you hold, your own target in months of essential spending, progress, and how the plan grows the reserve. |
+| **Financial goals** | Your goals in funding order, the tools below, and the Plan B banner. |
+| **Financial outlook** | Trajectories, goal feasibility and scenario comparison. |
+| **Plan B and Rescue** | Replan around a disruption while protecting what you choose (see below). |
 | **Alerts** | Reminders such as insurance renewals. |
-| **Settings** | Language, data export and account deletion. |
+| **Settings** | Language, the **Default Inflation Rate**, data export and account deletion. |
+
+The **Default Inflation Rate** (Settings) is the starting annual inflation for new plans and new investments. Saved calculations, saved plans and Recovery Agreements keep the rate they were saved with, and you can still override it for a single investment.
 
 Handy extras: **English / हिन्दी** in the top bar, a light/dark theme toggle, and **Listen** to hear a page read aloud.
 

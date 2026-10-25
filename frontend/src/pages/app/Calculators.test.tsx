@@ -40,7 +40,7 @@ beforeEach(() => {
   window.sessionStorage.clear()
   window.localStorage.clear()
   window.sessionStorage.setItem('arthayukti.session', 'tok_session')
-  window.location.hash = '/calculators'
+  window.location.hash = '/equities'
   setAccessToken(null)
 })
 afterEach(() => {

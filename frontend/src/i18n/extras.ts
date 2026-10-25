@@ -156,8 +156,8 @@ const en = {
   },
   income: {
     eyebrow: 'Planned income',
-    title: 'Your income, year by year.',
-    lead: 'What you expect to earn, built from the streams below. Money already received is recorded separately, under Import & transactions.',
+    title: 'Your Incomes',
+    lead: 'What you expect to earn, built from the streams below. Money already received is recorded separately, under Transactions further down this page.',
     total: 'Total projected income',
     totalNote: (months: number, first: string) => `Across the next ${months} months, from ${first}.`,
     monthlyNow: 'Each month now',
@@ -381,8 +381,8 @@ const hi: ExtrasCopy = {
   },
   income: {
     eyebrow: 'योजनाबद्ध आमदनी',
-    title: 'आपकी आमदनी, साल दर साल।',
-    lead: 'आप जितना कमाने की उम्मीद करते हैं, नीचे के स्रोतों से बना। जो पैसा मिल चुका है वह अलग से "आयात और लेन-देन" में दर्ज होता है।',
+    title: 'आपकी आय',
+    lead: 'आप जितना कमाने की उम्मीद करते हैं, नीचे के स्रोतों से बना। जो पैसा मिल चुका है वह अलग से "लेन-देन" में, इसी पन्ने में नीचे, दर्ज होता है।',
     total: 'कुल अनुमानित आमदनी',
     totalNote: (months: number, first: string) => `अगले ${months} महीनों में, ${first} से।`,
     monthlyNow: 'अभी हर महीने',

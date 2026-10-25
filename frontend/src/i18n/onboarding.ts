@@ -95,7 +95,7 @@ export const onboardingCopy: Record<'en' | 'hi', OnboardingCopy> = {
       empty: 'No income added yet.',
       removeItem: 'income source',
       total: 'Together, each month',
-      constant: 'Income starts this year and stays the same unless you give it a yearly increase. You can add planned raises later in Income & expenses.',
+      constant: 'Income starts this year and stays the same unless you give it a yearly increase. You can add planned raises later in Income and Expenditures.',
       none: 'If you have no regular income, you can continue. The plan will then show no income.',
       limit: 'Add as many sources as you need.',
     },

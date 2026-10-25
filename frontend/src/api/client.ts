@@ -59,6 +59,12 @@ import type {
   RiskAssessmentHistoryItem,
   ConservativeComparisonResponse,
   AIExplanation,
+  AmortizationRequest,
+  AmortizationResponse,
+  EmergencyAnalysis,
+  Preferences,
+  StrategyComparisonRequest,
+  StrategyComparisonResponse,
   AIStatus,
   SituationDraft,
 } from './types'
@@ -201,6 +207,23 @@ export const api = {
     if (!response.ok) throw new ApiFailure('http_error', `Export failed (${response.status}).`, response.status)
     return response.blob()
   },
+  // Settings that follow the person
+  preferences: (signal?: AbortSignal) => get<Preferences>('/auth/preferences', signal),
+  updatePreferences: (defaultInflationAnnual: string) =>
+    send<Preferences>('PUT', '/auth/preferences', { default_inflation_annual: defaultInflationAnnual }),
+  // Emergency fund, debts
+  // A plan with no goals is not a valid plan yet, so only its spending is sent and the server works out the essentials.
+  emergencyAnalyze: (plan: Plan, targetMonths: number | null, signal?: AbortSignal) =>
+    post<EmergencyAnalysis>(
+      '/emergency-fund/analyze',
+      plan.goals.length > 0
+        ? { plan, target_months: targetMonths }
+        : { expenses: plan.expenses ?? [], commitments: plan.commitments ?? [], target_months: targetMonths },
+      signal,
+    ),
+  debtAmortize: (body: AmortizationRequest, signal?: AbortSignal) => post<AmortizationResponse>('/debt/amortize', body, signal),
+  debtCompare: (body: StrategyComparisonRequest, signal?: AbortSignal) =>
+    post<StrategyComparisonResponse>('/debt/compare-strategies', body, signal),
   // AI help (the key lives only on the server)
   aiStatus: (signal?: AbortSignal) => get<AIStatus>('/ai/status', signal),
   aiSituationDraft: (text: string, currentMonth: string, signal?: AbortSignal) =>

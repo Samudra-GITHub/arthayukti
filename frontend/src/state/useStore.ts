@@ -71,6 +71,16 @@ export interface Store {
   previousOrder: string[] | null
   undoOrder: () => void
   resetPlan: () => void
+  /** The person's default annual inflation (a fraction like "0.065000"); null until it has loaded. */
+  inflation: { rate: string; isDefault: boolean } | null
+  /** Saves the default inflation. It never changes a saved plan, calculation or agreement. */
+  setInflation: (rate: string) => Promise<boolean>
+  /** Puts the default inflation into the plan on screen (unsaved until the person saves). */
+  applyInflationToPlan: () => void
+  /** Sets the saved balance of the emergency-fund goal. */
+  setEmergencyReserve: (amount: string) => void
+  /** Adds an emergency-fund goal with the target the person chose. */
+  addEmergencyGoal: (targetAmount: string) => void
 }
 
 export const StoreContext = createContext<Store | null>(null)

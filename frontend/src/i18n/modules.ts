@@ -146,7 +146,7 @@ const en = {
     kinds: { term_life: 'Term life', health: 'Health', ulip: 'ULIP', endowment_money_back: 'Endowment or money-back', motor: 'Motor', home: 'Home' } as Record<string, string>,
     renewal: 'Renewal',
     noRenewal: 'No renewal date entered',
-    note: 'Premiums are not added to your spending unless you add them under Income & expenses.',
+    note: 'Premiums are not added to your spending unless you add them under Income and Expenditures.',
   },
   taxes: {
     title: 'Taxes are not available yet',
@@ -154,7 +154,7 @@ const en = {
     needs: ['A tax-rule engine with effective dates and sources', 'Instrument-level cost basis and holding periods', 'Your confirmation of which rules apply to you'],
   },
   profile: {
-    title: 'Household profile is not available yet',
+    title: 'User Profile is not available yet',
     body: 'Ages, dependants, parents’ support, future children and risk preferences are not collected, because nothing can store or use them safely so far. Nothing is inferred about your family.',
     nowTitle: 'What shapes your plan today',
     now: ['Your income sources', 'Essential and non-essential spending', 'Loan payments', 'Goals and their order'],
@@ -435,7 +435,7 @@ const hi: ModulesCopy = {
     needs: ['तारीख़ और स्रोत वाला कर-नियम इंजन', 'हर निवेश की लागत और रखने की अवधि', 'आप पर कौन से नियम लागू हैं, इसकी आपकी पुष्टि'],
   },
   profile: {
-    title: 'परिवार की जानकारी अभी उपलब्ध नहीं है',
+    title: 'उपयोगकर्ता प्रोफ़ाइल अभी उपलब्ध नहीं है',
     body: 'उम्र, आश्रित, माता-पिता की मदद, भविष्य के बच्चे और जोखिम की पसंद नहीं ली जाती, क्योंकि उन्हें अभी सुरक्षित रूप से रखने या इस्तेमाल करने की व्यवस्था नहीं है। आपके परिवार के बारे में कुछ भी अंदाज़े से नहीं निकाला जाता।',
     nowTitle: 'आज आपकी योजना को क्या आकार देता है',
     now: ['आपकी आमदनी के स्रोत', 'ज़रूरी और गैर-ज़रूरी खर्च', 'कर्ज़ की किस्तें', 'लक्ष्य और उनका क्रम'],

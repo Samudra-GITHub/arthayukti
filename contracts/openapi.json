@@ -2347,6 +2347,227 @@
         "title": "DependantDetail",
         "type": "object"
       },
+      "EmergencyAnalysis": {
+        "additionalProperties": false,
+        "properties": {
+          "goal_id": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9_-]{1,40}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Goal Id"
+          },
+          "goal_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Goal Label"
+          },
+          "goal_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Goal Status"
+          },
+          "goal_target_today": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Goal Target Today"
+          },
+          "has_goal": {
+            "title": "Has Goal",
+            "type": "boolean"
+          },
+          "monthly_essentials": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Monthly Essentials",
+            "type": "string"
+          },
+          "months_covered": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Months Covered"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "progress": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Progress"
+          },
+          "projected": {
+            "items": {
+              "$ref": "#/components/schemas/ReservePoint"
+            },
+            "title": "Projected",
+            "type": "array"
+          },
+          "projected_completion": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Projected Completion"
+          },
+          "reserve_held": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reserve Held"
+          },
+          "shortfall_to_target": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shortfall To Target"
+          },
+          "target_amount": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Amount"
+          },
+          "target_months": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Months"
+          }
+        },
+        "required": [
+          "monthly_essentials",
+          "target_months",
+          "target_amount",
+          "has_goal",
+          "goal_id",
+          "goal_label",
+          "goal_target_today",
+          "reserve_held",
+          "months_covered",
+          "progress",
+          "shortfall_to_target",
+          "projected",
+          "goal_status",
+          "projected_completion",
+          "notes"
+        ],
+        "title": "EmergencyAnalysis",
+        "type": "object"
+      },
+      "EmergencyRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "commitments": {
+            "items": {
+              "$ref": "#/components/schemas/Commitment"
+            },
+            "maxItems": 6,
+            "title": "Commitments",
+            "type": "array"
+          },
+          "expenses": {
+            "items": {
+              "$ref": "#/components/schemas/Expense"
+            },
+            "maxItems": 12,
+            "title": "Expenses",
+            "type": "array"
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Plan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "target_months": {
+            "anyOf": [
+              {
+                "maximum": 60.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Months"
+          }
+        },
+        "title": "EmergencyRequest",
+        "type": "object"
+      },
       "ErrorBody": {
         "additionalProperties": false,
         "properties": {
@@ -3261,6 +3482,17 @@
           "created_at": {
             "title": "Created At",
             "type": "string"
+          },
+          "default_inflation_annual": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Default Inflation Annual"
           },
           "email": {
             "title": "Email",
@@ -6737,6 +6969,42 @@
         "title": "PolicyResponse",
         "type": "object"
       },
+      "Preferences": {
+        "additionalProperties": false,
+        "description": "Settings that follow the person across the app.",
+        "properties": {
+          "default_inflation_annual": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Default Inflation Annual",
+            "type": "string"
+          },
+          "is_default": {
+            "title": "Is Default",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "default_inflation_annual",
+          "is_default"
+        ],
+        "title": "Preferences",
+        "type": "object"
+      },
+      "PreferencesUpdate": {
+        "additionalProperties": false,
+        "properties": {
+          "default_inflation_annual": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Default Inflation Annual",
+            "type": "string"
+          }
+        },
+        "required": [
+          "default_inflation_annual"
+        ],
+        "title": "PreferencesUpdate",
+        "type": "object"
+      },
       "ProcessEscalationEventRequest": {
         "additionalProperties": false,
         "properties": {
@@ -7864,6 +8132,27 @@
           "assumptions"
         ],
         "title": "RescueResponse",
+        "type": "object"
+      },
+      "ReservePoint": {
+        "additionalProperties": false,
+        "properties": {
+          "balance": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Balance",
+            "type": "string"
+          },
+          "month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "Month",
+            "type": "string"
+          }
+        },
+        "required": [
+          "month",
+          "balance"
+        ],
+        "title": "ReservePoint",
         "type": "object"
       },
       "RestorationCondition": {
@@ -10460,6 +10749,148 @@
         ]
       }
     },
+    "/api/v1/auth/preferences": {
+      "get": {
+        "description": "The signed-in person's settings: today the default annual inflation assumption.",
+        "operationId": "get_preferences_api_v1_auth_preferences_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Preferences"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Preferences",
+        "tags": [
+          "auth"
+        ]
+      },
+      "put": {
+        "description": "Save the default inflation. It is the starting value for new plans and calculations only: saved\ncalculations, plans and Recovery Agreements keep the figure they were saved with.",
+        "operationId": "update_preferences_api_v1_auth_preferences_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreferencesUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Preferences"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Preferences",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
     "/api/v1/auth/signup": {
       "post": {
         "description": "Register a new user account with secure password hashing.",
@@ -11486,6 +11917,83 @@
         "summary": "Get User Debt Strategies",
         "tags": [
           "debt"
+        ]
+      }
+    },
+    "/api/v1/emergency-fund/analyze": {
+      "post": {
+        "description": "What is held, the target in months of essentials, progress, and how the engine grows the reserve.",
+        "operationId": "analyze_api_v1_emergency_fund_analyze_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmergencyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmergencyAnalysis"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Analyze",
+        "tags": [
+          "emergency-fund"
         ]
       }
     },

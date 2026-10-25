@@ -5,6 +5,7 @@ import type { FixOption, Goal, IncomeStream, Plan, SampleDetail } from '../api/t
 import { copy } from '../i18n/copy'
 import type { Language } from '../lib/months'
 import { blankPlan, hasGoals, MAX_GOALS, newGoal } from '../lib/blank'
+import { addMonths } from '../lib/months'
 import { currentOrder } from '../lib/tradeoffs'
 import { ownScenario, scenarioFor, withFix, type Choice } from '../lib/scenarios'
 import { useAuth } from './useAuth'
@@ -41,6 +42,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [savedJson, setSavedJson] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [inflation, setInflationState] = useState<{ rate: string; isDefault: boolean } | null>(null)
 
   useEffect(() => {
     document.documentElement.lang = copy[language].htmlLang
@@ -97,6 +99,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setPlanId(null)
       setSavedJson(null)
       setSaveError(null)
+      setInflationState(null)
       startOver()
     }
   }
@@ -106,11 +109,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const controller = new AbortController()
     ;(async () => {
       try {
+        // The person's own default inflation, when it can be read; a failure here never blocks the account.
+        const prefs = await api.preferences(controller.signal).catch(() => null)
+        if (prefs) setInflationState({ rate: prefs.default_inflation_annual, isDefault: prefs.is_default })
         const summaries = await api.plans(controller.signal)
         if (summaries.length === 0) {
+          // A new account starts with an empty plan on screen, not saved until the person enters something and saves.
+          const empty = blankPlan(undefined, undefined, prefs?.default_inflation_annual)
           setSample(null)
-          setPlan(null)
-          setSource(null)
+          setPlan(empty)
+          setSource('own')
+          setSavedJson(JSON.stringify(empty))
           setAccountState('ready')
           return
         }
@@ -328,6 +337,40 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setPreviousOrder(null)
   }, [previousOrder, rank])
 
+  const setInflation = useCallback(async (rate: string) => {
+    try {
+      const saved = await api.updatePreferences(rate)
+      setInflationState({ rate: saved.default_inflation_annual, isDefault: saved.is_default })
+      return true
+    } catch {
+      return false
+    }
+  }, [])
+
+  const applyInflationToPlan = useCallback(() => {
+    if (!inflation) return
+    update((current) => ({ ...current, assumptions: { ...current.assumptions, general_inflation_annual: inflation.rate } }))
+  }, [inflation, update])
+
+  const setEmergencyReserve = useCallback(
+    (amount: string) =>
+      update((current) => ({
+        ...current,
+        goals: current.goals.map((goal) => (goal.type === 'emergency_fund' ? { ...goal, current_savings: amount } : goal)),
+      })),
+    [update],
+  )
+
+  const addEmergencyGoal = useCallback(
+    (targetAmount: string) =>
+      update((current) =>
+        current.goals.length >= MAX_GOALS || current.goals.some((goal) => goal.type === 'emergency_fund')
+          ? current
+          : { ...current, goals: [...current.goals, newGoal(current, 'emergency_fund', 'Emergency fund', targetAmount, addMonths(current.as_of, 12))] },
+      ),
+    [update],
+  )
+
   const resetPlan = useCallback(() => {
     if (sample) setPlan(sample.plan)
     else if (source === 'own') setPlan(blankPlan())
@@ -379,6 +422,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     previousOrder,
     undoOrder,
     resetPlan,
+    inflation,
+    setInflation,
+    applyInflationToPlan,
+    setEmergencyReserve,
+    addEmergencyGoal,
   }
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>

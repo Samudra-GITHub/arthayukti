@@ -21,6 +21,8 @@ import {
 import { useAction } from '../../state/useAction'
 import { useCalculatorsCopy } from '../../state/useCalculatorsCopy'
 import { useRemote } from '../../state/useRemote'
+import { useStore } from '../../state/useStore'
+import { rateToPercent } from '../../lib/inflation'
 
 const LAST_KEY = 'arthayukti.calculator'
 
@@ -49,7 +51,10 @@ function lastOpened(): string | null {
 export function CalculatorsPage() {
   const copy = useCalculatorsCopy()
   const t = copy.saved
-  const [draft, setDraft] = useState<CalculatorDraft>(blankCalculator)
+  const { inflation } = useStore()
+  // New investments start from the person's default inflation; each one can still be changed on its own.
+  const inflationPercent = inflation ? rateToPercent(inflation.rate) : '0'
+  const [draft, setDraft] = useState<CalculatorDraft>(() => blankCalculator(inflationPercent))
   const [touched, setTouched] = useState(false)
   const [activeId, setActiveId] = useState<string | null>(null)
   const [name, setName] = useState('')
@@ -108,7 +113,7 @@ export function CalculatorsPage() {
   }
 
   function startNew() {
-    setDraft(blankCalculator())
+    setDraft(blankCalculator(inflationPercent))
     setActiveId(null)
     setName('')
     setSnapshot(null)
@@ -306,7 +311,7 @@ export function CalculatorsPage() {
         {draft.investments.length < MAX_INVESTMENTS ? (
           <button
             type="button"
-            onClick={() => change({ ...draft, investments: [...draft.investments, { ...blankInvestment(), name: copy.investment.heading(draft.investments.length + 1) }] })}
+            onClick={() => change({ ...draft, investments: [...draft.investments, { ...blankInvestment(undefined, inflationPercent), name: copy.investment.heading(draft.investments.length + 1) }] })}
             className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-dashed border-line px-4 font-semibold"
           >
             <Plus size={18} aria-hidden="true" />

@@ -13,7 +13,7 @@ from app.schemas.household import HouseholdProfileResponse
 from app.schemas.insurance import PolicyResponse
 from app.schemas.plan import Plan
 from app.schemas.recovery_plan import AgreementDraft
-from app.schemas.types import ApiModel
+from app.schemas.types import ApiModel, Rate
 
 # bcrypt only reads the first 72 bytes, so longer passwords would be silently truncated.
 MAX_PASSWORD_BYTES = 72
@@ -82,11 +82,23 @@ class MessageResponse(ApiModel):
     message: str
 
 
+class Preferences(ApiModel):
+    """Settings that follow the person across the app."""
+
+    default_inflation_annual: Rate
+    is_default: bool  # true until the person sets their own
+
+
+class PreferencesUpdate(ApiModel):
+    default_inflation_annual: Rate
+
+
 class ExportUser(ApiModel):
     id: str
     email: str
     full_name: str
     created_at: str
+    default_inflation_annual: str | None = None
 
 
 class ExportPlan(ApiModel):

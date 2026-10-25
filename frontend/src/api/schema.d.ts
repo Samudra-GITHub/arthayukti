@@ -246,6 +246,31 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Preferences
+         * @description The signed-in person's settings: today the default annual inflation assumption.
+         */
+        get: operations["get_preferences_api_v1_auth_preferences_get"];
+        /**
+         * Update Preferences
+         * @description Save the default inflation. It is the starting value for new plans and calculations only: saved
+         *     calculations, plans and Recovery Agreements keep the figure they were saved with.
+         */
+        put: operations["update_preferences_api_v1_auth_preferences_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/signup": {
         parameters: {
             query?: never;
@@ -459,6 +484,26 @@ export interface paths {
         get: operations["get_user_debt_strategies_api_v1_debt_strategies_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/emergency-fund/analyze": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Analyze
+         * @description What is held, the target in months of essentials, progress, and how the engine grows the reserve.
+         */
+        post: operations["analyze_api_v1_emergency_fund_analyze_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2233,6 +2278,49 @@ export interface components {
              */
             relationship: "child" | "spouse" | "parent" | "sibling" | "other";
         };
+        /** EmergencyAnalysis */
+        EmergencyAnalysis: {
+            /** Goal Id */
+            goal_id: string | null;
+            /** Goal Label */
+            goal_label: string | null;
+            /** Goal Status */
+            goal_status: string | null;
+            /** Goal Target Today */
+            goal_target_today: string | null;
+            /** Has Goal */
+            has_goal: boolean;
+            /** Monthly Essentials */
+            monthly_essentials: string;
+            /** Months Covered */
+            months_covered: string | null;
+            /** Notes */
+            notes: string[];
+            /** Progress */
+            progress: string | null;
+            /** Projected */
+            projected: components["schemas"]["ReservePoint"][];
+            /** Projected Completion */
+            projected_completion: string | null;
+            /** Reserve Held */
+            reserve_held: string | null;
+            /** Shortfall To Target */
+            shortfall_to_target: string | null;
+            /** Target Amount */
+            target_amount: string | null;
+            /** Target Months */
+            target_months: number | null;
+        };
+        /** EmergencyRequest */
+        EmergencyRequest: {
+            /** Commitments */
+            commitments?: components["schemas"]["Commitment"][];
+            /** Expenses */
+            expenses?: components["schemas"]["Expense"][];
+            plan?: components["schemas"]["Plan"] | null;
+            /** Target Months */
+            target_months?: number | null;
+        };
         /** ErrorBody */
         ErrorBody: {
             /** Code */
@@ -2520,6 +2608,8 @@ export interface components {
         ExportUser: {
             /** Created At */
             created_at: string;
+            /** Default Inflation Annual */
+            default_inflation_annual?: string | null;
             /** Email */
             email: string;
             /** Full Name */
@@ -3522,6 +3612,21 @@ export interface components {
             /** Updated At */
             updated_at: string;
         };
+        /**
+         * Preferences
+         * @description Settings that follow the person across the app.
+         */
+        Preferences: {
+            /** Default Inflation Annual */
+            default_inflation_annual: string;
+            /** Is Default */
+            is_default: boolean;
+        };
+        /** PreferencesUpdate */
+        PreferencesUpdate: {
+            /** Default Inflation Annual */
+            default_inflation_annual: string;
+        };
         /** ProcessEscalationEventRequest */
         ProcessEscalationEventRequest: {
             /** Effective Date */
@@ -3870,6 +3975,13 @@ export interface components {
             run_id: string;
             /** Unresolved Gap */
             unresolved_gap: string | null;
+        };
+        /** ReservePoint */
+        ReservePoint: {
+            /** Balance */
+            balance: string;
+            /** Month */
+            month: string;
         };
         /**
          * RestorationCondition
@@ -5210,6 +5322,122 @@ export interface operations {
             };
         };
     };
+    get_preferences_api_v1_auth_preferences_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Preferences"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    update_preferences_api_v1_auth_preferences_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PreferencesUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Preferences"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     signup_api_v1_auth_signup_post: {
         parameters: {
             query?: never;
@@ -5971,6 +6199,66 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StrategyComparisonResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    analyze_api_v1_emergency_fund_analyze_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmergencyRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmergencyAnalysis"];
                 };
             };
             /** @description Sign in required, or the token is missing, malformed or expired. */

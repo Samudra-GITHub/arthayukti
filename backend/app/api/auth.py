@@ -3,6 +3,7 @@ import logging
 import secrets
 import uuid
 from datetime import UTC, datetime, timedelta
+from decimal import Decimal
 from functools import lru_cache
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
@@ -47,6 +48,8 @@ from app.schemas.auth import (
     MessageResponse,
     PasswordResetConfirm,
     PasswordResetRequest,
+    Preferences,
+    PreferencesUpdate,
     SignupRequest,
     UserProfile,
 )
@@ -159,6 +162,35 @@ def logout(current_user: User = Depends(get_current_user)) -> MessageResponse:
 def get_current_user_profile(current_user: User = Depends(get_current_user)) -> UserProfile:
     """Fetch profile of current authenticated user."""
     return _profile(current_user)
+
+
+def _preferences(user: User) -> Preferences:
+    """The stored default, or the application's starting value (shown as such) until the person sets one."""
+    stored = user.default_inflation_annual
+    value = Decimal(str(stored)) if stored is not None else Decimal(settings.DEFAULT_GOAL_INFLATION)
+    return Preferences(
+        default_inflation_annual=value.quantize(Decimal("0.000001")), is_default=stored is None
+    )
+
+
+@router.get("/preferences", response_model=Preferences)
+def get_preferences(current_user: User = Depends(get_current_user)) -> Preferences:
+    """The signed-in person's settings: today the default annual inflation assumption."""
+    return _preferences(current_user)
+
+
+@router.put("/preferences", response_model=Preferences)
+def update_preferences(
+    req: PreferencesUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> Preferences:
+    """Save the default inflation. It is the starting value for new plans and calculations only: saved
+    calculations, plans and Recovery Agreements keep the figure they were saved with."""
+    current_user.default_inflation_annual = req.default_inflation_annual
+    db.commit()
+    db.refresh(current_user)
+    return _preferences(current_user)
 
 
 @router.post("/password-reset/request", response_model=MessageResponse)
@@ -282,6 +314,11 @@ def export_user_data(
             email=current_user.email,
             full_name=current_user.full_name,
             created_at=current_user.created_at.isoformat(),
+            default_inflation_annual=(
+                str(current_user.default_inflation_annual)
+                if current_user.default_inflation_annual is not None
+                else None
+            ),
         ),
         plans=[
             ExportPlan(id=p.id, name=p.name, as_of=p.as_of, plan=Plan.model_validate_json(p.plan_json))

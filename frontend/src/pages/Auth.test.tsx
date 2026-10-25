@@ -53,7 +53,7 @@ describe('signing in', () => {
     expect(await screen.findByRole('heading', { name: 'Welcome back.' })).toBeInTheDocument()
   })
 
-  it('signs in through the real endpoint, keeps the token (not the password) for this tab, and starts setup for a new account', async () => {
+  it('signs in through the real endpoint, keeps the token (not the password) for this tab, and lands a new account on the homepage', async () => {
     window.location.hash = '/login'
     const { calls } = mockApi({
       ...common,
@@ -62,7 +62,11 @@ describe('signing in', () => {
     })
     render(<App />)
     await signIn()
-    expect(await screen.findByRole('heading', { name: 'Let us understand your financial world.' })).toBeInTheDocument()
+    // A new account goes straight to the homepage with guidance, not into a setup wizard.
+    expect(await screen.findByRole('heading', { name: 'Welcome. Start with whatever you know.' })).toBeInTheDocument()
+    expect(window.location.hash).toBe('#/dashboard')
+    expect(screen.queryByRole('heading', { name: 'Let us understand your financial world.' })).toBeNull()
+    expect(calls.some((c) => c.method === 'POST' && c.path === '/plans')).toBe(false)
 
     expect(calls.find((c) => c.path === '/auth/login')?.body).toEqual({ email: 'asha@example.test', password: 'Correct-Pass-123' })
     expect(calls.find((c) => c.path === '/plans')?.auth).toBe('Bearer tok_session')
@@ -193,13 +197,16 @@ describe('creating an account', () => {
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
-  it('creates the account through the real endpoint and goes straight into setup', async () => {
+  it('creates the account through the real endpoint with only basic details and lands on the homepage', async () => {
     window.location.hash = '/signup'
     const { calls } = mockApi({ ...common, 'POST /auth/signup': () => json(SESSION, 201), 'GET /plans': () => json([]) })
     render(<App />)
     await fillSignup()
-    expect(await screen.findByRole('heading', { name: 'Let us understand your financial world.' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Welcome. Start with whatever you know.' })).toBeInTheDocument()
+    expect(window.location.hash).toBe('#/dashboard')
+    // Only name, email and password go to the server: no income, spending, goals or any other financial detail.
     expect(calls.find((c) => c.path === '/auth/signup')?.body).toEqual({ email: 'asha@example.test', password: 'Fresh-Pass-12345', full_name: 'Asha' })
+    expect(calls.some((c) => c.method === 'POST' && c.path === '/plans')).toBe(false)
   })
 
   it('does not say whether an address already exists', async () => {

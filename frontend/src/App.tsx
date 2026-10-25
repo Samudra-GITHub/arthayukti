@@ -29,11 +29,11 @@ import {
   InvestmentTrajectoryPage,
   ScenarioComparisonPage,
 } from './pages/app/Outlook'
-import { AssetsPage, DebtsPage, InsurancePage } from './pages/app/Records'
+import { CalculatorsHubPage, DebtsModule, EquitiesModule, InsuranceModule } from './pages/app/CalcHub'
+import { EmergencyPage } from './pages/app/Emergency'
 import { PlanBPage } from './pages/app/PlanB'
 import { RescuePage } from './pages/app/Rescue'
-import { CalculatorsPage } from './pages/app/Calculators'
-import { AdvisorPage, AlertsPage, FinancesPage, GoalsPage, ImportPage, ProfilePage, SettingsPage, TaxesPage } from './pages/app/Tools'
+import { AdvisorPage, AlertsPage, FinancesPage, GoalsPage, ProfilePage, SettingsPage } from './pages/app/Tools'
 import type { PageProps } from './pages/types'
 import { StoreProvider } from './state/store'
 import { useStore } from './state/useStore'
@@ -61,13 +61,15 @@ function Screens() {
   const [route, navigate] = useRoute()
   const auth = useAuth()
   const { plan, text, accountState } = useStore()
+  const nav = useShellCopy().nav
 
   useEffect(() => {
     if (auth.status === 'anonymous' && PRIVATE_ROUTES.includes(route)) navigate('login')
     if (auth.status === 'authenticated' && accountState === 'ready' && SIGNED_OUT_ONLY.includes(route)) {
-      navigate(plan ? 'dashboard' : 'onboarding')
+      // Straight to the homepage: nothing has to be entered first. Guided setup stays available from there.
+      navigate('dashboard')
     }
-  }, [auth.status, accountState, route, plan, navigate])
+  }, [auth.status, accountState, route, navigate])
 
   // The reset link works without a plan: it comes from an e-mail.
   if (route === 'reset-password') return <ResetPasswordPage navigate={navigate} />
@@ -116,16 +118,16 @@ function Screens() {
       return <AppPage route={route} navigate={navigate}><FinancesPage navigate={navigate} /></AppPage>
     case 'goals':
       return <AppPage route={route} navigate={navigate}><GoalsPage navigate={navigate} /></AppPage>
-    case 'assets':
-      return <AppPage route={route} navigate={navigate}><AssetsPage /></AppPage>
-    case 'debts':
-      return <AppPage route={route} navigate={navigate}><DebtsPage /></AppPage>
-    case 'insurance':
-      return <AppPage route={route} navigate={navigate}><InsurancePage /></AppPage>
-    case 'taxes':
-      return <AppPage route={route} navigate={navigate}><TaxesPage /></AppPage>
     case 'calculators':
-      return <AppPage route={route} navigate={navigate}><CalculatorsPage /></AppPage>
+      return <AppPage route={route} navigate={navigate}><CalculatorsHubPage navigate={navigate} /></AppPage>
+    case 'insurance':
+      return <AppPage route={route} navigate={navigate}><InsuranceModule navigate={navigate} title={nav.insurance} /></AppPage>
+    case 'debts':
+      return <AppPage route={route} navigate={navigate}><DebtsModule navigate={navigate} title={nav.debts} /></AppPage>
+    case 'equities':
+      return <AppPage route={route} navigate={navigate}><EquitiesModule navigate={navigate} title={nav.equities} /></AppPage>
+    case 'emergency':
+      return <AppPage route={route} navigate={navigate}><EmergencyPage /></AppPage>
     case 'outlook-household':
       return <AppPage route={route} navigate={navigate}><HouseholdTrajectoryPage /></AppPage>
     case 'outlook-investment':
@@ -146,8 +148,6 @@ function Screens() {
       return <AppPage route={route} navigate={navigate}><PlanBPage /></AppPage>
     case 'advisor':
       return <AppPage route={route} navigate={navigate}><AdvisorPage /></AppPage>
-    case 'import':
-      return <AppPage route={route} navigate={navigate}><ImportPage /></AppPage>
     case 'alerts':
       return <AppPage route={route} navigate={navigate}><AlertsPage /></AppPage>
     case 'settings':

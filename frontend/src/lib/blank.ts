@@ -12,7 +12,7 @@ export function currentMonth(now: Date = new Date()): string {
  * An empty plan to be filled in by the person. It holds a structure and zeros only: no
  * amounts, goals or names are invented. The backend still decides every outcome.
  */
-export function blankPlan(asOf: string = currentMonth(), name = 'My household'): Plan {
+export function blankPlan(asOf: string = currentMonth(), name = 'My household', inflation = '0.000000'): Plan {
   return {
     name,
     as_of: asOf,
@@ -28,13 +28,20 @@ export function blankPlan(asOf: string = currentMonth(), name = 'My household'):
     unassigned_savings: '0.00',
     goals: [],
     assumptions: {
-      general_inflation_annual: '0.000000',
+      general_inflation_annual: inflation,
       savings_return_annual: '0.000000',
       income_growth_annual: '0.000000',
       expense_growth_annual: '0.000000',
     },
     fix_limits: { extra_savings_cap_pct_of_income: '0.2000' },
   }
+}
+
+/** True when nothing has been entered yet: no goals, no income and no spending. Nothing is invented to fill the gap. */
+export function isBlankPlan(plan: Plan): boolean {
+  const income = plan.income_streams.some((stream) => Number(stream.monthly_net) > 0 || Number(stream.amount ?? 0) > 0)
+  const spending = (plan.expenses ?? []).some((expense) => Number(expense.monthly) > 0)
+  return plan.goals.length === 0 && !income && !spending
 }
 
 export function hasGoals(plan: Plan | null): plan is Plan {

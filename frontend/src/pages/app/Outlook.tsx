@@ -33,8 +33,19 @@ function useHorizon() {
 /** Runs `render` once the plan and its month-by-month result are there. */
 function WithProjection({ children }: { children: (plan: Plan, result: ProjectionResult) => ReactNode }) {
   const m = useModulesCopy()
-  const { plan, projection } = useStore()
+  const { plan, projection, text } = useStore()
   if (!plan) return <Notice>{m.common.needsPlan}</Notice>
+  // With no goals there is nothing to project: say so, rather than waiting on a result that will not come.
+  if (plan.goals.length === 0) {
+    return (
+      <Panel title={text.needGoals.title}>
+        <p className="text-muted">{text.needGoals.body}</p>
+        <a href="#/dreams" className="min-h-12 self-start rounded-xl bg-brand px-6 py-3 font-semibold text-white">
+          {text.needGoals.action}
+        </a>
+      </Panel>
+    )
+  }
   return <Loaded remote={projection}>{(result) => children(plan, result)}</Loaded>
 }
 

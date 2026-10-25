@@ -35,6 +35,8 @@ class User(Base):
     phone_number = Column(String(50), nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
     is_verified = Column(Boolean, default=False, nullable=False)
+    # The person's own default annual inflation assumption. NULL until they set it.
+    default_inflation_annual = Column(Numeric(8, 6), nullable=True)
     created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
     updated_at = Column(
         DateTime(timezone=True), default=_now_utc, onupdate=_now_utc, nullable=False

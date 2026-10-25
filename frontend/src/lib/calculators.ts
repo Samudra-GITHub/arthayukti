@@ -63,7 +63,7 @@ export function currentMonth(now = new Date()): string {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
 }
 
-export function blankInvestment(startMonth: string = currentMonth()): InvestmentDraft {
+export function blankInvestment(startMonth: string = currentMonth(), inflationPercent = '0'): InvestmentDraft {
   return {
     id: newId('inv'),
     name: '',
@@ -77,15 +77,15 @@ export function blankInvestment(startMonth: string = currentMonth()): Investment
     growthYears: '10',
     growthPercent: '12',
     taxPercent: '0',
-    inflationPercent: '0',
+    inflationPercent,
     afterAction: '',
     reinvestPercent: '',
     include: true,
   }
 }
 
-export function blankCalculator(): CalculatorDraft {
-  return { mode: 'individual', commonDate: '', investments: [{ ...blankInvestment(), name: 'Investment 1' }] }
+export function blankCalculator(inflationPercent = '0'): CalculatorDraft {
+  return { mode: 'individual', commonDate: '', investments: [{ ...blankInvestment(undefined, inflationPercent), name: 'Investment 1' }] }
 }
 
 /**

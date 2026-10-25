@@ -47,7 +47,7 @@ describe('the Income page', () => {
   it('shows the server projection: total, chart values and the year table agree', async () => {
     const { calls } = backend()
     render(<App />)
-    expect(await screen.findByRole('heading', { name: 'Your income, year by year.' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Your Incomes' })).toBeInTheDocument()
     expect((await screen.findAllByText('₹12,50,000')).length).toBeGreaterThan(0) // hero total (and the last cumulative row)
     const table = await screen.findByRole('table', { name: 'Year by year' })
     expect(within(table).getByText('₹6,50,000')).toBeInTheDocument()
@@ -68,7 +68,7 @@ describe('the Income page', () => {
   it('lets a fifth stream be added and sends the edited plan, not the saved one', async () => {
     const { calls } = backend()
     render(<App />)
-    await screen.findByRole('heading', { name: 'Your income, year by year.' })
+    await screen.findByRole('heading', { name: 'Your Incomes' })
     const before = screen.queryAllByLabelText('Name').length
     fireEvent.click(screen.getByRole('button', { name: 'Add income stream' }))
     // Until the new stream is valid it is not sent: the page asks for the marked fields.
@@ -87,7 +87,7 @@ describe('the Income page', () => {
   it('checks a raise before using it: it must come after the first year', async () => {
     backend()
     render(<App />)
-    await screen.findByRole('heading', { name: 'Your income, year by year.' })
+    await screen.findByRole('heading', { name: 'Your Incomes' })
     fireEvent.click(screen.getAllByRole('button', { name: 'Edit with a schedule' })[0])
     fireEvent.click(screen.getAllByRole('button', { name: 'Add a raise' })[0])
     fireEvent.change(screen.getByLabelText('From year 1'), { target: { value: '2020' } })

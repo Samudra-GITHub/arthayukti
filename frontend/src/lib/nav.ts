@@ -1,21 +1,4 @@
-import {
-  Bell,
-  Bot,
-  Calculator,
-  Building2,
-  ChartLine,
-  FileUp,
-  Gauge,
-  HandCoins,
-  House,
-  Landmark,
-  Receipt,
-  Settings,
-  ShieldCheck,
-  Target,
-  Users,
-  type LucideIcon,
-} from 'lucide-react'
+import { Bell, Bot, Calculator, ChartLine, Gauge, HandCoins, House, LifeBuoy, PiggyBank, Settings, Target, Users, type LucideIcon } from 'lucide-react'
 import type { ShellCopy } from '../i18n/shell'
 import type { Route } from './route'
 
@@ -31,12 +14,16 @@ export const NAV_BEFORE_OUTLOOK: NavItem[] = [
   { route: 'dashboard', key: 'dashboard', icon: Gauge, covers: [] },
   { route: 'profile', key: 'profile', icon: Users, covers: [] },
   { route: 'finances', key: 'finances', icon: HandCoins, covers: ['money-in', 'money-out'] },
-  { route: 'goals', key: 'goals', icon: Target, covers: ['dreams', 'plan', 'what-if', 'fixes', 'compare', 'tradeoffs', 'rescue', 'plan-b'] },
-  { route: 'assets', key: 'assets', icon: Building2, covers: [] },
-  { route: 'debts', key: 'debts', icon: Landmark, covers: [] },
-  { route: 'insurance', key: 'insurance', icon: ShieldCheck, covers: [] },
-  { route: 'taxes', key: 'taxes', icon: Receipt, covers: [] },
-  { route: 'calculators', key: 'calculators', icon: Calculator, covers: [] },
+  { route: 'calculators', key: 'calculators', icon: Calculator, covers: ['insurance', 'debts', 'equities'] },
+  { route: 'emergency', key: 'emergency', icon: PiggyBank, covers: [] },
+  { route: 'goals', key: 'goals', icon: Target, covers: ['dreams', 'plan', 'what-if', 'fixes', 'compare', 'tradeoffs'] },
+]
+
+/** The three calculator modules, shown under Calculators. */
+export const CALCULATOR_ITEMS: { route: Route; key: 'insurance' | 'debts' | 'equities' }[] = [
+  { route: 'insurance', key: 'insurance' },
+  { route: 'debts', key: 'debts' },
+  { route: 'equities', key: 'equities' },
 ]
 
 export const OUTLOOK_ITEMS: { route: Route; key: keyof ShellCopy['nav']['outlookItems'] }[] = [
@@ -52,8 +39,8 @@ export const OUTLOOK_ITEMS: { route: Route; key: keyof ShellCopy['nav']['outlook
 export const OUTLOOK_ICON = ChartLine
 
 export const NAV_AFTER_OUTLOOK: NavItem[] = [
+  { route: 'plan-b', key: 'planb', icon: LifeBuoy, covers: ['rescue'] },
   { route: 'advisor', key: 'advisor', icon: Bot, covers: [] },
-  { route: 'import', key: 'import', icon: FileUp, covers: [] },
   { route: 'alerts', key: 'alerts', icon: Bell, covers: [] },
   { route: 'settings', key: 'settings', icon: Settings, covers: [] },
 ]
