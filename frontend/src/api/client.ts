@@ -73,6 +73,8 @@ import type {
   StrategyComparisonResponse,
   AIStatus,
   SituationDraft,
+  TrajectoryRequest,
+  TrajectoryResult,
 } from './types'
 
 const BASE = import.meta.env.VITE_API_BASE_URL ?? ''
@@ -228,6 +230,8 @@ export const api = {
     return response.blob()
   },
   debtTrajectory: (signal?: AbortSignal) => get<DebtTrajectory>('/debt/trajectory', signal),
+  // Financial Trajectory
+  trajectory: (body: TrajectoryRequest, signal?: AbortSignal) => post<TrajectoryResult>('/trajectory/project', body, signal),
   // Holdings ledger
   holdingTransactions: (holdingId: string, signal?: AbortSignal) =>
     get<HoldingTransaction[]>(`/financials/investments/${holdingId}/transactions`, signal),

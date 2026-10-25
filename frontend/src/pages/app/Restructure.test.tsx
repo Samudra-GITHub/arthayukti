@@ -57,10 +57,10 @@ describe('navigation', () => {
     render(<App />)
     await screen.findByRole('heading', { name: 'Where you stand' })
     const text = screen.getAllByRole('navigation', { name: 'Main menu' }).map((n) => n.textContent ?? '').join(' ')
-    for (const label of ['Dashboard', 'User Profile', 'Income and Expenditures', 'Calculators', 'Insurance', 'Debts', 'Equities', 'Emergency Funds', 'Financial goals', 'Financial outlook', 'Plan B and Rescue', 'Settings']) {
+    for (const label of ['Dashboard', 'User Profile', 'Income and Expenditures', 'Insurance', 'Debts', 'Equities', 'Emergency Funds', 'Financial goals', 'Financial outlook', 'Plan B and Rescue', 'Settings']) {
       expect(text).toContain(label)
     }
-    for (const gone of ['Taxes', 'Import & transactions', 'Household profile', 'Assets & investments', 'Income & expenses']) {
+    for (const gone of ['Calculators', 'Taxes', 'Import & transactions', 'Household profile', 'Assets & investments', 'Income & expenses']) {
       expect(text).not.toContain(gone)
     }
   })
@@ -70,7 +70,7 @@ describe('navigation', () => {
     expect(parseRoute('#/import')).toBe('finances')
     expect(parseRoute('#/taxes')).toBe('dashboard')
     expect(parseRoute('#/emergency')).toBe('emergency')
-    expect(parseRoute('#/calculators')).toBe('calculators')
+    expect(parseRoute('#/calculators')).toBe('dashboard') // there is no Calculators section: Insurance, Debts and Equities stand alone
   })
 
   it('opens Plan B from its own navigation entry', async () => {
@@ -82,27 +82,33 @@ describe('navigation', () => {
 })
 
 describe('Income and Expenditures', () => {
-  it('has the Calculators shortcut, the incomes heading and the transactions section on one page', async () => {
+  it('has the incomes heading and the transactions section on one page, and no Calculators shortcut', async () => {
     window.location.hash = '/finances'
     backend({ 'GET /financials/transactions': () => json([]), 'GET /financials/accounts': () => json([]) })
     render(<App />)
-    expect(await screen.findByRole('heading', { name: 'Calculators' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Opens*Calculators/ })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Your Incomes' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Save transaction' })).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: /Opens*Calculators/ }))
-    expect(await screen.findByText('Three tools, each backed by the same calculation engine as the rest of the app. Every figure is worked out from what you enter.')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Opens*Calculators/ })).not.toBeInTheDocument()
   })
 })
 
-describe('Calculators', () => {
-  it('lists Insurance, Debts and Equities and opens each module', async () => {
-    window.location.hash = '/calculators'
-    backend({ 'GET /financials/liabilities': () => json([]), 'GET /financials/investments': () => json([]), 'GET /insurance/policies': () => json([]), 'GET /insurance/dashboard': () => json({ total_effective_cover: '0.00', next_increase_date: null, next_increase_amount: null, upcoming_alerts_count: 0, policies: [] }) })
+describe('Insurance, Debts and Equities', () => {
+  it('are separate areas of their own, each opening directly with no Calculators section above it', async () => {
+    window.location.hash = '/debts'
+    backend({ 'GET /financials/liabilities': () => json([]) })
     render(<App />)
-    for (const title of ['Insurance', 'Debts', 'Equities']) expect(await screen.findByRole('heading', { name: title })).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: /Opens*Debts/ }))
     expect(await screen.findByRole('heading', { name: 'Loan repayment calculator' })).toBeInTheDocument()
-    expect(window.location.hash).toBe('#/debts')
+    expect(screen.queryByText('Back to Calculators')).not.toBeInTheDocument()
+    const menu = screen.getAllByRole('navigation', { name: 'Main menu' })[0]
+    for (const name of ['Insurance', 'Debts', 'Equities']) expect(within(menu).getByRole('button', { name })).toBeInTheDocument()
+    expect(within(menu).queryByRole('button', { name: 'Calculators' })).not.toBeInTheDocument()
+  })
+
+  it('opens Insurance on its own', async () => {
+    window.location.hash = '/insurance'
+    backend({ 'GET /insurance/policies': () => json([]), 'GET /insurance/dashboard': () => json({ effective_health_sum_insured: '0.00', health_ncb_total: '0.00', maximum_possible_cover: null, next_increase_amount: null, next_increase_date: null, total_base_cover: '0.00', total_cover_growth: '0.00', total_effective_cover: '0.00', upcoming_alerts_count: 0 }) })
+    render(<App />)
+    expect(await screen.findByText(/Cover and premiums are exactly what you enter/)).toBeInTheDocument()
   })
 
   it('Equities shows the investment calculator first and the holdings on request', async () => {
@@ -333,7 +339,7 @@ describe('a new account', () => {
     })
     render(<App />)
     expect(await screen.findByRole('heading', { name: 'Welcome. Start with whatever you know.' })).toBeInTheDocument()
-    for (const name of ['Income and Expenditures', 'Calculators', 'Emergency Funds', 'Goals', 'Financial outlook']) {
+    for (const name of ['Income and Expenditures', 'Insurance', 'Debts', 'Equities', 'Emergency Funds', 'Goals', 'Financial outlook']) {
       expect(screen.getAllByRole('heading', { name }).length).toBeGreaterThan(0)
     }
     expect(screen.getByRole('button', { name: 'Start guided setup' })).toBeInTheDocument()

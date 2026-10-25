@@ -23,28 +23,37 @@ def _step_up(rate: Decimal, t: int) -> Decimal:
     return (1 + rate) ** ((t - 1) // 12)
 
 
+def stream_amount(resolved: Resolved, stream, t: int, income_factor: Decimal) -> Decimal | None:
+    """One income stream's rounded take-home for plan month `t`, or None when it is not running that month.
+
+    The surplus, the goals and the income projection all read this, so they cannot disagree."""
+    year = (resolved.as_of_index + t - 1) // 12
+    if stream.start_year is not None:
+        # Scheduled stream: calendar years, its own growth and step-ups; plan-wide growth never applies.
+        base = resolved.stream_bases.get(stream.id, {}).get(year)
+        if base is None:
+            return None
+        amount = base
+    else:
+        if stream.ends_after is not None:
+            last_t = month_to_index(stream.ends_after) - resolved.as_of_index + 1
+            if t > last_t:
+                return None
+        amount = stream.monthly_net * income_factor
+    for cut in resolved.income_cuts:
+        if cut.from_t <= t <= cut.to_t and cut.stream_id in (None, stream.id):
+            amount *= cut.multiplier
+    return quantize(amount)
+
+
 def month_flows(resolved: Resolved, t: int) -> Flows:
     income_factor = _step_up(resolved.income_growth, t)
 
-    year = (resolved.as_of_index + t - 1) // 12
     income = Decimal(0)
     for stream in resolved.streams:
-        if stream.start_year is not None:
-            # Scheduled stream: calendar years, its own growth and step-ups; plan-wide growth never applies.
-            base = resolved.stream_bases.get(stream.id, {}).get(year)
-            if base is None:
-                continue
-            amount = base
-        else:
-            if stream.ends_after is not None:
-                last_t = month_to_index(stream.ends_after) - resolved.as_of_index + 1
-                if t > last_t:
-                    continue
-            amount = stream.monthly_net * income_factor
-        for cut in resolved.income_cuts:
-            if cut.from_t <= t <= cut.to_t and cut.stream_id in (None, stream.id):
-                amount *= cut.multiplier
-        income += quantize(amount)
+        paid = stream_amount(resolved, stream, t, income_factor)
+        if paid is not None:
+            income += paid
 
     expenses = Decimal(0)
     for item in resolved.expenses:

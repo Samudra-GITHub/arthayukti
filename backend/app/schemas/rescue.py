@@ -3,14 +3,14 @@ from typing import Annotated, Literal
 
 from pydantic import Field, StringConstraints
 
-from app.schemas.plan import Plan
+from app.schemas.plan import PlanWithGoals
 from app.schemas.results import ProjectionSummary
 from app.schemas.scenario import Scenario
 from app.schemas.types import Amount, ApiModel, Money, Rate
 
 
 class RescueRequest(ApiModel):
-    plan: Plan
+    plan: PlanWithGoals
     scenario: Scenario | None = None
     avoid_new_debt: bool = True
     min_emergency_reserve: Money = Decimal("0.00")
@@ -59,7 +59,7 @@ class AIConsultRequest(ApiModel):
     user_prompt: Annotated[
         str, StringConstraints(strip_whitespace=True, min_length=1, max_length=1000)
     ]
-    plan: Plan
+    plan: PlanWithGoals
     scenario: Scenario | None = None
 
 

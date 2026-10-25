@@ -7,6 +7,7 @@ from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BASE_DIR = Path(__file__).resolve().parents[2]
+BACKEND_DIR = Path(__file__).resolve().parents[1]
 
 logger = logging.getLogger("arthayukti")
 
@@ -23,7 +24,7 @@ KNOWN_PLACEHOLDER_SECRETS = {
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=str(BASE_DIR / ".env"),
+        env_file=(str(BASE_DIR / ".env"), str(BACKEND_DIR / ".env")),
         env_file_encoding="utf-8",
         extra="ignore",
     )
@@ -57,7 +58,7 @@ class Settings(BaseSettings):
     # Optional AI help (Gemini). Backend only: the key is never sent to the browser. Empty means the AI
     # features report themselves unavailable and everything else works unchanged.
     GEMINI_API_KEY: str = ""
-    GEMINI_MODEL: str = "gemini-2.5-flash"
+    GEMINI_MODEL: str = "gemini-3.5-flash-lite"
     GEMINI_TIMEOUT_SECONDS: float = 20.0
     AI_MAX_INPUT_CHARS: int = 1500
 

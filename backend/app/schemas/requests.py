@@ -1,28 +1,28 @@
 from pydantic import Field
 
-from app.schemas.plan import Plan
+from app.schemas.plan import Plan, PlanWithGoals
 from app.schemas.scenario import Scenario
 from app.schemas.types import ApiModel, Id, Label
 
 
 class ProjectionRequest(ApiModel):
-    plan: Plan
+    plan: PlanWithGoals
     scenario: Scenario | None = None
     include_monthly: bool = True
 
 
 class TradeoffRequest(ApiModel):
-    plan: Plan
+    plan: PlanWithGoals
     scenario: Scenario | None = None
 
 
 class FixRequest(ApiModel):
-    plan: Plan
+    plan: PlanWithGoals
     scenario: Scenario | None = None
 
 
 class CompareRequest(ApiModel):
-    plan: Plan
+    plan: PlanWithGoals
     scenarios: list[Scenario] = Field(min_length=2, max_length=3)
 
 

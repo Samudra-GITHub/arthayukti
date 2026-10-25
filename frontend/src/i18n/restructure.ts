@@ -1,22 +1,6 @@
-/** Words for the Calculators hub, the Debts calculator, Emergency Funds, the inflation setting and first-time guidance. */
+/** Words for the Insurance, Debts and Equities modules, the Debts calculator, Emergency Funds, the inflation setting and first-time guidance. */
 
 const en = {
-  hub: {
-    title: 'Calculators',
-    intro: 'Three tools, each backed by the same calculation engine as the rest of the app. Every figure is worked out from what you enter.',
-    open: 'Open',
-    cards: {
-      insurance: { title: 'Insurance', body: 'Your policies, premiums, cover over time and renewal reminders.' },
-      debts: { title: 'Debts', body: 'Work out a loan repayment, see what extra payments save, and compare repayment orders.' },
-      equities: { title: 'Equities', body: 'Project a lump sum or regular investing at the growth you assume, after tax and inflation.' },
-    },
-    back: 'Back to Calculators',
-    path: 'Calculators',
-  },
-  shortcut: {
-    title: 'Calculators',
-    body: 'Work out a loan, an investment or your insurance cover from your own numbers.',
-  },
   equities: {
     calculator: 'Investment calculator',
     holdings: 'Holdings and balances',
@@ -134,7 +118,9 @@ const en = {
     body: 'Nothing is filled in for you, and you do not have to do everything at once. Add your numbers when you are ready, in any order.',
     steps: [
       { route: 'finances', title: 'Income and Expenditures', body: 'Your income and your monthly spending.' },
-      { route: 'calculators', title: 'Calculators', body: 'Insurance, debts and equities.' },
+      { route: 'insurance', title: 'Insurance', body: 'Your policies, premiums and cover.' },
+      { route: 'debts', title: 'Debts', body: 'Loans and what you still owe.' },
+      { route: 'equities', title: 'Equities', body: 'Your investments and holdings.' },
       { route: 'emergency', title: 'Emergency Funds', body: 'A reserve for the unexpected.' },
       { route: 'goals', title: 'Goals', body: 'What you are saving for, and when.' },
       { route: 'outlook-feasibility', title: 'Financial outlook', body: 'See where your goals stand once they are in.' },
@@ -170,7 +156,7 @@ const en = {
     empty: 'No debts with a balance are recorded. Add them below.',
     failed: 'The trajectory could not be loaded.',
     retry: 'Try again',
-    separate: 'These come from the debts you record under Calculators, Debts. The loan payments inside your plan are entered separately, so check the two do not describe the same loan.',
+    separate: 'These come from the debts you record under Debts. The loan payments inside your plan are entered separately, so check the two do not describe the same loan.',
   },
   spending: {
     title: 'Your Expenditures',
@@ -295,22 +281,6 @@ const en = {
 export type RestructureCopy = typeof en
 
 const hi: RestructureCopy = {
-  hub: {
-    title: 'कैलकुलेटर',
-    intro: 'तीन औज़ार, हर एक वही गणना इंजन इस्तेमाल करता है जो ऐप के बाकी हिस्से करते हैं। हर आँकड़ा आपके भरे हुए मानों से निकलता है।',
-    open: 'खोलें',
-    cards: {
-      insurance: { title: 'बीमा', body: 'आपकी पॉलिसियाँ, प्रीमियम, समय के साथ कवर और नवीनीकरण की याद।' },
-      debts: { title: 'कर्ज़', body: 'कर्ज़ की किस्त निकालें, अतिरिक्त भुगतान से बचत देखें, और चुकाने का क्रम तुलना करें।' },
-      equities: { title: 'इक्विटी', body: 'एकमुश्त या नियमित निवेश को आपकी मानी हुई बढ़त पर, कर और महँगाई के बाद आँकें।' },
-    },
-    back: 'कैलकुलेटर पर वापस',
-    path: 'कैलकुलेटर',
-  },
-  shortcut: {
-    title: 'कैलकुलेटर',
-    body: 'अपने आँकड़ों से कर्ज़, निवेश या बीमा कवर का हिसाब लगाएँ।',
-  },
   equities: {
     calculator: 'निवेश कैलकुलेटर',
     holdings: 'होल्डिंग और बैलेंस',
@@ -428,7 +398,9 @@ const hi: RestructureCopy = {
     body: 'आपके लिए कुछ भी पहले से नहीं भरा गया है, और सब कुछ एक साथ नहीं करना है। तैयार हों तब, किसी भी क्रम में अपने आँकड़े जोड़ें।',
     steps: [
       { route: 'finances', title: 'आय और व्यय', body: 'आपकी आय और मासिक खर्च।' },
-      { route: 'calculators', title: 'कैलकुलेटर', body: 'बीमा, कर्ज़ और इक्विटी।' },
+      { route: 'insurance', title: 'बीमा', body: 'आपकी पॉलिसियाँ, प्रीमियम और कवर।' },
+      { route: 'debts', title: 'कर्ज़', body: 'लोन और जो अभी बाकी है।' },
+      { route: 'equities', title: 'इक्विटी', body: 'आपके निवेश और होल्डिंग।' },
       { route: 'emergency', title: 'आपातकालीन निधि', body: 'अनहोनी के लिए रिज़र्व।' },
       { route: 'goals', title: 'लक्ष्य', body: 'आप किसके लिए बचा रहे हैं, और कब तक।' },
       { route: 'outlook-feasibility', title: 'आर्थिक अनुमान', body: 'आँकड़े भरने के बाद देखें लक्ष्य कहाँ हैं।' },
@@ -464,7 +436,7 @@ const hi: RestructureCopy = {
     empty: 'बैलेंस वाला कोई कर्ज़ दर्ज नहीं है। नीचे जोड़ें।',
     failed: 'अनुमान नहीं आ सका।',
     retry: 'फिर कोशिश करें',
-    separate: 'ये उन कर्ज़ों से आते हैं जो आप कैलकुलेटर, कर्ज़ में दर्ज करते हैं। आपकी योजना के भीतर के लोन भुगतान अलग से भरे जाते हैं, इसलिए देख लें कि दोनों एक ही लोन का वर्णन तो नहीं कर रहे।',
+    separate: 'ये उन कर्ज़ों से आते हैं जो आप कर्ज़ में दर्ज करते हैं। आपकी योजना के भीतर के लोन भुगतान अलग से भरे जाते हैं, इसलिए देख लें कि दोनों एक ही लोन का वर्णन तो नहीं कर रहे।',
   },
   spending: {
     title: 'आपके खर्च',

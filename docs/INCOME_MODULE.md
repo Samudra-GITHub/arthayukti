@@ -19,6 +19,11 @@ Money already received is recorded separately as credit transactions and never c
 - Start year: from January; not before the plan's first year. End year: inclusive, through December.
 - Growth: optional, 0 to 30 %, compounded on the first month of each calendar year after the start year.
   Blank and 0 both mean no automatic increase.
+- Raise start year (`growth_start_year`, optional): the first calendar year the raise is added; it must be after
+  the start year (the amount entered is what is earned in the start year), not after the end year, and needs an
+  annual raise. Before it the income stays flat. Left blank, the raise is first added the year after the start year
+  (the behaviour before this field existed). The raise then repeats every year. Example: 12,00,000 a year with a
+  10% raise starting 2028 gives 12,00,000 in 2027, 13,20,000 in 2028 and 14,52,000 in 2029.
 - Step-up: from January of its year the base is replaced by the new amount (same frequency as the stream);
   growth then compounds from it. A step-up wins over growth in the same year. One per year, strictly after
   the start year and not after the end year.
@@ -29,3 +34,14 @@ Money already received is recorded separately as credit transactions and never c
 `engine/flows.month_flows` produces monthly income. `engine/income.project_income` sums those months by
 calendar year, and `POST /income/projection` (and `/csv`) return it. The dashboard, chart, table, CSV and
 the planner all read this same series.
+
+The response also carries `sources` (each income's entered amount, monthly equivalent, raise, raise start year,
+step-ups and its amount per year; the per-source years add up to the yearly totals), `plan_growth_annual` and a
+list of `conventions` to show beside the table. `stream_amount` in `engine/flows.py` is the one function that gives
+a stream's amount for a month, so the surplus, the goals and this projection cannot disagree.
+
+## Limits
+- The projection period is at most 50 years (600 months), the engine's horizon limit.
+- A plan can be saved with no goal, so income can be entered first. Goal-based calculations (projections, fixes,
+  trade-offs, rescue, recommendations) still need at least one goal and return a 422 asking for one; the income and
+  spending projections do not.

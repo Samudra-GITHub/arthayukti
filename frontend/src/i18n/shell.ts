@@ -9,6 +9,7 @@ export interface ShellCopy {
     profile: string
     finances: string
     goals: string
+    trajectory: string
     debts: string
     insurance: string
     equities: string
@@ -111,6 +112,7 @@ export const shellCopy: Record<'en' | 'hi', ShellCopy> = {
       profile: 'User Profile',
       finances: 'Income and Expenditures',
       goals: 'Financial goals',
+      trajectory: 'Financial Trajectory',
       debts: 'Debts',
       insurance: 'Insurance',
       equities: 'Equities',
@@ -217,6 +219,7 @@ export const shellCopy: Record<'en' | 'hi', ShellCopy> = {
       profile: 'उपयोगकर्ता प्रोफ़ाइल',
       finances: 'आय और व्यय',
       goals: 'आर्थिक लक्ष्य',
+      trajectory: 'वित्तीय प्रक्षेप-पथ',
       debts: 'कर्ज़',
       insurance: 'बीमा',
       equities: 'इक्विटी',

@@ -1,7 +1,7 @@
 from decimal import Decimal
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import Field, model_validator
+from pydantic import AfterValidator, Field, model_validator
 
 from app.schemas.types import (
     ApiModel,
@@ -42,7 +42,8 @@ class IncomeStream(ApiModel):
 
     Two forms. A legacy stream has only `monthly_net` and the optional month `ends_after`; the plan-wide
     `income_growth_annual` applies to it exactly as before. A scheduled stream has `start_year` and
-    `amount` + `frequency`, an optional inclusive `end_year`, its own optional `annual_growth`, and
+    `amount` + `frequency`, an optional inclusive `end_year`, its own optional `annual_growth` (a raise that
+    repeats every year), an optional `growth_start_year` (the first calendar year the raise is added) and
     optional `step_ups`; the plan-wide growth is never applied to it. For scheduled streams `monthly_net`
     is derived (the initial amount's monthly equivalent) and any value sent is replaced.
     """
@@ -56,6 +57,7 @@ class IncomeStream(ApiModel):
     start_year: int | None = Field(default=None, ge=YEAR_MIN, le=YEAR_MAX)
     end_year: int | None = Field(default=None, ge=YEAR_MIN, le=YEAR_MAX)
     annual_growth: Rate | None = None
+    growth_start_year: int | None = Field(default=None, ge=YEAR_MIN, le=YEAR_MAX)
     step_ups: list[IncomeStepUp] = Field(default_factory=list, max_length=MAX_STEP_UPS_PER_STREAM)
 
     @property
@@ -65,11 +67,11 @@ class IncomeStream(ApiModel):
     @model_validator(mode="after")
     def _check_schedule(self) -> "IncomeStream":
         if self.start_year is None:
-            extras = (self.amount, self.end_year, self.annual_growth)
+            extras = (self.amount, self.end_year, self.annual_growth, self.growth_start_year)
             if any(x is not None for x in extras) or self.step_ups or self.frequency != "monthly":
                 raise ValueError(
-                    f"income stream {self.id}: amount, frequency, end_year, annual_growth and step_ups "
-                    "need a start_year"
+                    f"income stream {self.id}: amount, frequency, end_year, annual_growth, growth_start_year "
+                    "and step_ups need a start_year"
                 )
             return self
         if self.amount is None:
@@ -78,6 +80,16 @@ class IncomeStream(ApiModel):
             raise ValueError(f"income stream {self.id}: use end_year, not ends_after, with start_year")
         if self.end_year is not None and self.end_year < self.start_year:
             raise ValueError(f"income stream {self.id}: end_year is before start_year")
+        if self.growth_start_year is not None:
+            if self.annual_growth is None:
+                raise ValueError(f"income stream {self.id}: a raise start year needs an annual raise")
+            if self.growth_start_year <= self.start_year:
+                raise ValueError(
+                    f"income stream {self.id}: the raise must start after the start year "
+                    "(the amount entered is what is earned in the start year)"
+                )
+            if self.end_year is not None and self.growth_start_year > self.end_year:
+                raise ValueError(f"income stream {self.id}: the raise starts after the end year")
         years = [step.year for step in self.step_ups]
         if len(set(years)) != len(years):
             raise ValueError(f"income stream {self.id}: only one step-up is allowed per year")
@@ -93,6 +105,12 @@ class IncomeStream(ApiModel):
                 raise ValueError(f"income stream {self.id}: a step-up falls after the end year")
         self.monthly_net = monthly_equivalent(self.amount, self.frequency)
         return self
+
+
+def _needs_goals(plan: "Plan") -> "Plan":
+    if not plan.goals:
+        raise ValueError("Add at least one goal before this can be worked out.")
+    return plan
 
 
 def monthly_equivalent(amount: Decimal, frequency: str) -> Decimal:
@@ -193,7 +211,8 @@ class Plan(ApiModel):
     expenses: list[Expense] = Field(default_factory=list, max_length=MAX_EXPENSE_LINES)
     commitments: list[Commitment] = Field(default_factory=list, max_length=6)
     unassigned_savings: Money = Decimal("0.00")
-    goals: list[Goal] = Field(min_length=1, max_length=8)
+    # A plan can be saved before any goal exists (income and spending come first); projecting it needs one.
+    goals: list[Goal] = Field(max_length=8)
     assumptions: Assumptions
     fix_limits: FixLimits = Field(default_factory=FixLimits)
 
@@ -230,3 +249,7 @@ class Plan(ApiModel):
 def _require_unique(kind: str, ids: list[str]) -> None:
     if len(set(ids)) != len(ids):
         raise ValueError(f"{kind} ids must be unique")
+
+
+# What the goal-based calculations take: a plan with at least one goal, checked at the request.
+PlanWithGoals = Annotated[Plan, AfterValidator(_needs_goals)]

@@ -333,3 +333,57 @@ def test_the_dependency_needs_a_key_and_a_sane_model_name(monkeypatch):
 def test_the_key_never_appears_in_the_api_contract_or_responses():
     schema = json.dumps(app.openapi())
     assert "GEMINI" not in schema and KEY not in schema
+
+
+def test_http_client_retries_transient_503_and_succeeds(monkeypatch):
+    calls = []
+
+    def urlopen(request, timeout):
+        calls.append(request)
+        if len(calls) == 1:
+            raise urllib.error.HTTPError("u", 503, "Unavailable", {}, None)
+        return _ok('{"retried": true}')
+
+    monkeypatch.setattr(gemini.urllib.request, "urlopen", urlopen)
+    client = HttpGeminiClient(KEY, "m", 2.0, max_retries=1, retry_delay=0.01)
+    res = client.generate_json("s", "u")
+    assert res == {"retried": True}
+    assert len(calls) == 2
+
+
+def test_http_client_does_not_retry_rate_limit_429(monkeypatch):
+    calls = []
+
+    def urlopen(request, timeout):
+        calls.append(request)
+        raise urllib.error.HTTPError("u", 429, "Too Many Requests", {}, None)
+
+    monkeypatch.setattr(gemini.urllib.request, "urlopen", urlopen)
+    client = HttpGeminiClient(KEY, "m", 2.0, max_retries=1, retry_delay=0.01)
+    with pytest.raises(AIFailure) as caught:
+        client.generate_json("s", "u")
+    assert caught.value.code == "ai_rate_limited"
+    assert len(calls) == 1
+
+
+def test_http_client_refuses_unsafe_finish_reason(monkeypatch):
+    payload = json.dumps({
+        "candidates": [
+            {
+                "finishReason": "SAFETY",
+                "content": {"parts": [{"text": '{"bad": true}'}]},
+            }
+        ]
+    }).encode()
+    monkeypatch.setattr(gemini.urllib.request, "urlopen", lambda request, timeout: _Response(payload))
+    client = HttpGeminiClient(KEY, "m", 2.0)
+    with pytest.raises(AIFailure) as caught:
+        client.generate_json("s", "u")
+    assert caught.value.code == "ai_bad_response"
+
+
+def test_gemini_config_defaults_and_limits():
+    assert settings.GEMINI_TIMEOUT_SECONDS > 0
+    assert settings.AI_MAX_INPUT_CHARS == 1500
+    assert settings.GEMINI_MODEL in ("gemini-2.5-flash", "gemini-3.5-flash-lite")
+

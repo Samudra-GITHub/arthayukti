@@ -10,6 +10,7 @@ No third-party SDK: one HTTPS call with the standard library keeps the dependenc
 import json
 import logging
 import re
+import time
 import urllib.error
 import urllib.request
 from typing import Any, Protocol
@@ -40,10 +41,19 @@ class GeminiClient(Protocol):
 
 
 class HttpGeminiClient:
-    def __init__(self, api_key: str, model: str, timeout: float) -> None:
+    def __init__(
+        self,
+        api_key: str,
+        model: str,
+        timeout: float,
+        max_retries: int = 1,
+        retry_delay: float = 0.25,
+    ) -> None:
         self._key = api_key
         self._model = model
         self._timeout = timeout
+        self._max_retries = max_retries
+        self._retry_delay = retry_delay
 
     def generate_json(self, system: str, user: str) -> Any:
         body = {
@@ -61,25 +71,69 @@ class HttpGeminiClient:
             headers={"Content-Type": "application/json", "x-goog-api-key": self._key},
             method="POST",
         )
-        try:
-            with urllib.request.urlopen(request, timeout=self._timeout) as response:  # noqa: S310
-                raw = response.read(MAX_REPLY_BYTES + 1)
-        except urllib.error.HTTPError as error:
-            logger.warning("gemini request refused: http %s", error.code)
-            if error.code == 429:
-                raise AIFailure(429, "ai_rate_limited", "The AI service is busy. Try again in a minute.") from None
-            if error.code in (400, 401, 403, 404):
-                # Bad key, wrong model name or blocked project: an operator problem, not the person's.
-                raise AIFailure(503, "ai_unavailable", "AI help is not working on this server right now.") from None
-            raise AIFailure(502, "ai_unavailable", "The AI service had a problem. Try again later.") from None
-        except (urllib.error.URLError, TimeoutError, OSError) as error:
-            logger.warning("gemini request failed: %s", type(error).__name__)
-            raise AIFailure(504, "ai_timeout", "The AI service did not answer in time. Try again.") from None
+        total_attempts = 1 + max(0, self._max_retries)
+        raw = b""
+        for attempt in range(total_attempts):
+            try:
+                with urllib.request.urlopen(request, timeout=self._timeout) as response:  # noqa: S310
+                    raw = response.read(MAX_REPLY_BYTES + 1)
+                break
+            except urllib.error.HTTPError as error:
+                logger.warning(
+                    "gemini request refused: http %s (attempt %d/%d)",
+                    error.code,
+                    attempt + 1,
+                    total_attempts,
+                )
+                if error.code == 429:
+                    raise AIFailure(
+                        429, "ai_rate_limited", "The AI service is busy. Try again in a minute."
+                    ) from None
+                if error.code in (400, 401, 403, 404):
+                    # Bad key, wrong model name or blocked project: an operator problem, not the person's.
+                    raise AIFailure(
+                        503, "ai_unavailable", "AI help is not working on this server right now."
+                    ) from None
+                if error.code in (502, 503) and attempt < total_attempts - 1:
+                    time.sleep(self._retry_delay)
+                    continue
+                raise AIFailure(
+                    502, "ai_unavailable", "The AI service had a problem. Try again later."
+                ) from None
+            except TimeoutError as error:
+                logger.warning("gemini request timed out: %s", type(error).__name__)
+                raise AIFailure(
+                    504, "ai_timeout", "The AI service did not answer in time. Try again."
+                ) from None
+            except (urllib.error.URLError, OSError) as error:
+                logger.warning(
+                    "gemini request failed: %s (attempt %d/%d)",
+                    type(error).__name__,
+                    attempt + 1,
+                    total_attempts,
+                )
+                if attempt < total_attempts - 1:
+                    time.sleep(self._retry_delay)
+                    continue
+                raise AIFailure(
+                    504, "ai_timeout", "The AI service did not answer in time. Try again."
+                ) from None
+
         if len(raw) > MAX_REPLY_BYTES:
             raise AIFailure(502, "ai_bad_response", "The AI service sent an unusable answer.")
         try:
-            text = json.loads(raw)["candidates"][0]["content"]["parts"][0]["text"]
+            parsed = json.loads(raw)
+            candidate = parsed["candidates"][0]
+            finish_reason = candidate.get("finishReason")
+            if finish_reason and finish_reason not in ("STOP", "MAX_TOKENS"):
+                logger.warning("gemini generation stopped early: %s", finish_reason)
+                raise AIFailure(
+                    502, "ai_bad_response", "The AI service could not complete the response."
+                )
+            text = candidate["content"]["parts"][0]["text"]
             return json.loads(text)
+        except AIFailure:
+            raise
         except (ValueError, KeyError, IndexError, TypeError):
             logger.warning("gemini reply was not the expected JSON")
             raise AIFailure(502, "ai_bad_response", "The AI service sent an unusable answer.") from None

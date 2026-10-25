@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { Bell, Check, ChevronDown, ChevronsLeft, ChevronsRight, LogOut, Menu, X } from 'lucide-react'
 import { api } from '../api/client'
 import type { InsuranceReminderItem } from '../api/types'
-import { CALCULATOR_ITEMS, NAV_AFTER_OUTLOOK, NAV_BEFORE_OUTLOOK, OUTLOOK_ICON, OUTLOOK_ITEMS, titleFor, type NavItem } from '../lib/nav'
+import { NAV_AFTER_OUTLOOK, NAV_BEFORE_OUTLOOK, OUTLOOK_ICON, OUTLOOK_ITEMS, titleFor, type NavItem } from '../lib/nav'
 import type { Route } from '../lib/route'
 import { useAuth } from '../state/useAuth'
 import { useShellCopy } from '../state/useShellCopy'
@@ -33,10 +33,9 @@ function readCollapsed(): boolean {
 }
 
 /** Quick links in the pill bar at the top. */
-const TOP_LINKS: { route: Route; key: 'dashboard' | 'finances' | 'calculators' | 'goals' | 'outlook' }[] = [
+const TOP_LINKS: { route: Route; key: 'dashboard' | 'finances' | 'goals' | 'outlook' }[] = [
   { route: 'dashboard', key: 'dashboard' },
   { route: 'finances', key: 'finances' },
-  { route: 'calculators', key: 'calculators' },
   { route: 'goals', key: 'goals' },
   { route: 'outlook-household', key: 'outlook' },
 ]
@@ -154,22 +153,6 @@ export function AppShell({ route, navigate: goTo, speak, children }: ShellProps)
             <Icon size={20} aria-hidden="true" className="shrink-0" />
             <span className={compact ? 'sr-only' : 'truncate'}>{c.nav[item.key]}</span>
           </button>
-          {item.key === 'calculators' && !compact ? (
-            <ul className="mt-1 ml-6 flex flex-col gap-1 border-l border-line pl-3">
-              {CALCULATOR_ITEMS.map((module) => (
-                <li key={module.route}>
-                  <button
-                    type="button"
-                    onClick={() => navigate(module.route)}
-                    aria-current={route === module.route ? 'page' : undefined}
-                    className={`min-h-10 w-full rounded-xl px-4 text-left text-[14px] ${route === module.route ? 'bg-brand font-semibold text-white' : 'text-ink hover:bg-sand'}`}
-                  >
-                    {c.nav[module.key]}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : null}
         </li>
       )
     }
@@ -245,7 +228,6 @@ export function AppShell({ route, navigate: goTo, speak, children }: ShellProps)
                 route === item.route ||
                 (item.key === 'outlook' && outlookActive) ||
                 (item.key === 'finances' && ['money-in', 'money-out'].includes(route)) ||
-                (item.key === 'calculators' && CALCULATOR_ITEMS.some((module) => module.route === route)) ||
                 (item.key === 'goals' && ['dreams', 'plan', 'what-if', 'fixes', 'compare', 'tradeoffs'].includes(route))
               return (
                 <button

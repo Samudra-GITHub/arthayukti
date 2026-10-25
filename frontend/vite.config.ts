@@ -13,5 +13,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    // The guided-setup test walks every step and takes about five seconds on a busy machine.
+    testTimeout: 20000,
   },
 })

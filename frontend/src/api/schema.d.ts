@@ -1670,6 +1670,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/trajectory/project": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Project Trajectory
+         * @description One monthly timeline of cash, assets, liabilities, insurance and (when chosen) goals, from the person's own
+         *     records, with the assumptions, warnings and sources it rests on. Deterministic for the same records and request.
+         */
+        post: operations["project_trajectory_api_v1_trajectory_project_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2000,6 +2021,33 @@ export interface components {
              */
             token_type: string;
             user: components["schemas"]["UserProfile"];
+        };
+        /** Balances */
+        Balances: {
+            /** Cash */
+            cash: string;
+            /** Deposits And Investment Accounts */
+            deposits_and_investment_accounts: string;
+            /** Goal Funds */
+            goal_funds: string;
+            /** Insurance Fund Value */
+            insurance_fund_value: string;
+            /** Loans */
+            loans: string;
+            /** Market Investments */
+            market_investments: string;
+            /** Net Worth */
+            net_worth: string;
+            /** Physical And Other Assets */
+            physical_and_other_assets: string;
+            /** Retirement And Fixed Income */
+            retirement_and_fixed_income: string;
+            /** Total Assets */
+            total_assets: string;
+            /** Total Liabilities */
+            total_liabilities: string;
+            /** Unfunded Shortfall */
+            unfunded_shortfall: string;
         };
         /** Body_import_transactions_csv_api_v1_financials_transactions_import_post */
         Body_import_transactions_csv_api_v1_financials_transactions_import_post: {
@@ -2356,6 +2404,23 @@ export interface components {
             /** To Month */
             to_month?: string | null;
         };
+        /** Checkpoint */
+        Checkpoint: {
+            /** Age */
+            age: number | null;
+            /** Assets */
+            assets: string;
+            /** Cash */
+            cash: string;
+            /** Liabilities */
+            liabilities: string;
+            /** Month */
+            month: string;
+            /** Months Ahead */
+            months_ahead: number;
+            /** Net Worth */
+            net_worth: string;
+        };
         /**
          * Commitment
          * @description An existing fixed payment (for example an EMI) that stops after remaining_months.
@@ -2405,6 +2470,31 @@ export interface components {
             /** Results */
             results: components["schemas"]["CompareEntry"][];
         };
+        /** Comparison */
+        Comparison: {
+            /** Baseline Horizon Cash */
+            baseline_horizon_cash: string;
+            /** Baseline Horizon Net Worth */
+            baseline_horizon_net_worth: string;
+            /** Cash Difference */
+            cash_difference: string;
+            /** Net Worth Difference */
+            net_worth_difference: string;
+        };
+        /** Completeness */
+        Completeness: {
+            /** Missing */
+            missing: components["schemas"]["MissingItem"][];
+            /** Recorded */
+            recorded: boolean;
+            /** Stale Quotes */
+            stale_quotes: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "complete" | "partial" | "insufficient";
+        };
         /** ConservativeComparisonResponse */
         ConservativeComparisonResponse: {
             conservative: components["schemas"]["RecommendationVariant"];
@@ -2424,6 +2514,23 @@ export interface components {
             amount: string;
             /** Goal Id */
             goal_id: string;
+        };
+        /** DebtFreeDate */
+        DebtFreeDate: {
+            /** Balance Now */
+            balance_now: string;
+            /** Id */
+            id: string;
+            /** Interest In Period */
+            interest_in_period: string;
+            /** Month */
+            month: string | null;
+            /** Name */
+            name: string;
+            /** Reason */
+            reason: string | null;
+            /** Status */
+            status: string;
         };
         /** DebtItemInput */
         DebtItemInput: {
@@ -2515,6 +2622,49 @@ export interface components {
              * @enum {string}
              */
             relationship: "child" | "spouse" | "parent" | "sibling" | "other";
+        };
+        /** Drivers */
+        Drivers: {
+            /** Benefits Received */
+            benefits_received: string;
+            /** Goal Growth */
+            goal_growth: string;
+            /** Goal Spending */
+            goal_spending: string;
+            /** Income */
+            income: string;
+            /** Interest Paid */
+            interest_paid: string;
+            /** Investment Charges */
+            investment_charges: string;
+            /** Market Growth */
+            market_growth: string;
+            /** Premiums Paid */
+            premiums_paid: string;
+            /** Principal Repaid */
+            principal_repaid: string;
+            /** Shortfall */
+            shortfall: string;
+            /** Spending */
+            spending: string;
+        };
+        /** EffectiveAssumption */
+        EffectiveAssumption: {
+            /** Edit Route */
+            edit_route: string | null;
+            /** Id */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "plan" | "user_assumed" | "default_rule";
+            /** Label */
+            label: string;
+            /** Source */
+            source: string;
+            /** Value */
+            value: string;
         };
         /** EmergencyAnalysis */
         EmergencyAnalysis: {
@@ -3070,12 +3220,48 @@ export interface components {
              */
             type: "home" | "education" | "loan_payoff" | "emergency_fund" | "retirement" | "custom";
         };
+        /**
+         * GoalEffect
+         * @description What a funded goal does to the balance sheet. A custom goal's effect is never guessed from its name.
+         */
+        GoalEffect: {
+            /**
+             * Effect
+             * @enum {string}
+             */
+            effect: "spend" | "asset_purchase" | "debt_reduction" | "hold";
+            /** Goal Id */
+            goal_id: string;
+            /** Liability Id */
+            liability_id?: string | null;
+        };
         /** GoalHint */
         GoalHint: {
             /** Label */
             label: string;
             /** Target Amount Today */
             target_amount_today: string;
+            /** Type */
+            type: string;
+        };
+        /** GoalImpact */
+        GoalImpact: {
+            /** Delay Months */
+            delay_months: number | null;
+            /** Effect */
+            effect: string;
+            /** Effect Month */
+            effect_month: string | null;
+            /** Goal Id */
+            goal_id: string;
+            /** Label */
+            label: string;
+            /** Projected Completion */
+            projected_completion: string | null;
+            /** Status */
+            status: string;
+            /** Target Date */
+            target_date: string;
             /** Type */
             type: string;
         };
@@ -3152,6 +3338,16 @@ export interface components {
         HealthResponse: {
             /** Status */
             status: string;
+        };
+        /**
+         * Horizon
+         * @description How far to look: a number of months, or an age (which needs the reference age on the household profile).
+         */
+        Horizon: {
+            /** Months */
+            months?: number | null;
+            /** Target Age */
+            target_age?: number | null;
         };
         /**
          * HouseholdProfileResponse
@@ -3309,12 +3505,18 @@ export interface components {
         };
         /** IncomeProjectionResponse */
         IncomeProjectionResponse: {
+            /** Conventions */
+            conventions: string[];
             /** First Month */
             first_month: string;
             /** Horizon Months */
             horizon_months: number;
+            /** Plan Growth Annual */
+            plan_growth_annual: string;
             /** Plan Source */
             plan_source: string;
+            /** Sources */
+            sources: components["schemas"]["IncomeSource"][];
             /** Total Projected Income */
             total_projected_income: string;
             /** Years */
@@ -3331,6 +3533,54 @@ export interface components {
             monthly_net: string;
             /** To Month */
             to_month?: string | null;
+        };
+        /**
+         * IncomeSource
+         * @description One income stream as entered and as the engine used it. Its yearly amounts add up to the yearly totals.
+         */
+        IncomeSource: {
+            /** Annual Growth */
+            annual_growth: string | null;
+            /** Effective Growth Annual */
+            effective_growth_annual: string;
+            /** End Year */
+            end_year: number | null;
+            /** Ends After */
+            ends_after: string | null;
+            /** Entered Amount */
+            entered_amount: string;
+            /** Frequency */
+            frequency: string;
+            /** Growth Start Year */
+            growth_start_year: number | null;
+            /** Id */
+            id: string;
+            /** Kind */
+            kind: string;
+            /** Label */
+            label: string;
+            /** Monthly Equivalent */
+            monthly_equivalent: string;
+            /** Start Year */
+            start_year: number | null;
+            /** Step Ups */
+            step_ups: components["schemas"]["IncomeSourceStepUp"][];
+            /** Years */
+            years: components["schemas"]["IncomeSourceYear"][];
+        };
+        /** IncomeSourceStepUp */
+        IncomeSourceStepUp: {
+            /** Amount */
+            amount: string;
+            /** Year */
+            year: number;
+        };
+        /** IncomeSourceYear */
+        IncomeSourceYear: {
+            /** Amount */
+            amount: string;
+            /** Year */
+            year: number;
         };
         /**
          * IncomeStepUp
@@ -3350,7 +3600,8 @@ export interface components {
          *
          *     Two forms. A legacy stream has only `monthly_net` and the optional month `ends_after`; the plan-wide
          *     `income_growth_annual` applies to it exactly as before. A scheduled stream has `start_year` and
-         *     `amount` + `frequency`, an optional inclusive `end_year`, its own optional `annual_growth`, and
+         *     `amount` + `frequency`, an optional inclusive `end_year`, its own optional `annual_growth` (a raise that
+         *     repeats every year), an optional `growth_start_year` (the first calendar year the raise is added) and
          *     optional `step_ups`; the plan-wide growth is never applied to it. For scheduled streams `monthly_net`
          *     is derived (the initial amount's monthly equivalent) and any value sent is replaced.
          */
@@ -3369,6 +3620,8 @@ export interface components {
              * @enum {string}
              */
             frequency: "monthly" | "quarterly" | "yearly";
+            /** Growth Start Year */
+            growth_start_year?: number | null;
             /** Id */
             id: string;
             /** Label */
@@ -3543,6 +3796,33 @@ export interface components {
             /** Item Id */
             item_id: string;
         };
+        /** LedgerMonth */
+        LedgerMonth: {
+            closing_balances: components["schemas"]["Balances"];
+            /** Debt Events */
+            debt_events: components["schemas"]["TrajectoryEvent"][];
+            /** Deposit Events */
+            deposit_events: components["schemas"]["TrajectoryEvent"][];
+            /** Expense Events */
+            expense_events: components["schemas"]["TrajectoryEvent"][];
+            /** Goal Events */
+            goal_events: components["schemas"]["TrajectoryEvent"][];
+            /** Income Events */
+            income_events: components["schemas"]["TrajectoryEvent"][];
+            /** Insurance Events */
+            insurance_events: components["schemas"]["TrajectoryEvent"][];
+            /** Investment Events */
+            investment_events: components["schemas"]["TrajectoryEvent"][];
+            /** Month */
+            month: string;
+            /** Net Worth */
+            net_worth: string;
+            opening_balances: components["schemas"]["Balances"];
+            /** Other Events */
+            other_events: components["schemas"]["TrajectoryEvent"][];
+            /** Uncovered Cash Deficit */
+            uncovered_cash_deficit: string;
+        };
         /** LiabilityCreateRequest */
         LiabilityCreateRequest: {
             /** Current Balance */
@@ -3609,6 +3889,16 @@ export interface components {
             /** Start Date */
             start_date?: string | null;
         };
+        /**
+         * LinkedCommitment
+         * @description Says a loan payment in the plan is the same loan as a recorded debt, so it is counted once (as the debt).
+         */
+        LinkedCommitment: {
+            /** Commitment Id */
+            commitment_id: string;
+            /** Liability Id */
+            liability_id: string;
+        };
         /** LoginRequest */
         LoginRequest: {
             /** Email */
@@ -3672,6 +3962,19 @@ export interface components {
         MessageResponse: {
             /** Message */
             message: string;
+        };
+        /** MissingItem */
+        MissingItem: {
+            /** Edit Route */
+            edit_route: string;
+            /** Field */
+            field: string;
+            /** Reason */
+            reason: string;
+            /** Record */
+            record: string;
+            /** Record Id */
+            record_id: string | null;
         };
         /** MonthGoalRow */
         MonthGoalRow: {
@@ -3891,6 +4194,31 @@ export interface components {
             /** Month */
             month?: string | null;
         };
+        /** PlannedEvent */
+        PlannedEvent: {
+            /** Account Id */
+            account_id?: string | null;
+            /** Amount */
+            amount?: string | null;
+            /**
+             * Charges
+             * @default 0.00
+             */
+            charges: string;
+            /** Id */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "investment_purchase" | "deposit_maturity";
+            /** Label */
+            label: string;
+            /** Maturity Amount */
+            maturity_amount?: string | null;
+            /** Month */
+            month: string;
+        };
         /** PlannedLifeEvent */
         PlannedLifeEvent: {
             /** Description */
@@ -4101,6 +4429,24 @@ export interface components {
             id: string;
             /** Label */
             label: string;
+        };
+        /** ProvenanceEntry */
+        ProvenanceEntry: {
+            /** As Of */
+            as_of: string | null;
+            /** Component */
+            component: string;
+            /** Detail */
+            detail: string | null;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "user_entered" | "provider_fetched" | "computed" | "assumed";
+            /** Label */
+            label: string;
+            /** Source */
+            source: string | null;
         };
         /**
          * RecommendationComparisonRequest
@@ -4468,6 +4814,22 @@ export interface components {
             month: string;
             /** Monthly */
             monthly: string;
+        };
+        /**
+         * ReturnAssumption
+         * @description A return the person chooses for one holding, account or policy (`holding`) or a whole class. Nothing is assumed
+         *     for them: with none set, a value is held constant and the result says so.
+         */
+        ReturnAssumption: {
+            /** Annual Rate */
+            annual_rate: string;
+            /** Key */
+            key: string;
+            /**
+             * Scope
+             * @enum {string}
+             */
+            scope: "holding" | "class";
         };
         /** ReviewItem */
         ReviewItem: {
@@ -4920,6 +5282,165 @@ export interface components {
             total_delay_months: number;
             /** Total Shortfall Today */
             total_shortfall_today: string;
+        };
+        /** TrajectoryEvent */
+        TrajectoryEvent: {
+            /** Asset Delta */
+            asset_delta: string;
+            /** Cash Delta */
+            cash_delta: string;
+            /** Interest */
+            interest: string | null;
+            /** Kind */
+            kind: string;
+            /** Label */
+            label: string;
+            /** Liability Delta */
+            liability_delta: string;
+            /** Month */
+            month: string;
+            /** Net Worth Effect */
+            net_worth_effect: string;
+            /** Note */
+            note: string;
+            /** Principal */
+            principal: string | null;
+            /** Source Id */
+            source_id: string | null;
+        };
+        /**
+         * TrajectoryRequest
+         * @description `plan_id` uses the signed-in user's saved plan; `plan` projects an explicit hypothetical plan.
+         *
+         *     The balance sheet always comes from the person's own records. `view`: baseline (current income, spending,
+         *     commitments and owned assets and debts, no future goals), selected_goals (baseline plus the goals named in
+         *     `selected_goal_ids` and their funding), or scenario (the same plus the `scenario` shocks).
+         */
+        TrajectoryRequest: {
+            /** Goal Effects */
+            goal_effects?: components["schemas"]["GoalEffect"][];
+            horizon?: components["schemas"]["Horizon"];
+            /**
+             * Include Events
+             * @default true
+             */
+            include_events: boolean;
+            /**
+             * Include Monthly Ledger
+             * @default true
+             */
+            include_monthly_ledger: boolean;
+            /** Input Snapshot Hash */
+            input_snapshot_hash?: string | null;
+            /** Linked Commitments */
+            linked_commitments?: components["schemas"]["LinkedCommitment"][];
+            plan?: components["schemas"]["Plan"] | null;
+            /** Plan Id */
+            plan_id?: string | null;
+            /** Planned Events */
+            planned_events?: components["schemas"]["PlannedEvent"][];
+            /**
+             * Premium Growth Annual
+             * @default 0.000000
+             */
+            premium_growth_annual: string;
+            /**
+             * Premiums In Spending
+             * @default auto
+             * @enum {string}
+             */
+            premiums_in_spending: "auto" | "yes" | "no";
+            /** Return Assumptions */
+            return_assumptions?: components["schemas"]["ReturnAssumption"][];
+            scenario?: components["schemas"]["Scenario"] | null;
+            /** Selected Goal Ids */
+            selected_goal_ids?: string[];
+            /**
+             * View
+             * @default baseline
+             * @enum {string}
+             */
+            view: "baseline" | "selected_goals" | "scenario";
+        };
+        /** TrajectoryResult */
+        TrajectoryResult: {
+            /** As Of */
+            as_of: string;
+            /** Checkpoints */
+            checkpoints: components["schemas"]["Checkpoint"][];
+            comparison: components["schemas"]["Comparison"] | null;
+            completeness: components["schemas"]["Completeness"];
+            drivers: components["schemas"]["Drivers"];
+            /** Effective Assumptions */
+            effective_assumptions: components["schemas"]["EffectiveAssumption"][];
+            /** Goals */
+            goals: components["schemas"]["GoalImpact"][];
+            /** Horizon Months */
+            horizon_months: number;
+            /** Input Snapshot Hash */
+            input_snapshot_hash: string;
+            /** Model Version */
+            model_version: string;
+            /** Monthly Ledger */
+            monthly_ledger: components["schemas"]["LedgerMonth"][] | null;
+            opening_balances: components["schemas"]["Balances"];
+            /** Provenance */
+            provenance: components["schemas"]["ProvenanceEntry"][];
+            /** Reference Age */
+            reference_age: number | null;
+            summary: components["schemas"]["TrajectorySummary"];
+            /**
+             * View
+             * @enum {string}
+             */
+            view: "baseline" | "selected_goals" | "scenario";
+            /** Warnings */
+            warnings: components["schemas"]["TrajectoryWarning"][];
+        };
+        /** TrajectorySummary */
+        TrajectorySummary: {
+            /** All Debts Cleared Month */
+            all_debts_cleared_month: string | null;
+            /** Current Assets */
+            current_assets: string;
+            /** Current Cash */
+            current_cash: string;
+            /** Current Liabilities */
+            current_liabilities: string;
+            /** Current Net Worth */
+            current_net_worth: string;
+            /** Horizon Assets */
+            horizon_assets: string;
+            /** Horizon Cash */
+            horizon_cash: string;
+            /** Horizon Liabilities */
+            horizon_liabilities: string;
+            /** Horizon Net Worth */
+            horizon_net_worth: string;
+            /** Projected Debt Free Dates */
+            projected_debt_free_dates: components["schemas"]["DebtFreeDate"][];
+            /** Reconciles */
+            reconciles: boolean;
+        };
+        /** TrajectoryWarning */
+        TrajectoryWarning: {
+            /** Code */
+            code: string;
+            /** Component */
+            component: string;
+            /** Edit Route */
+            edit_route: string | null;
+            /** Message */
+            message: string;
+            /** Record Id */
+            record_id: string | null;
+            /** Related Id */
+            related_id?: string | null;
+            /**
+             * Severity
+             * @enum {string}
+             */
+            severity: "info" | "warning" | "critical";
         };
         /**
          * TransactionCreate
@@ -10920,6 +11441,66 @@ export interface operations {
             };
             /** @description The request is invalid. */
             422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    project_trajectory_api_v1_trajectory_project_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TrajectoryRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrajectoryResult"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };

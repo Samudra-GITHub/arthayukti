@@ -29,6 +29,7 @@ from app.api import (
     rescue,
     risk,
     samples,
+    trajectory,
 )
 from app.api.deps import OPTIONAL_AUTH_PATHS
 from app.config import settings
@@ -116,6 +117,7 @@ def create_app() -> FastAPI:
         emergency,
         expenditure,
         ledger,
+        trajectory,
     ):
         app.include_router(module.router, prefix="/api/v1")
 

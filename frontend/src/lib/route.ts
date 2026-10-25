@@ -22,9 +22,9 @@ export const ROUTES = [
   'profile',
   'finances',
   'goals',
+  'trajectory',
   'rescue',
   'plan-b',
-  'calculators',
   'insurance',
   'debts',
   'equities',
@@ -50,9 +50,9 @@ export const PRIVATE_ROUTES: Route[] = [
   'profile',
   'finances',
   'goals',
+  'trajectory',
   'rescue',
   'plan-b',
-  'calculators',
   'insurance',
   'debts',
   'equities',
@@ -70,7 +70,7 @@ export const PRIVATE_ROUTES: Route[] = [
 ]
 
 /** Pages that moved or were removed: an old bookmark lands on where its content lives now. */
-const MOVED: Record<string, Route> = { assets: 'equities', import: 'finances', taxes: 'dashboard' }
+const MOVED: Record<string, Route> = { assets: 'equities', calculators: 'dashboard', import: 'finances', taxes: 'dashboard' }
 
 export function parseRoute(hash: string): Route {
   // A query string (as in the reset link) is not part of the route name.

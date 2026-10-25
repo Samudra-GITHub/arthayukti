@@ -2,9 +2,9 @@ import copy
 import json
 
 import pytest
-from pydantic import ValidationError
+from pydantic import TypeAdapter, ValidationError
 
-from app.schemas.plan import Plan
+from app.schemas.plan import Plan, PlanWithGoals
 from app.schemas.scenario import Scenario
 from tests.engine.helpers import SAMPLES, goal, make_plan
 
@@ -75,11 +75,16 @@ def test_goal_count_is_limited():
         make_plan(income="90000.00", expenses="0.00", goals=goals)
 
 
-def test_at_least_one_goal_and_one_income_are_required():
+def test_a_plan_can_be_saved_without_goals_but_goal_based_work_and_income_are_still_required():
+    # Income and spending come first, so a plan with no goals yet is a valid thing to keep ...
     data = base()
     data["goals"] = []
-    with pytest.raises(ValidationError):
-        Plan.model_validate(data)
+    assert Plan.model_validate(data).goals == []
+    # ... but anything that works out goals refuses it, with the same validation error as before.
+    with pytest.raises(ValidationError, match="at least one goal"):
+        TypeAdapter(PlanWithGoals).validate_python(data)
+    assert len(TypeAdapter(PlanWithGoals).validate_python(base()).goals) >= 1
+    # At least one income stream is still required.
     data = base()
     data["income_streams"] = []
     with pytest.raises(ValidationError):

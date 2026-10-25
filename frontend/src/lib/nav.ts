@@ -1,4 +1,4 @@
-import { Bell, Bot, Calculator, ChartLine, Gauge, HandCoins, House, LifeBuoy, PiggyBank, Settings, Target, Users, type LucideIcon } from 'lucide-react'
+import { Bell, Bot, ChartLine, Gauge, HandCoins, House, Landmark, LifeBuoy, PiggyBank, Settings, ShieldCheck, Target, TrendingUp, Users, Waypoints, type LucideIcon } from 'lucide-react'
 import type { ShellCopy } from '../i18n/shell'
 import type { Route } from './route'
 
@@ -14,16 +14,12 @@ export const NAV_BEFORE_OUTLOOK: NavItem[] = [
   { route: 'dashboard', key: 'dashboard', icon: Gauge, covers: [] },
   { route: 'profile', key: 'profile', icon: Users, covers: [] },
   { route: 'finances', key: 'finances', icon: HandCoins, covers: ['money-in', 'money-out'] },
-  { route: 'calculators', key: 'calculators', icon: Calculator, covers: ['insurance', 'debts', 'equities'] },
+  { route: 'insurance', key: 'insurance', icon: ShieldCheck, covers: [] },
+  { route: 'debts', key: 'debts', icon: Landmark, covers: [] },
+  { route: 'equities', key: 'equities', icon: TrendingUp, covers: [] },
   { route: 'emergency', key: 'emergency', icon: PiggyBank, covers: [] },
   { route: 'goals', key: 'goals', icon: Target, covers: ['dreams', 'plan', 'what-if', 'fixes', 'compare', 'tradeoffs'] },
-]
-
-/** The three calculator modules, shown under Calculators. */
-export const CALCULATOR_ITEMS: { route: Route; key: 'insurance' | 'debts' | 'equities' }[] = [
-  { route: 'insurance', key: 'insurance' },
-  { route: 'debts', key: 'debts' },
-  { route: 'equities', key: 'equities' },
+  { route: 'trajectory', key: 'trajectory', icon: Waypoints, covers: [] },
 ]
 
 export const OUTLOOK_ITEMS: { route: Route; key: keyof ShellCopy['nav']['outlookItems'] }[] = [

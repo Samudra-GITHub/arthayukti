@@ -39,8 +39,19 @@ def project(
     plan: Plan, scenario: Scenario | None = None, include_monthly: bool = True
 ) -> ProjectionResult:
     """Run the monthly allocation policy and report per-goal outcomes."""
+    if not plan.goals:
+        raise ValueError("Add at least one goal before the plan can be projected.")
     with engine_context():
         return _project(resolve(plan, scenario), include_monthly)
+
+
+def project_resolved(resolved: Resolved, include_monthly: bool = True) -> ProjectionResult:
+    """Run the same allocation policy on inputs that are already resolved.
+
+    For callers that add monthly flows the plan cannot express (the financial trajectory's loan payments and
+    premiums) before running the goal engine. `project` is this plus `resolve`."""
+    with engine_context():
+        return _project(resolved, include_monthly)
 
 
 @dataclass

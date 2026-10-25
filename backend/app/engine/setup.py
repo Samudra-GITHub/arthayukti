@@ -134,7 +134,7 @@ def resolve(plan: Plan, scenario: Scenario | None) -> Resolved:
     goals.sort(key=lambda spec: (spec.priority, spec.id))
 
     as_of_index = month_to_index(plan.as_of)
-    horizon = min(MAX_HORIZON_MONTHS, max(spec.deadline for spec in goals) + EXTRA_HORIZON_MONTHS)
+    horizon = min(MAX_HORIZON_MONTHS, max((spec.deadline for spec in goals), default=0) + EXTRA_HORIZON_MONTHS)
 
     def to_t(month: str) -> int:
         return month_to_index(month) - as_of_index + 1

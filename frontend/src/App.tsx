@@ -29,7 +29,8 @@ import {
   InvestmentTrajectoryPage,
   ScenarioComparisonPage,
 } from './pages/app/Outlook'
-import { CalculatorsHubPage, DebtsModule, EquitiesModule, InsuranceModule } from './pages/app/CalcHub'
+import { DebtsModule, EquitiesModule, InsuranceModule } from './pages/app/CalcHub'
+import { TrajectoryPage } from './pages/app/Trajectory'
 import { EmergencyPage } from './pages/app/Emergency'
 import { PlanBPage } from './pages/app/PlanB'
 import { RescuePage } from './pages/app/Rescue'
@@ -61,7 +62,6 @@ function Screens() {
   const [route, navigate] = useRoute()
   const auth = useAuth()
   const { plan, text, accountState } = useStore()
-  const nav = useShellCopy().nav
 
   useEffect(() => {
     if (auth.status === 'anonymous' && PRIVATE_ROUTES.includes(route)) navigate('login')
@@ -115,17 +115,17 @@ function Screens() {
     case 'profile':
       return <AppPage route={route} navigate={navigate}><ProfilePage navigate={navigate} /></AppPage>
     case 'finances':
-      return <AppPage route={route} navigate={navigate}><FinancesPage navigate={navigate} /></AppPage>
+      return <AppPage route={route} navigate={navigate}><FinancesPage /></AppPage>
     case 'goals':
       return <AppPage route={route} navigate={navigate}><GoalsPage navigate={navigate} /></AppPage>
-    case 'calculators':
-      return <AppPage route={route} navigate={navigate}><CalculatorsHubPage navigate={navigate} /></AppPage>
     case 'insurance':
-      return <AppPage route={route} navigate={navigate}><InsuranceModule navigate={navigate} title={nav.insurance} /></AppPage>
+      return <AppPage route={route} navigate={navigate}><InsuranceModule /></AppPage>
     case 'debts':
-      return <AppPage route={route} navigate={navigate}><DebtsModule navigate={navigate} title={nav.debts} /></AppPage>
+      return <AppPage route={route} navigate={navigate}><DebtsModule /></AppPage>
     case 'equities':
-      return <AppPage route={route} navigate={navigate}><EquitiesModule navigate={navigate} title={nav.equities} /></AppPage>
+      return <AppPage route={route} navigate={navigate}><EquitiesModule /></AppPage>
+    case 'trajectory':
+      return <AppPage route={route} navigate={navigate}><TrajectoryPage /></AppPage>
     case 'emergency':
       return <AppPage route={route} navigate={navigate}><EmergencyPage /></AppPage>
     case 'outlook-household':

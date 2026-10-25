@@ -1056,6 +1056,87 @@
         "title": "AuthResponse",
         "type": "object"
       },
+      "Balances": {
+        "additionalProperties": false,
+        "properties": {
+          "cash": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cash",
+            "type": "string"
+          },
+          "deposits_and_investment_accounts": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Deposits And Investment Accounts",
+            "type": "string"
+          },
+          "goal_funds": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Goal Funds",
+            "type": "string"
+          },
+          "insurance_fund_value": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Insurance Fund Value",
+            "type": "string"
+          },
+          "loans": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Loans",
+            "type": "string"
+          },
+          "market_investments": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Market Investments",
+            "type": "string"
+          },
+          "net_worth": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Net Worth",
+            "type": "string"
+          },
+          "physical_and_other_assets": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Physical And Other Assets",
+            "type": "string"
+          },
+          "retirement_and_fixed_income": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Retirement And Fixed Income",
+            "type": "string"
+          },
+          "total_assets": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Assets",
+            "type": "string"
+          },
+          "total_liabilities": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Liabilities",
+            "type": "string"
+          },
+          "unfunded_shortfall": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Unfunded Shortfall",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cash",
+          "deposits_and_investment_accounts",
+          "market_investments",
+          "retirement_and_fixed_income",
+          "physical_and_other_assets",
+          "insurance_fund_value",
+          "goal_funds",
+          "total_assets",
+          "loans",
+          "unfunded_shortfall",
+          "total_liabilities",
+          "net_worth"
+        ],
+        "title": "Balances",
+        "type": "object"
+      },
       "Body_import_transactions_csv_api_v1_financials_transactions_import_post": {
         "properties": {
           "file": {
@@ -2082,6 +2163,62 @@
         "title": "CashItem",
         "type": "object"
       },
+      "Checkpoint": {
+        "additionalProperties": false,
+        "properties": {
+          "age": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age"
+          },
+          "assets": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Assets",
+            "type": "string"
+          },
+          "cash": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cash",
+            "type": "string"
+          },
+          "liabilities": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Liabilities",
+            "type": "string"
+          },
+          "month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "Month",
+            "type": "string"
+          },
+          "months_ahead": {
+            "title": "Months Ahead",
+            "type": "integer"
+          },
+          "net_worth": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Net Worth",
+            "type": "string"
+          }
+        },
+        "required": [
+          "month",
+          "months_ahead",
+          "age",
+          "assets",
+          "liabilities",
+          "net_worth",
+          "cash"
+        ],
+        "title": "Checkpoint",
+        "type": "object"
+      },
       "Commitment": {
         "additionalProperties": false,
         "description": "An existing fixed payment (for example an EMI) that stops after remaining_months.",
@@ -2231,6 +2368,76 @@
         "title": "CompareResult",
         "type": "object"
       },
+      "Comparison": {
+        "additionalProperties": false,
+        "properties": {
+          "baseline_horizon_cash": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Baseline Horizon Cash",
+            "type": "string"
+          },
+          "baseline_horizon_net_worth": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Baseline Horizon Net Worth",
+            "type": "string"
+          },
+          "cash_difference": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cash Difference",
+            "type": "string"
+          },
+          "net_worth_difference": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Net Worth Difference",
+            "type": "string"
+          }
+        },
+        "required": [
+          "baseline_horizon_net_worth",
+          "baseline_horizon_cash",
+          "net_worth_difference",
+          "cash_difference"
+        ],
+        "title": "Comparison",
+        "type": "object"
+      },
+      "Completeness": {
+        "additionalProperties": false,
+        "properties": {
+          "missing": {
+            "items": {
+              "$ref": "#/components/schemas/MissingItem"
+            },
+            "title": "Missing",
+            "type": "array"
+          },
+          "recorded": {
+            "title": "Recorded",
+            "type": "boolean"
+          },
+          "stale_quotes": {
+            "title": "Stale Quotes",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "complete",
+              "partial",
+              "insufficient"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "recorded",
+          "stale_quotes",
+          "missing"
+        ],
+        "title": "Completeness",
+        "type": "object"
+      },
       "ConservativeComparisonResponse": {
         "additionalProperties": false,
         "properties": {
@@ -2285,6 +2492,67 @@
           "amount"
         ],
         "title": "CrowdedOut",
+        "type": "object"
+      },
+      "DebtFreeDate": {
+        "additionalProperties": false,
+        "properties": {
+          "balance_now": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Balance Now",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "interest_in_period": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Interest In Period",
+            "type": "string"
+          },
+          "month": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Month"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "month",
+          "status",
+          "reason",
+          "balance_now",
+          "interest_in_period"
+        ],
+        "title": "DebtFreeDate",
         "type": "object"
       },
       "DebtItemInput": {
@@ -2588,6 +2856,132 @@
           "age"
         ],
         "title": "DependantDetail",
+        "type": "object"
+      },
+      "Drivers": {
+        "additionalProperties": false,
+        "properties": {
+          "benefits_received": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Benefits Received",
+            "type": "string"
+          },
+          "goal_growth": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Goal Growth",
+            "type": "string"
+          },
+          "goal_spending": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Goal Spending",
+            "type": "string"
+          },
+          "income": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Income",
+            "type": "string"
+          },
+          "interest_paid": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Interest Paid",
+            "type": "string"
+          },
+          "investment_charges": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Investment Charges",
+            "type": "string"
+          },
+          "market_growth": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Market Growth",
+            "type": "string"
+          },
+          "premiums_paid": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Premiums Paid",
+            "type": "string"
+          },
+          "principal_repaid": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Principal Repaid",
+            "type": "string"
+          },
+          "shortfall": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Shortfall",
+            "type": "string"
+          },
+          "spending": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Spending",
+            "type": "string"
+          }
+        },
+        "required": [
+          "income",
+          "spending",
+          "interest_paid",
+          "principal_repaid",
+          "premiums_paid",
+          "benefits_received",
+          "goal_spending",
+          "market_growth",
+          "goal_growth",
+          "investment_charges",
+          "shortfall"
+        ],
+        "title": "Drivers",
+        "type": "object"
+      },
+      "EffectiveAssumption": {
+        "additionalProperties": false,
+        "properties": {
+          "edit_route": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Edit Route"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "plan",
+              "user_assumed",
+              "default_rule"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "value",
+          "kind",
+          "source",
+          "edit_route"
+        ],
+        "title": "EffectiveAssumption",
         "type": "object"
       },
       "EmergencyAnalysis": {
@@ -4414,6 +4808,44 @@
         "title": "Goal",
         "type": "object"
       },
+      "GoalEffect": {
+        "additionalProperties": false,
+        "description": "What a funded goal does to the balance sheet. A custom goal's effect is never guessed from its name.",
+        "properties": {
+          "effect": {
+            "enum": [
+              "spend",
+              "asset_purchase",
+              "debt_reduction",
+              "hold"
+            ],
+            "title": "Effect",
+            "type": "string"
+          },
+          "goal_id": {
+            "pattern": "^[A-Za-z0-9_-]{1,40}$",
+            "title": "Goal Id",
+            "type": "string"
+          },
+          "liability_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Liability Id"
+          }
+        },
+        "required": [
+          "goal_id",
+          "effect"
+        ],
+        "title": "GoalEffect",
+        "type": "object"
+      },
       "GoalHint": {
         "additionalProperties": false,
         "properties": {
@@ -4437,6 +4869,84 @@
           "target_amount_today"
         ],
         "title": "GoalHint",
+        "type": "object"
+      },
+      "GoalImpact": {
+        "additionalProperties": false,
+        "properties": {
+          "delay_months": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delay Months"
+          },
+          "effect": {
+            "title": "Effect",
+            "type": "string"
+          },
+          "effect_month": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effect Month"
+          },
+          "goal_id": {
+            "title": "Goal Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "projected_completion": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Projected Completion"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "target_date": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "Target Date",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "goal_id",
+          "label",
+          "type",
+          "status",
+          "target_date",
+          "projected_completion",
+          "delay_months",
+          "effect",
+          "effect_month"
+        ],
+        "title": "GoalImpact",
         "type": "object"
       },
       "GoalOutcome": {
@@ -4670,6 +5180,40 @@
           "status"
         ],
         "title": "HealthResponse",
+        "type": "object"
+      },
+      "Horizon": {
+        "additionalProperties": false,
+        "description": "How far to look: a number of months, or an age (which needs the reference age on the household profile).",
+        "properties": {
+          "months": {
+            "anyOf": [
+              {
+                "maximum": 600.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Months"
+          },
+          "target_age": {
+            "anyOf": [
+              {
+                "maximum": 120.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Age"
+          }
+        },
+        "title": "Horizon",
         "type": "object"
       },
       "HouseholdProfileResponse": {
@@ -5487,6 +6031,13 @@
       "IncomeProjectionResponse": {
         "additionalProperties": false,
         "properties": {
+          "conventions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Conventions",
+            "type": "array"
+          },
           "first_month": {
             "title": "First Month",
             "type": "string"
@@ -5495,9 +6046,21 @@
             "title": "Horizon Months",
             "type": "integer"
           },
+          "plan_growth_annual": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Plan Growth Annual",
+            "type": "string"
+          },
           "plan_source": {
             "title": "Plan Source",
             "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/IncomeSource"
+            },
+            "title": "Sources",
+            "type": "array"
           },
           "total_projected_income": {
             "pattern": "^-?\\d+(\\.\\d+)?$",
@@ -5517,7 +6080,10 @@
           "horizon_months",
           "first_month",
           "total_projected_income",
-          "years"
+          "plan_growth_annual",
+          "conventions",
+          "years",
+          "sources"
         ],
         "title": "IncomeProjectionResponse",
         "type": "object"
@@ -5556,6 +6122,175 @@
         "title": "IncomeSegment",
         "type": "object"
       },
+      "IncomeSource": {
+        "additionalProperties": false,
+        "description": "One income stream as entered and as the engine used it. Its yearly amounts add up to the yearly totals.",
+        "properties": {
+          "annual_growth": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Growth"
+          },
+          "effective_growth_annual": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Effective Growth Annual",
+            "type": "string"
+          },
+          "end_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Year"
+          },
+          "ends_after": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends After"
+          },
+          "entered_amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Entered Amount",
+            "type": "string"
+          },
+          "frequency": {
+            "title": "Frequency",
+            "type": "string"
+          },
+          "growth_start_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth Start Year"
+          },
+          "id": {
+            "pattern": "^[A-Za-z0-9_-]{1,40}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "monthly_equivalent": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Monthly Equivalent",
+            "type": "string"
+          },
+          "start_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Year"
+          },
+          "step_ups": {
+            "items": {
+              "$ref": "#/components/schemas/IncomeSourceStepUp"
+            },
+            "title": "Step Ups",
+            "type": "array"
+          },
+          "years": {
+            "items": {
+              "$ref": "#/components/schemas/IncomeSourceYear"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "kind",
+          "frequency",
+          "entered_amount",
+          "monthly_equivalent",
+          "start_year",
+          "end_year",
+          "ends_after",
+          "annual_growth",
+          "growth_start_year",
+          "effective_growth_annual",
+          "step_ups",
+          "years"
+        ],
+        "title": "IncomeSource",
+        "type": "object"
+      },
+      "IncomeSourceStepUp": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Amount",
+            "type": "string"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "amount"
+        ],
+        "title": "IncomeSourceStepUp",
+        "type": "object"
+      },
+      "IncomeSourceYear": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Amount",
+            "type": "string"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "amount"
+        ],
+        "title": "IncomeSourceYear",
+        "type": "object"
+      },
       "IncomeStepUp": {
         "additionalProperties": false,
         "description": "From `year` (January) the stream's base amount is replaced by `amount`, in the stream's frequency.",
@@ -5587,7 +6322,7 @@
       },
       "IncomeStream": {
         "additionalProperties": false,
-        "description": "Planned (expected, take-home) income.\n\nTwo forms. A legacy stream has only `monthly_net` and the optional month `ends_after`; the plan-wide\n`income_growth_annual` applies to it exactly as before. A scheduled stream has `start_year` and\n`amount` + `frequency`, an optional inclusive `end_year`, its own optional `annual_growth`, and\noptional `step_ups`; the plan-wide growth is never applied to it. For scheduled streams `monthly_net`\nis derived (the initial amount's monthly equivalent) and any value sent is replaced.",
+        "description": "Planned (expected, take-home) income.\n\nTwo forms. A legacy stream has only `monthly_net` and the optional month `ends_after`; the plan-wide\n`income_growth_annual` applies to it exactly as before. A scheduled stream has `start_year` and\n`amount` + `frequency`, an optional inclusive `end_year`, its own optional `annual_growth` (a raise that\nrepeats every year), an optional `growth_start_year` (the first calendar year the raise is added) and\noptional `step_ups`; the plan-wide growth is never applied to it. For scheduled streams `monthly_net`\nis derived (the initial amount's monthly equivalent) and any value sent is replaced.",
         "properties": {
           "amount": {
             "anyOf": [
@@ -5647,6 +6382,19 @@
             ],
             "title": "Frequency",
             "type": "string"
+          },
+          "growth_start_year": {
+            "anyOf": [
+              {
+                "maximum": 2200.0,
+                "minimum": 1990.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth Start Year"
           },
           "id": {
             "pattern": "^[A-Za-z0-9_-]{1,40}$",
@@ -6236,6 +6984,105 @@
         "title": "ItemMonth",
         "type": "object"
       },
+      "LedgerMonth": {
+        "additionalProperties": false,
+        "properties": {
+          "closing_balances": {
+            "$ref": "#/components/schemas/Balances"
+          },
+          "debt_events": {
+            "items": {
+              "$ref": "#/components/schemas/TrajectoryEvent"
+            },
+            "title": "Debt Events",
+            "type": "array"
+          },
+          "deposit_events": {
+            "items": {
+              "$ref": "#/components/schemas/TrajectoryEvent"
+            },
+            "title": "Deposit Events",
+            "type": "array"
+          },
+          "expense_events": {
+            "items": {
+              "$ref": "#/components/schemas/TrajectoryEvent"
+            },
+            "title": "Expense Events",
+            "type": "array"
+          },
+          "goal_events": {
+            "items": {
+              "$ref": "#/components/schemas/TrajectoryEvent"
+            },
+            "title": "Goal Events",
+            "type": "array"
+          },
+          "income_events": {
+            "items": {
+              "$ref": "#/components/schemas/TrajectoryEvent"
+            },
+            "title": "Income Events",
+            "type": "array"
+          },
+          "insurance_events": {
+            "items": {
+              "$ref": "#/components/schemas/TrajectoryEvent"
+            },
+            "title": "Insurance Events",
+            "type": "array"
+          },
+          "investment_events": {
+            "items": {
+              "$ref": "#/components/schemas/TrajectoryEvent"
+            },
+            "title": "Investment Events",
+            "type": "array"
+          },
+          "month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "Month",
+            "type": "string"
+          },
+          "net_worth": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Net Worth",
+            "type": "string"
+          },
+          "opening_balances": {
+            "$ref": "#/components/schemas/Balances"
+          },
+          "other_events": {
+            "items": {
+              "$ref": "#/components/schemas/TrajectoryEvent"
+            },
+            "title": "Other Events",
+            "type": "array"
+          },
+          "uncovered_cash_deficit": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Uncovered Cash Deficit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "month",
+          "opening_balances",
+          "income_events",
+          "expense_events",
+          "debt_events",
+          "insurance_events",
+          "investment_events",
+          "deposit_events",
+          "goal_events",
+          "other_events",
+          "closing_balances",
+          "net_worth",
+          "uncovered_cash_deficit"
+        ],
+        "title": "LedgerMonth",
+        "type": "object"
+      },
       "LiabilityCreateRequest": {
         "additionalProperties": false,
         "properties": {
@@ -6504,6 +7351,27 @@
         "title": "LiabilityUpdateRequest",
         "type": "object"
       },
+      "LinkedCommitment": {
+        "additionalProperties": false,
+        "description": "Says a loan payment in the plan is the same loan as a recorded debt, so it is counted once (as the debt).",
+        "properties": {
+          "commitment_id": {
+            "pattern": "^[A-Za-z0-9_-]{1,40}$",
+            "title": "Commitment Id",
+            "type": "string"
+          },
+          "liability_id": {
+            "title": "Liability Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "commitment_id",
+          "liability_id"
+        ],
+        "title": "LinkedCommitment",
+        "type": "object"
+      },
       "LoginRequest": {
         "additionalProperties": false,
         "properties": {
@@ -6703,6 +7571,47 @@
           "message"
         ],
         "title": "MessageResponse",
+        "type": "object"
+      },
+      "MissingItem": {
+        "additionalProperties": false,
+        "properties": {
+          "edit_route": {
+            "title": "Edit Route",
+            "type": "string"
+          },
+          "field": {
+            "title": "Field",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "record": {
+            "title": "Record",
+            "type": "string"
+          },
+          "record_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Record Id"
+          }
+        },
+        "required": [
+          "record",
+          "record_id",
+          "field",
+          "reason",
+          "edit_route"
+        ],
+        "title": "MissingItem",
         "type": "object"
       },
       "MonthGoalRow": {
@@ -7078,7 +7987,6 @@
               "$ref": "#/components/schemas/Goal"
             },
             "maxItems": 8,
-            "minItems": 1,
             "title": "Goals",
             "type": "array"
           },
@@ -7354,6 +8262,84 @@
           "message"
         ],
         "title": "PlanWarning",
+        "type": "object"
+      },
+      "PlannedEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Id"
+          },
+          "amount": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount"
+          },
+          "charges": {
+            "default": "0.00",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Charges",
+            "type": "string"
+          },
+          "id": {
+            "pattern": "^[A-Za-z0-9_-]{1,40}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "investment_purchase",
+              "deposit_maturity"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "maturity_amount": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maturity Amount"
+          },
+          "month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "Month",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "month",
+          "kind",
+          "label"
+        ],
+        "title": "PlannedEvent",
         "type": "object"
       },
       "PlannedLifeEvent": {
@@ -7999,6 +8985,72 @@
           "balance"
         ],
         "title": "ProtectedBalance",
+        "type": "object"
+      },
+      "ProvenanceEntry": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of"
+          },
+          "component": {
+            "title": "Component",
+            "type": "string"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          },
+          "kind": {
+            "enum": [
+              "user_entered",
+              "provider_fetched",
+              "computed",
+              "assumed"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "required": [
+          "component",
+          "label",
+          "kind",
+          "source",
+          "detail",
+          "as_of"
+        ],
+        "title": "ProvenanceEntry",
         "type": "object"
       },
       "RecommendationComparisonRequest": {
@@ -9139,6 +10191,38 @@
           "monthly"
         ],
         "title": "RestorationStep",
+        "type": "object"
+      },
+      "ReturnAssumption": {
+        "additionalProperties": false,
+        "description": "A return the person chooses for one holding, account or policy (`holding`) or a whole class. Nothing is assumed\nfor them: with none set, a value is held constant and the result says so.",
+        "properties": {
+          "annual_rate": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Annual Rate",
+            "type": "string"
+          },
+          "key": {
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Key",
+            "type": "string"
+          },
+          "scope": {
+            "enum": [
+              "holding",
+              "class"
+            ],
+            "title": "Scope",
+            "type": "string"
+          }
+        },
+        "required": [
+          "scope",
+          "key",
+          "annual_rate"
+        ],
+        "title": "ReturnAssumption",
         "type": "object"
       },
       "ReviewItem": {
@@ -10410,6 +11494,516 @@
           "total_shortfall_today"
         ],
         "title": "TradeoffTotals",
+        "type": "object"
+      },
+      "TrajectoryEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_delta": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Asset Delta",
+            "type": "string"
+          },
+          "cash_delta": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cash Delta",
+            "type": "string"
+          },
+          "interest": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interest"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "liability_delta": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Liability Delta",
+            "type": "string"
+          },
+          "month": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "Month",
+            "type": "string"
+          },
+          "net_worth_effect": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Net Worth Effect",
+            "type": "string"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "principal": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Principal"
+          },
+          "source_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Id"
+          }
+        },
+        "required": [
+          "month",
+          "kind",
+          "label",
+          "source_id",
+          "cash_delta",
+          "asset_delta",
+          "liability_delta",
+          "net_worth_effect",
+          "principal",
+          "interest",
+          "note"
+        ],
+        "title": "TrajectoryEvent",
+        "type": "object"
+      },
+      "TrajectoryRequest": {
+        "description": "`plan_id` uses the signed-in user's saved plan; `plan` projects an explicit hypothetical plan.\n\nThe balance sheet always comes from the person's own records. `view`: baseline (current income, spending,\ncommitments and owned assets and debts, no future goals), selected_goals (baseline plus the goals named in\n`selected_goal_ids` and their funding), or scenario (the same plus the `scenario` shocks).",
+        "properties": {
+          "goal_effects": {
+            "items": {
+              "$ref": "#/components/schemas/GoalEffect"
+            },
+            "maxItems": 8,
+            "title": "Goal Effects",
+            "type": "array"
+          },
+          "horizon": {
+            "$ref": "#/components/schemas/Horizon"
+          },
+          "include_events": {
+            "default": true,
+            "title": "Include Events",
+            "type": "boolean"
+          },
+          "include_monthly_ledger": {
+            "default": true,
+            "title": "Include Monthly Ledger",
+            "type": "boolean"
+          },
+          "input_snapshot_hash": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "minLength": 64,
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Input Snapshot Hash"
+          },
+          "linked_commitments": {
+            "items": {
+              "$ref": "#/components/schemas/LinkedCommitment"
+            },
+            "maxItems": 6,
+            "title": "Linked Commitments",
+            "type": "array"
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Plan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "plan_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Id"
+          },
+          "planned_events": {
+            "items": {
+              "$ref": "#/components/schemas/PlannedEvent"
+            },
+            "maxItems": 20,
+            "title": "Planned Events",
+            "type": "array"
+          },
+          "premium_growth_annual": {
+            "default": "0.000000",
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Premium Growth Annual",
+            "type": "string"
+          },
+          "premiums_in_spending": {
+            "default": "auto",
+            "enum": [
+              "auto",
+              "yes",
+              "no"
+            ],
+            "title": "Premiums In Spending",
+            "type": "string"
+          },
+          "return_assumptions": {
+            "items": {
+              "$ref": "#/components/schemas/ReturnAssumption"
+            },
+            "maxItems": 50,
+            "title": "Return Assumptions",
+            "type": "array"
+          },
+          "scenario": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Scenario"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "selected_goal_ids": {
+            "items": {
+              "pattern": "^[A-Za-z0-9_-]{1,40}$",
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Selected Goal Ids",
+            "type": "array"
+          },
+          "view": {
+            "default": "baseline",
+            "enum": [
+              "baseline",
+              "selected_goals",
+              "scenario"
+            ],
+            "title": "View",
+            "type": "string"
+          }
+        },
+        "title": "TrajectoryRequest",
+        "type": "object"
+      },
+      "TrajectoryResult": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "title": "As Of",
+            "type": "string"
+          },
+          "checkpoints": {
+            "items": {
+              "$ref": "#/components/schemas/Checkpoint"
+            },
+            "title": "Checkpoints",
+            "type": "array"
+          },
+          "comparison": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Comparison"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "completeness": {
+            "$ref": "#/components/schemas/Completeness"
+          },
+          "drivers": {
+            "$ref": "#/components/schemas/Drivers"
+          },
+          "effective_assumptions": {
+            "items": {
+              "$ref": "#/components/schemas/EffectiveAssumption"
+            },
+            "title": "Effective Assumptions",
+            "type": "array"
+          },
+          "goals": {
+            "items": {
+              "$ref": "#/components/schemas/GoalImpact"
+            },
+            "title": "Goals",
+            "type": "array"
+          },
+          "horizon_months": {
+            "title": "Horizon Months",
+            "type": "integer"
+          },
+          "input_snapshot_hash": {
+            "title": "Input Snapshot Hash",
+            "type": "string"
+          },
+          "model_version": {
+            "title": "Model Version",
+            "type": "string"
+          },
+          "monthly_ledger": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/LedgerMonth"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Monthly Ledger"
+          },
+          "opening_balances": {
+            "$ref": "#/components/schemas/Balances"
+          },
+          "provenance": {
+            "items": {
+              "$ref": "#/components/schemas/ProvenanceEntry"
+            },
+            "title": "Provenance",
+            "type": "array"
+          },
+          "reference_age": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Age"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/TrajectorySummary"
+          },
+          "view": {
+            "enum": [
+              "baseline",
+              "selected_goals",
+              "scenario"
+            ],
+            "title": "View",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "$ref": "#/components/schemas/TrajectoryWarning"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "model_version",
+          "as_of",
+          "horizon_months",
+          "view",
+          "input_snapshot_hash",
+          "reference_age",
+          "effective_assumptions",
+          "completeness",
+          "warnings",
+          "provenance",
+          "summary",
+          "drivers",
+          "goals",
+          "comparison",
+          "checkpoints",
+          "opening_balances",
+          "monthly_ledger"
+        ],
+        "title": "TrajectoryResult",
+        "type": "object"
+      },
+      "TrajectorySummary": {
+        "additionalProperties": false,
+        "properties": {
+          "all_debts_cleared_month": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "All Debts Cleared Month"
+          },
+          "current_assets": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Current Assets",
+            "type": "string"
+          },
+          "current_cash": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Current Cash",
+            "type": "string"
+          },
+          "current_liabilities": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Current Liabilities",
+            "type": "string"
+          },
+          "current_net_worth": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Current Net Worth",
+            "type": "string"
+          },
+          "horizon_assets": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Horizon Assets",
+            "type": "string"
+          },
+          "horizon_cash": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Horizon Cash",
+            "type": "string"
+          },
+          "horizon_liabilities": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Horizon Liabilities",
+            "type": "string"
+          },
+          "horizon_net_worth": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Horizon Net Worth",
+            "type": "string"
+          },
+          "projected_debt_free_dates": {
+            "items": {
+              "$ref": "#/components/schemas/DebtFreeDate"
+            },
+            "title": "Projected Debt Free Dates",
+            "type": "array"
+          },
+          "reconciles": {
+            "title": "Reconciles",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "current_assets",
+          "current_liabilities",
+          "current_net_worth",
+          "current_cash",
+          "horizon_assets",
+          "horizon_liabilities",
+          "horizon_net_worth",
+          "horizon_cash",
+          "projected_debt_free_dates",
+          "all_debts_cleared_month",
+          "reconciles"
+        ],
+        "title": "TrajectorySummary",
+        "type": "object"
+      },
+      "TrajectoryWarning": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "component": {
+            "title": "Component",
+            "type": "string"
+          },
+          "edit_route": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Edit Route"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "record_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Record Id"
+          },
+          "related_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Related Id"
+          },
+          "severity": {
+            "enum": [
+              "info",
+              "warning",
+              "critical"
+            ],
+            "title": "Severity",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "severity",
+          "message",
+          "component",
+          "record_id",
+          "edit_route"
+        ],
+        "title": "TrajectoryWarning",
         "type": "object"
       },
       "TransactionCreate": {
@@ -18480,6 +20074,83 @@
         "summary": "Create Tradeoffs",
         "tags": [
           "analysis"
+        ]
+      }
+    },
+    "/api/v1/trajectory/project": {
+      "post": {
+        "description": "One monthly timeline of cash, assets, liabilities, insurance and (when chosen) goals, from the person's own\nrecords, with the assumptions, warnings and sources it rests on. Deterministic for the same records and request.",
+        "operationId": "project_trajectory_api_v1_trajectory_project_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrajectoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrajectoryResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Project Trajectory",
+        "tags": [
+          "trajectory"
         ]
       }
     }

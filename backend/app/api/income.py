@@ -15,12 +15,28 @@ from sqlalchemy.orm import Session
 from app.api.common import AUTH_RESPONSES, VALIDATION_RESPONSES
 from app.api.deps import get_current_user, get_db
 from app.db.models import SavedPlan, User
-from app.engine.income import project_income
+from app.engine.income import project_income_detail
 from app.errors import ApiError
-from app.schemas.income import IncomeProjectionRequest, IncomeProjectionResponse, IncomeYear
+from app.schemas.income import (
+    IncomeProjectionRequest,
+    IncomeProjectionResponse,
+    IncomeSource,
+    IncomeYear,
+)
 from app.schemas.plan import Plan
 
 router = APIRouter(prefix="/income", tags=["income"], responses=AUTH_RESPONSES)
+
+# What every projection assumes, stated once so the screen can show it next to the numbers.
+CONVENTIONS = [
+    "Amounts are annual totals of take-home income for each calendar year, not monthly figures.",
+    "A yearly raise repeats every year from the first year it applies; it is not a one-off increase.",
+    "A raise is first added in its start year; with no start year given, in the year after the income starts.",
+    "A step-up replaces the amount from January of its year. In a year with both a raise and a step-up, the step-up "
+    "replaces the amount and the raise is not added on top; the raise then continues from the step-up amount.",
+    "A scheduled income uses only its own raise. Only an income with no start year follows the plan-wide growth rate.",
+    "Income never grows or recovers unless you say so, and a year with fewer than 12 months counts only the months inside the plan.",
+]
 
 
 def _load(req: IncomeProjectionRequest, db: Session, user: User) -> tuple[Plan, str]:
@@ -35,7 +51,7 @@ def _load(req: IncomeProjectionRequest, db: Session, user: User) -> tuple[Plan, 
 
 def _build(req: IncomeProjectionRequest, db: Session, user: User) -> IncomeProjectionResponse:
     plan, source = _load(req, db, user)
-    rows = project_income(plan, req.horizon_months)
+    rows, sources = project_income_detail(plan, req.horizon_months)
     years = [IncomeYear.model_validate(row) for row in rows]
     total = years[-1].cumulative_income if years else Decimal("0.00")
     return IncomeProjectionResponse(
@@ -43,7 +59,10 @@ def _build(req: IncomeProjectionRequest, db: Session, user: User) -> IncomeProje
         horizon_months=req.horizon_months,
         first_month=plan.as_of,
         total_projected_income=total,
+        plan_growth_annual=plan.assumptions.income_growth_annual,
+        conventions=CONVENTIONS,
         years=years,
+        sources=[IncomeSource.model_validate(row) for row in sources],
     )
 
 

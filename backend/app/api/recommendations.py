@@ -9,7 +9,7 @@ from app.api.deps import get_current_user, get_db
 from app.db.models import SavedPlan, User
 from app.engine.projection import project
 from app.errors import ApiError
-from app.schemas.plan import Plan
+from app.schemas.plan import Plan, PlanWithGoals
 from app.schemas.recommendations import (
     ConservativeComparisonResponse,
     GoalRecommendationItem,
@@ -25,7 +25,7 @@ class RecommendationComparisonRequest(BaseModel):
     """Give `plan_id` to use the signed-in user's saved plan, or `plan` for an explicit hypothetical."""
 
     plan_id: str | None = None
-    plan: Plan | None = None
+    plan: PlanWithGoals | None = None
     scenario: Scenario | None = None
     conservative_return_drop: Decimal = Field(default=Decimal("0.025"), ge=Decimal("0"), le=Decimal("0.20"))
 

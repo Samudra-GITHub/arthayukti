@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { ExpenditureSection } from './Expenditure'
 import { IncomeSection } from './Income'
+import { IncomeTrajectorySection } from './IncomeTrajectory'
 import { api } from '../../api/client'
 import type { AIConsultResponse, CSVImportResponse, IntentSuggestions } from '../../api/types'
 import { AmountField, CheckField, DateField, FormError, SelectField, TextField } from '../../components/forms'
@@ -580,18 +581,15 @@ export function GoalsPage({ navigate }: PageProps) {
   )
 }
 
-export function FinancesPage({ navigate }: PageProps) {
+export function FinancesPage() {
   const m = useModulesCopy()
   const t = m.finances
-  const shortcut = useRestructureCopy().shortcut
   const { plan } = useStore()
   if (!plan) return <Notice>{m.common.needsPlan}</Notice>
   return (
     <>
-      <Panel id="finances-calculators" title={shortcut.title} aside={<button type="button" onClick={() => navigate('calculators')} className="min-h-10 rounded-xl bg-brand px-4 font-semibold text-white">{m.common.open}<span className="sr-only"> {shortcut.title}</span></button>}>
-        <p className="text-muted">{shortcut.body}</p>
-      </Panel>
       <IncomeSection />
+      <IncomeTrajectorySection />
       <ExpenditureSection />
       <Panel title={t.commitments}>
         {(plan.commitments ?? []).length === 0 ? (
