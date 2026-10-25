@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 
 from app.api import (
     ai,
+    ai_assist,
     analysis,
     auth,
     calculators,
@@ -108,6 +109,7 @@ def create_app() -> FastAPI:
         income,
         calculators,
         recovery,
+        ai_assist,
     ):
         app.include_router(module.router, prefix="/api/v1")
 

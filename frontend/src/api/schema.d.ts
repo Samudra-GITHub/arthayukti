@@ -26,6 +26,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ai/explain-recovery": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Explain Recovery
+         * @description Explain a plan in words. The server evaluates the plan itself and gives the model only the results.
+         */
+        post: operations["explain_recovery_api_v1_ai_explain_recovery_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/ai/parse-intent": {
         parameters: {
             query?: never;
@@ -40,6 +60,46 @@ export interface paths {
          * @description Pick suggested goals and constraints out of a typed question. Suggestions only.
          */
         post: operations["ai_parse_intent_api_v1_ai_parse_intent_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ai/situation-draft": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Situation Draft
+         * @description Read a description into a suggested form draft. Only the typed text and the month are sent out.
+         */
+        post: operations["situation_draft_api_v1_ai_situation_draft_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ai/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Status
+         * @description Whether AI help is switched on. Never says why it is not, and never shows the key.
+         */
+        get: operations["status_api_v1_ai_status_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1451,6 +1511,11 @@ export interface components {
             /** Unresolved Gap */
             unresolved_gap: string | null;
         };
+        /** AIStatus */
+        AIStatus: {
+            /** Available */
+            available: boolean;
+        };
         /** AccountCreateRequest */
         AccountCreateRequest: {
             /** Account Name */
@@ -2342,6 +2407,37 @@ export interface components {
              * @enum {string}
              */
             type: "expense_change";
+        };
+        /** ExplainRequest */
+        ExplainRequest: {
+            input: components["schemas"]["RecoveryInput"];
+            /**
+             * Language
+             * @default en
+             * @enum {string}
+             */
+            language: "en" | "hi";
+        };
+        /** Explanation */
+        Explanation: {
+            /** Caution */
+            caution: string;
+            /** Changed */
+            changed: string[];
+            /**
+             * Generated
+             * @default true
+             * @constant
+             */
+            generated: true;
+            /** Kept As Is */
+            kept_as_is: string[];
+            /** Notice */
+            notice: string;
+            /** Returns To Plan */
+            returns_to_plan: string;
+            /** Summary */
+            summary: string;
         };
         /** ExportAccount */
         ExportAccount: {
@@ -4161,6 +4257,45 @@ export interface components {
             /** Year */
             year: number;
         };
+        /**
+         * SituationDraft
+         * @description A suggestion to put into the form. Every field may be empty, and the person confirms each one.
+         */
+        SituationDraft: {
+            /** Cannot Change */
+            cannot_change: string[];
+            /** Cash Available */
+            cash_available?: string | null;
+            /** Clarifications */
+            clarifications: string[];
+            /** Disruption */
+            disruption: ("income_reduction" | "income_loss" | "new_expense") | null;
+            /** Duration Months */
+            duration_months?: number | null;
+            /**
+             * Generated
+             * @default true
+             * @constant
+             */
+            generated: true;
+            /** Income Before */
+            income_before?: string | null;
+            /** Income During */
+            income_during?: string | null;
+            /** New Monthly Cost */
+            new_monthly_cost?: string | null;
+            /** Notice */
+            notice: string;
+            /** Start Month */
+            start_month: string | null;
+        };
+        /** SituationRequest */
+        SituationRequest: {
+            /** Current Month */
+            current_month: string;
+            /** Text */
+            text: string;
+        };
         /** StrategyComparisonRequest */
         StrategyComparisonRequest: {
             /** Debts */
@@ -4381,6 +4516,93 @@ export interface operations {
             };
         };
     };
+    explain_recovery_api_v1_ai_explain_recovery_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExplainRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Explanation"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The AI service sent an unusable answer. */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description AI help is not available on this server. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The AI service did not answer in time. */
+            504: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     ai_parse_intent_api_v1_ai_parse_intent_post: {
         parameters: {
             query?: never;
@@ -4405,6 +4627,176 @@ export interface operations {
             };
             /** @description The request is invalid. */
             422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    situation_draft_api_v1_ai_situation_draft_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SituationRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SituationDraft"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The AI service sent an unusable answer. */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description AI help is not available on this server. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The AI service did not answer in time. */
+            504: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    status_api_v1_ai_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIStatus"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The AI service sent an unusable answer. */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description AI help is not available on this server. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The AI service did not answer in time. */
+            504: {
                 headers: {
                     [name: string]: unknown;
                 };

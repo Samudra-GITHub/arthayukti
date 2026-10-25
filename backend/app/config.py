@@ -54,6 +54,13 @@ class Settings(BaseSettings):
     FRONTEND_BASE_URL: str = "http://localhost:5173"
     PASSWORD_RESET_TTL_MINUTES: int = 60
 
+    # Optional AI help (Gemini). Backend only: the key is never sent to the browser. Empty means the AI
+    # features report themselves unavailable and everything else works unchanged.
+    GEMINI_API_KEY: str = ""
+    GEMINI_MODEL: str = "gemini-2.5-flash"
+    GEMINI_TIMEOUT_SECONDS: float = 20.0
+    AI_MAX_INPUT_CHARS: int = 1500
+
     # Financial Engine Settings
     DEFAULT_GOAL_INFLATION: str = "0.05"
     MODEL_VERSION: str = "v1.3-constraint-aware"

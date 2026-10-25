@@ -51,7 +51,7 @@ export function Stepper({ value, decreaseLabel, increaseLabel, onDecrease, onInc
       type="button"
       onClick={action}
       aria-label={label}
-      className="flex h-16 w-14 shrink-0 items-center justify-center"
+      className="flex h-16 w-11 shrink-0 items-center justify-center sm:w-14"
     >
       {icon}
     </button>
@@ -59,7 +59,7 @@ export function Stepper({ value, decreaseLabel, increaseLabel, onDecrease, onInc
   return (
     <div className="flex min-h-16 items-center gap-2 rounded-2xl bg-cream">
       {button(decreaseLabel, onDecrease, <Minus size={24} aria-hidden="true" />)}
-      <p className="min-w-0 flex-1 text-center font-display text-[26px]" aria-live="polite">
+      <p className="min-w-0 flex-1 text-center font-display text-[22px] sm:text-[26px]" aria-live="polite">
         {formatMoney(value)}
       </p>
       {button(increaseLabel, onIncrease, <Plus size={24} aria-hidden="true" />)}

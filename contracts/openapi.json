@@ -190,6 +190,20 @@
         "title": "AIConsultResponse",
         "type": "object"
       },
+      "AIStatus": {
+        "additionalProperties": false,
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "available"
+        ],
+        "title": "AIStatus",
+        "type": "object"
+      },
       "AccountCreateRequest": {
         "additionalProperties": false,
         "properties": {
@@ -2945,6 +2959,79 @@
           "delta_monthly"
         ],
         "title": "ExpenseChange",
+        "type": "object"
+      },
+      "ExplainRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "input": {
+            "$ref": "#/components/schemas/RecoveryInput"
+          },
+          "language": {
+            "default": "en",
+            "enum": [
+              "en",
+              "hi"
+            ],
+            "title": "Language",
+            "type": "string"
+          }
+        },
+        "required": [
+          "input"
+        ],
+        "title": "ExplainRequest",
+        "type": "object"
+      },
+      "Explanation": {
+        "additionalProperties": false,
+        "properties": {
+          "caution": {
+            "title": "Caution",
+            "type": "string"
+          },
+          "changed": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Changed",
+            "type": "array"
+          },
+          "generated": {
+            "const": true,
+            "default": true,
+            "title": "Generated",
+            "type": "boolean"
+          },
+          "kept_as_is": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Kept As Is",
+            "type": "array"
+          },
+          "notice": {
+            "title": "Notice",
+            "type": "string"
+          },
+          "returns_to_plan": {
+            "title": "Returns To Plan",
+            "type": "string"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "summary",
+          "kept_as_is",
+          "changed",
+          "returns_to_plan",
+          "caution",
+          "notice"
+        ],
+        "title": "Explanation",
         "type": "object"
       },
       "ExportAccount": {
@@ -8788,6 +8875,148 @@
         "title": "SipYearlyMilestone",
         "type": "object"
       },
+      "SituationDraft": {
+        "additionalProperties": false,
+        "description": "A suggestion to put into the form. Every field may be empty, and the person confirms each one.",
+        "properties": {
+          "cannot_change": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Cannot Change",
+            "type": "array"
+          },
+          "cash_available": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cash Available"
+          },
+          "clarifications": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Clarifications",
+            "type": "array"
+          },
+          "disruption": {
+            "anyOf": [
+              {
+                "enum": [
+                  "income_reduction",
+                  "income_loss",
+                  "new_expense"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disruption"
+          },
+          "duration_months": {
+            "anyOf": [
+              {
+                "maximum": 120.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Months"
+          },
+          "generated": {
+            "const": true,
+            "default": true,
+            "title": "Generated",
+            "type": "boolean"
+          },
+          "income_before": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Income Before"
+          },
+          "income_during": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Income During"
+          },
+          "new_monthly_cost": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "New Monthly Cost"
+          },
+          "notice": {
+            "title": "Notice",
+            "type": "string"
+          },
+          "start_month": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Month"
+          }
+        },
+        "required": [
+          "disruption",
+          "start_month",
+          "cannot_change",
+          "clarifications",
+          "notice"
+        ],
+        "title": "SituationDraft",
+        "type": "object"
+      },
+      "SituationRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "current_month": {
+            "title": "Current Month",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "current_month"
+        ],
+        "title": "SituationRequest",
+        "type": "object"
+      },
       "StrategyComparisonRequest": {
         "additionalProperties": false,
         "properties": {
@@ -9394,6 +9623,113 @@
         ]
       }
     },
+    "/api/v1/ai/explain-recovery": {
+      "post": {
+        "description": "Explain a plan in words. The server evaluates the plan itself and gives the model only the results.",
+        "operationId": "explain_recovery_api_v1_ai_explain_recovery_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExplainRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Explanation"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The AI service sent an unusable answer."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "AI help is not available on this server."
+          },
+          "504": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The AI service did not answer in time."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Explain Recovery",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
     "/api/v1/ai/parse-intent": {
       "post": {
         "description": "Pick suggested goals and constraints out of a typed question. Suggestions only.",
@@ -9431,6 +9767,210 @@
           }
         },
         "summary": "Ai Parse Intent",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/v1/ai/situation-draft": {
+      "post": {
+        "description": "Read a description into a suggested form draft. Only the typed text and the month are sent out.",
+        "operationId": "situation_draft_api_v1_ai_situation_draft_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SituationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SituationDraft"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The AI service sent an unusable answer."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "AI help is not available on this server."
+          },
+          "504": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The AI service did not answer in time."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Situation Draft",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/v1/ai/status": {
+      "get": {
+        "description": "Whether AI help is switched on. Never says why it is not, and never shows the key.",
+        "operationId": "status_api_v1_ai_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The AI service sent an unusable answer."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "AI help is not available on this server."
+          },
+          "504": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The AI service did not answer in time."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Status",
         "tags": [
           "ai"
         ]

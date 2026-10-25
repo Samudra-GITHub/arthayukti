@@ -2,6 +2,8 @@ import type { RecoveryPlanOption, RecoverySearchRequest, RecoverySearchResponse 
 import { addMoney, formatMoney } from '../../lib/money'
 import { usePlanBCopy } from '../../state/usePlanBCopy'
 import { Notice, Panel, Stat, Table } from '../panel'
+import { agreementDraft } from '../../lib/planb'
+import { ExplainPlan } from './AIHelp'
 import { CashChart } from './CashChart'
 
 const money = (amount: string) => formatMoney(amount, { paise: true })
@@ -26,11 +28,12 @@ interface OptionProps {
   chosen: boolean
   busy: boolean
   stale: boolean
+  ai: boolean
   onChoose: () => void
   onReject: (itemId: string) => void
 }
 
-function OptionCard({ option, request, chosen, busy, stale, onChoose, onReject }: OptionProps) {
+function OptionCard({ option, request, chosen, busy, stale, ai, onChoose, onReject }: OptionProps) {
   const t = usePlanBCopy().results
   const m = option.metrics
   const labels = new Map(request.input.items.map((i) => [i.id, i.label]))
@@ -70,6 +73,10 @@ function OptionCard({ option, request, chosen, busy, stale, onChoose, onReject }
       <p className="text-[13px] text-muted">
         <strong>{t.goalDelay}:</strong> {m.goal_delay}
       </p>
+      <ExplainPlan
+        enabled={ai && !stale}
+        input={agreementDraft(request, option.adjustments.map((a) => a.adjustment), { selectedLabel: null, rationale: '', fallback: '' }).input}
+      />
       {changed.length > 0 ? (
         <div className="flex flex-col gap-2">
           <p className="text-[13px] text-muted">{t.rejectHint}</p>
@@ -106,11 +113,12 @@ interface ResultsProps {
   chosenId: string | null
   busy: boolean
   stale: boolean
+  ai: boolean
   onChoose: (option: RecoveryPlanOption) => void
   onReject: (itemId: string) => void
 }
 
-export function Results({ response, request, chosenId, busy, stale, onChoose, onReject }: ResultsProps) {
+export function Results({ response, request, chosenId, busy, stale, ai, onChoose, onReject }: ResultsProps) {
   const t = usePlanBCopy().results
   const s = response.search
   const statusLine = s.status === 'found' ? t.found(response.options.length) : s.status === 'infeasible' ? t.infeasible : t.incomplete
@@ -134,7 +142,7 @@ export function Results({ response, request, chosenId, busy, stale, onChoose, on
 
       <div className="flex flex-col gap-4">
         {response.options.map((option) => (
-          <OptionCard key={option.id} option={option} request={request} chosen={chosenId === option.id} busy={busy} stale={stale} onChoose={() => onChoose(option)} onReject={onReject} />
+          <OptionCard key={option.id} option={option} request={request} chosen={chosenId === option.id} busy={busy} stale={stale} ai={ai} onChoose={() => onChoose(option)} onReject={onReject} />
         ))}
       </div>
 

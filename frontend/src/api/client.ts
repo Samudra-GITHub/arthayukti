@@ -58,6 +58,9 @@ import type {
   RiskAssessmentSubmitRequest,
   RiskAssessmentHistoryItem,
   ConservativeComparisonResponse,
+  AIExplanation,
+  AIStatus,
+  SituationDraft,
 } from './types'
 
 const BASE = import.meta.env.VITE_API_BASE_URL ?? ''
@@ -198,6 +201,12 @@ export const api = {
     if (!response.ok) throw new ApiFailure('http_error', `Export failed (${response.status}).`, response.status)
     return response.blob()
   },
+  // AI help (the key lives only on the server)
+  aiStatus: (signal?: AbortSignal) => get<AIStatus>('/ai/status', signal),
+  aiSituationDraft: (text: string, currentMonth: string, signal?: AbortSignal) =>
+    post<SituationDraft>('/ai/situation-draft', { text, current_month: currentMonth }, signal),
+  aiExplainRecovery: (input: RecoveryInput, language: 'en' | 'hi', signal?: AbortSignal) =>
+    post<AIExplanation>('/ai/explain-recovery', { input, language }, signal),
   // Plan B
   recoverySearch: (body: RecoverySearchRequest, signal?: AbortSignal) =>
     post<RecoverySearchResponse>('/recovery/search', body, signal),

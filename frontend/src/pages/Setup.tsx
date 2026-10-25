@@ -203,7 +203,7 @@ export function Dreams({ navigate }: PageProps) {
         stepOf={text.common.stepOf(3)}
         labels={[text.common.moneyIn, text.common.moneyOut, text.common.dreams]}
       />
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-2">
         {ordered.map((goal, index) => {
           const Icon = GOAL_ICONS[goal.type] ?? House
           const step = stepFor(goal.target_amount_today)

@@ -73,3 +73,7 @@ removed with the account.
 - Goal delays are not calculated.
 - Prefill from a saved plan reads income, expenses, commitments and goal balances; contribution amounts must be entered.
 - Hindi copy has not had a native-speaker review.
+
+## AI help
+
+Optional Gemini help (describe a situation in words; explain a plan in words) is documented in `docs/AI_GEMINI.md`. It never decides a figure.

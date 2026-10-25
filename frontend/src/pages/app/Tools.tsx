@@ -11,6 +11,7 @@ import { goalNameById, statusText, toneOf } from '../../lib/outcome'
 import { useAction } from '../../state/useAction'
 import { useAuth } from '../../state/useAuth'
 import { useExtrasCopy } from '../../state/useExtrasCopy'
+import { usePlanBCopy } from '../../state/usePlanBCopy'
 import { useModulesCopy } from '../../state/useModulesCopy'
 import { useRemote } from '../../state/useRemote'
 import { useShellCopy } from '../../state/useShellCopy'
@@ -455,6 +456,7 @@ export function GoalsPage({ navigate }: PageProps) {
   const t = m.goals
   const shell = useShellCopy()
   const extras = useExtrasCopy()
+  const planB = usePlanBCopy().entry
   const { text, language, plan, projection } = useStore()
   if (!plan) return <Notice>{m.common.needsPlan}</Notice>
   const ordered = [...plan.goals].sort((a, b) => a.priority - b.priority)
@@ -485,6 +487,16 @@ export function GoalsPage({ navigate }: PageProps) {
         </Loaded>
         <div className="flex flex-wrap gap-2">{link('dreams', t.manage)}</div>
       </Panel>
+      <section aria-labelledby="plan-b-feature" className="flex flex-col gap-4 rounded-2xl bg-gradient-to-br from-brand to-sky-500 p-6 text-white shadow-lg sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex max-w-2xl flex-col gap-1">
+          <span className="w-fit rounded-full bg-white/20 px-3 py-0.5 text-[12px] font-bold uppercase tracking-wider">{planB.badge}</span>
+          <h2 id="plan-b-feature" className="text-2xl font-bold">{planB.title}</h2>
+          <p className="text-[15px] text-white/90">{planB.body}</p>
+        </div>
+        <button type="button" onClick={() => navigate('plan-b')} className="min-h-12 shrink-0 rounded-xl bg-white px-6 font-bold text-brand-ink shadow-md hover:bg-white/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+          {planB.open}
+        </button>
+      </section>
       <Panel title={t.explore}>
         <div className="flex flex-wrap gap-2">
           {link('tradeoffs', t.tradeoffs)}

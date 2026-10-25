@@ -109,6 +109,14 @@ describe('Plan B', () => {
     expect(await screen.findByText('Protect what matters. Change what is flexible. Know when to restart.')).toBeInTheDocument()
   })
 
+  it('is featured on the Financial goals page with its own button', async () => {
+    window.location.hash = '/goals'
+    backend()
+    render(<App />)
+    fireEvent.click(await screen.findByRole('button', { name: 'Open Plan B' }))
+    expect(await screen.findByText('Protect what matters. Change what is flexible. Know when to restart.')).toBeInTheDocument()
+  })
+
   it('stops a step that has a problem and names the field', async () => {
     backend()
     render(<App />)
@@ -270,5 +278,88 @@ describe('Plan B', () => {
     expect(screen.queryByText('Something went wrong. Try again.')).toBeNull()
     expect(screen.getByRole('button', { name: 'Save as new version' })).toBeInTheDocument()
   })
-})
 
+  describe('AI help', () => {
+    const DRAFT = {
+      disruption: 'income_reduction', start_month: '2026-11', duration_months: 6, income_before: '100000.00', income_during: '60000.00',
+      new_monthly_cost: null, cash_available: null, cannot_change: ['loan EMI'], clarifications: ['What is the new monthly cost?'],
+      notice: 'Suggested by AI from your words. Check every value before you use it; nothing has been calculated yet.', generated: true,
+    }
+    const on = { 'GET /ai/status': () => json({ available: true }) }
+
+    it('says AI help is off and offers no dead control when the server has no key', async () => {
+      backend({ 'GET /ai/status': () => json({ available: false }) })
+      render(<App />)
+      expect(await screen.findByText('AI help is not set up on this server. You can still fill in the form yourself.')).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Read my description' })).toBeNull()
+    })
+
+    it('treats an unreachable status check as off rather than showing broken controls', async () => {
+      backend({})
+      render(<App />)
+      expect(await screen.findByText('AI help is not set up on this server. You can still fill in the form yourself.')).toBeInTheDocument()
+    })
+
+    it('reads a description into the form, shows what it filled and what is still missing, and keeps the person in charge', async () => {
+      const { calls } = backend({ ...on, 'POST /ai/situation-draft': () => json(DRAFT) })
+      render(<App />)
+      const box = await screen.findByLabelText('What happened?')
+      expect(screen.getByRole('button', { name: 'Read my description' })).toBeDisabled()
+      fireEvent.change(box, { target: { value: 'My income falls to 60k for six months from next month. I cannot pause my loan EMI.' } })
+      fireEvent.click(screen.getByRole('button', { name: 'Read my description' }))
+      expect(await screen.findByText(/Suggested by AI from your words/)).toBeInTheDocument()
+      expect(screen.getByText('What is the new monthly cost?')).toBeInTheDocument()
+      expect(screen.getByText('loan EMI')).toBeInTheDocument()
+      const sent = calls.find((c) => c.path === '/ai/situation-draft')?.body as { text: string; current_month: string }
+      expect(sent.text).toContain('loan EMI')
+      expect(sent.current_month).toMatch(/^\d{4}-\d{2}$/)
+      // The values landed in the editable form; nothing was searched or calculated.
+      fireEvent.click(screen.getByRole('button', { name: 'Next' }))
+      expect(await screen.findByLabelText('Monthly take-home income before (₹)')).toHaveValue('100000')
+      expect(screen.getByLabelText('Monthly take-home income during the change (₹)')).toHaveValue('60000')
+      expect(calls.some((c) => c.path === '/recovery/search')).toBe(false)
+    })
+
+    it('shows a clear message when the AI service is busy and leaves the form untouched', async () => {
+      backend({ ...on, 'POST /ai/situation-draft': () => json({ error: { code: 'ai_rate_limited', message: 'busy' } }, 429) })
+      render(<App />)
+      fireEvent.change(await screen.findByLabelText('What happened?'), { target: { value: 'My income fell.' } })
+      fireEvent.click(screen.getByRole('button', { name: 'Read my description' }))
+      expect(await screen.findByText('AI help is busy. Try again in a minute.')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Read my description' })).not.toBeDisabled()
+    })
+
+    it('explains a plan in words, labelled as generated, from the plan the server evaluates', async () => {
+      const explanation = { summary: 'Your cash ends at 180000.00.', kept_as_is: ['Loan EMI is paid as usual.'], changed: ['Flexible spending is reduced.'], returns_to_plan: 'Nothing comes back by itself.', caution: 'This covers your own numbers only.', notice: 'Written by AI from the figures above. The figures are calculated by ArthaYukti; this wording is not a calculation and is not advice.', generated: true }
+      const { calls } = backend({ ...on, 'POST /recovery/search': (init) => json(searchResult(JSON.parse(String(init?.body)))), 'POST /ai/explain-recovery': () => json(explanation) })
+      render(<App />)
+      await fillAndOpenSearch()
+      fireEvent.click(screen.getByRole('button', { name: 'Find recovery options' }))
+      fireEvent.click(await screen.findByRole('button', { name: 'Explain this plan in words' }))
+      expect(await screen.findByText('Your cash ends at 180000.00.')).toBeInTheDocument()
+      expect(screen.getByText(/this wording is not a calculation/)).toBeInTheDocument()
+      const sent = calls.find((c) => c.path === '/ai/explain-recovery')?.body as { language: string; input: { adjustments: { item_id: string }[] } }
+      expect(sent.language).toBe('en')
+      expect(sent.input.adjustments.length).toBeGreaterThan(0)
+    })
+
+    it('shows no explanation and keeps the calculated figures when the wording is refused', async () => {
+      backend({ ...on, 'POST /recovery/search': (init) => json(searchResult(JSON.parse(String(init?.body)))), 'POST /ai/explain-recovery': () => json({ error: { code: 'ai_unverified', message: 'x' } }, 502) })
+      render(<App />)
+      await fillAndOpenSearch()
+      fireEvent.click(screen.getByRole('button', { name: 'Find recovery options' }))
+      fireEvent.click(await screen.findByRole('button', { name: 'Explain this plan in words' }))
+      expect(await screen.findByText(/used a figure that was not calculated/)).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: '1. Smallest total sacrifice' })).toBeInTheDocument()
+    })
+
+    it('offers no explain button when AI help is off', async () => {
+      backend({ 'GET /ai/status': () => json({ available: false }), 'POST /recovery/search': (init) => json(searchResult(JSON.parse(String(init?.body)))) })
+      render(<App />)
+      await fillAndOpenSearch()
+      fireEvent.click(screen.getByRole('button', { name: 'Find recovery options' }))
+      await screen.findByRole('heading', { name: '1. Smallest total sacrifice' })
+      expect(screen.queryByRole('button', { name: 'Explain this plan in words' })).toBeNull()
+    })
+  })
+})

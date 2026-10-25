@@ -2,6 +2,8 @@ import { useMemo, useRef, useState } from 'react'
 import { ApiFailure, api } from '../../api/client'
 import type { RecoveryPlanOption, RecoverySearchRequest, RecoverySearchResponse } from '../../api/types'
 import { AgreementList, AgreementView } from '../../components/planb/Agreements'
+import { DescribeWithAI } from '../../components/planb/AIHelp'
+import { useAIStatus } from '../../components/planb/useAIHelp'
 import { Results } from '../../components/planb/Results'
 import { StepAllow, StepChange, StepDescribe, StepProtect } from '../../components/planb/Steps'
 import { TextField } from '../../components/forms'
@@ -36,6 +38,7 @@ export function PlanBPage() {
   const [fallback, setFallback] = useState('')
   const [savedNote, setSavedNote] = useState(false)
   const token = useRef(newId('tok'))
+  const ai = useAIStatus()
   const search = useAction()
   const save = useAction()
   const built = useMemo(() => buildSearch(draft), [draft])
@@ -132,6 +135,8 @@ export function PlanBPage() {
         <p className="max-w-3xl text-muted">{t.intro}</p>
       </section>
 
+      <DescribeWithAI status={ai} draft={draft} onApply={(next) => { setDraft(next); setStep(0) }} />
+
       <Panel id="planb-form" title={t.steps[step]} aside={<span className="text-[13px] text-muted">{t.step(step + 1, 4)}</span>}>
         <ol className="flex flex-wrap gap-2 text-[13px]" aria-label={t.steps.join(', ')}>
           {t.steps.map((label, i) => (
@@ -183,7 +188,7 @@ export function PlanBPage() {
 
       {response && request ? (
         <div aria-busy={search.busy} className={search.busy ? 'opacity-70 transition-opacity' : 'transition-opacity'}>
-          <Results response={response} request={request} chosenId={chosen?.id ?? null} busy={search.busy} stale={stale} onChoose={setChosen} onReject={reject} />
+          <Results response={response} request={request} chosenId={chosen?.id ?? null} busy={search.busy} stale={stale} ai={ai === 'on'} onChoose={setChosen} onReject={reject} />
         </div>
       ) : null}
 
