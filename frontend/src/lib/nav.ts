@@ -1,4 +1,4 @@
-import { Bell, Bot, ChartLine, Gauge, HandCoins, House, Landmark, LifeBuoy, PiggyBank, Settings, ShieldCheck, Target, TrendingUp, Users, Waypoints, type LucideIcon } from 'lucide-react'
+import { Bell, Bot, Calculator, ChartLine, Gauge, HandCoins, House, Landmark, LifeBuoy, PiggyBank, Settings, ShieldCheck, Target, TrendingUp, Users, Waypoints, type LucideIcon } from 'lucide-react'
 import type { ShellCopy } from '../i18n/shell'
 import type { Route } from './route'
 
@@ -17,6 +17,7 @@ export const NAV_BEFORE_OUTLOOK: NavItem[] = [
   { route: 'insurance', key: 'insurance', icon: ShieldCheck, covers: [] },
   { route: 'debts', key: 'debts', icon: Landmark, covers: [] },
   { route: 'equities', key: 'equities', icon: TrendingUp, covers: [] },
+  { route: 'calculators', key: 'calculators', icon: Calculator, covers: [] },
   { route: 'emergency', key: 'emergency', icon: PiggyBank, covers: [] },
   { route: 'goals', key: 'goals', icon: Target, covers: ['dreams', 'plan', 'what-if', 'fixes', 'compare', 'tradeoffs'] },
   { route: 'trajectory', key: 'trajectory', icon: Waypoints, covers: [] },

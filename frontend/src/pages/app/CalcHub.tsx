@@ -46,6 +46,12 @@ export function EquitiesModule() {
           </button>
         ))}
       </div>
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-brand/30 bg-brand/5 p-3.5 text-[14px]">
+        <span>Model multiple independent Lump-Sum &amp; SIP investments with side-by-side comparison.</span>
+        <a href="#/calculators" className="font-semibold text-brand underline underline-offset-4 hover:text-brand/80">
+          Open Investment Calculator &rarr;
+        </a>
+      </div>
       <Notice>{t.note}</Notice>
       {view === 'calculator' ? (
         <CalculatorsPage />

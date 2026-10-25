@@ -30,6 +30,7 @@ import {
   ScenarioComparisonPage,
 } from './pages/app/Outlook'
 import { DebtsModule, EquitiesModule, InsuranceModule } from './pages/app/CalcHub'
+import { InvestmentCalculatorPage } from './pages/app/InvestmentCalculatorPage'
 import { TrajectoryPage } from './pages/app/Trajectory'
 import { EmergencyPage } from './pages/app/Emergency'
 import { PlanBPage } from './pages/app/PlanB'
@@ -124,6 +125,8 @@ function Screens() {
       return <AppPage route={route} navigate={navigate}><DebtsModule /></AppPage>
     case 'equities':
       return <AppPage route={route} navigate={navigate}><EquitiesModule /></AppPage>
+    case 'calculators':
+      return <AppPage route={route} navigate={navigate}><InvestmentCalculatorPage /></AppPage>
     case 'trajectory':
       return <AppPage route={route} navigate={navigate}><TrajectoryPage /></AppPage>
     case 'emergency':

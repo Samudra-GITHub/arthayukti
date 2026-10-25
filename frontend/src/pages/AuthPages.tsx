@@ -42,7 +42,6 @@ function failureText(error: unknown, c: ReturnType<typeof useShellCopy>['auth'],
   if (error instanceof ApiFailure) {
     if (error.code === 'offline') return c.offline
     if (error.status === 429) return c.slow
-    if (error.status === 403) return error.message || 'Account is disabled.'
   }
   return fallback
 }
@@ -66,7 +65,6 @@ export function LoginPage({ navigate }: PageProps) {
     setBusy(true)
     try {
       await auth.login(email.trim(), password)
-      navigate('dashboard')
     } catch (error) {
       setFailure(failureText(error, c, error instanceof ApiFailure && error.status === 401 ? c.wrong : c.offline))
     } finally {
@@ -150,7 +148,6 @@ export function SignupPage({ navigate }: PageProps) {
     setBusy(true)
     try {
       await auth.signup(email.trim(), password, name.trim())
-      navigate('dashboard')
     } catch (error) {
       setFailure(failureText(error, c, error instanceof ApiFailure && error.status === 422 ? c.passwordRules : c.createFailed))
     } finally {
