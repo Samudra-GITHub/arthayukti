@@ -14,7 +14,7 @@ Repository: <https://github.com/Samudra-GITHub/arthayukti> · Live site: <https:
 | --- | --- |
 | **Title** | ArthaYukti: *see which goal you lose when money runs short, and the smallest change that fixes it* |
 | **Theme / problem** | Finance, F-02: Multi-Goal Financial Planning Under Uncertainty |
-| **Team** | ArthaYukti team (members in section 15) |
+| **Team** | **Medhavis** (members in section 15) |
 
 **Executive summary.** People rarely have one financial goal. They want an emergency fund, a child's education, a home and retirement at once, from one income that can shrink. ArthaYukti is a web application that takes a household's income, spending, debts, insurance, investments and goals and answers three questions with exact, reproducible calculations: *which goal slips and by how long*, *what is the smallest change that fixes it*, and *what happens if life goes wrong* (income drop, new cost). On top of the engine sits an **AI Financial Advisor** (Gemini) that proposes alternative paths and explains trade-offs, but never does the arithmetic and never changes a record without the person confirming the exact edit.
 
@@ -152,7 +152,7 @@ Environment (copy `.env.example` to `backend/.env`; never commit it): `DATABASE_
 
 ## 15. Team contributions and references
 
-**Team statement:** ArthaYukti was built by two co-builders who share the project equally.
+**Team statement:** ArthaYukti was built by Team Medhavis, two co-builders who share the project equally.
 
 | Member | Role | What they brought |
 | --- | --- | --- |
