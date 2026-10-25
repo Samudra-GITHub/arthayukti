@@ -1373,6 +1373,139 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/portfolio": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Portfolio
+         * @description The person's stock positions valued at the latest stored prices, with profit and loss. It does not call the price
+         *     service: use refresh for that.
+         */
+        get: operations["get_portfolio_api_v1_portfolio_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/portfolio/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Portfolio History
+         * @description What can honestly be shown over time.
+         *
+         *     The price service has no historical prices, so a value history cannot be rebuilt for dates before this feature was
+         *     used. `snapshots` are the readings taken each time prices were refreshed, going forward from the first. The
+         *     `invested_timeline` is real history: what was invested when, from the dated transactions, needing no prices.
+         */
+        get: operations["portfolio_history_api_v1_portfolio_history_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/portfolio/holdings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Holding
+         * @description Record a purchase of a stock. If it is already held, this is another purchase of it (the ledger works out the
+         *     average cost). Nothing the browser says about prices is stored: only quantity, price paid and date.
+         */
+        post: operations["add_holding_api_v1_portfolio_holdings_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/portfolio/holdings/{holding_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Edit Holding
+         * @description Change the quantity, price paid, date or name of a holding that has one purchase. A holding with several
+         *     transactions is changed in the transaction ledger, where each one can be edited on its own.
+         */
+        put: operations["edit_holding_api_v1_portfolio_holdings__holding_id__put"];
+        post?: never;
+        /**
+         * Delete Holding
+         * @description Remove a holding and its transactions.
+         */
+        delete: operations["delete_holding_api_v1_portfolio_holdings__holding_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/portfolio/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Refresh Portfolio
+         * @description Ask the price service for the latest prices of the person's open positions, store what it returned, and value the
+         *     portfolio. If the service fails, the stored prices stay as they were and are shown with their age.
+         */
+        post: operations["refresh_portfolio_api_v1_portfolio_refresh_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/portfolio/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search Stocks
+         * @description NSE and BSE stocks matching a name or symbol, from the price service. A service failure is an error, not an
+         *     empty list.
+         */
+        get: operations["search_stocks_api_v1_portfolio_search_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projections": {
         parameters: {
             query?: never;
@@ -2858,6 +2991,15 @@ export interface components {
             /** Updated At */
             updated_at: string;
         };
+        /** Excluded */
+        Excluded: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Reason */
+            reason: string;
+        };
         /** ExpenditureLine */
         ExpenditureLine: {
             /** Category */
@@ -3339,6 +3481,64 @@ export interface components {
             /** Status */
             status: string;
         };
+        /** HistoryResponse */
+        HistoryResponse: {
+            /** Invested Timeline */
+            invested_timeline: components["schemas"]["InvestedPoint"][];
+            /** Note */
+            note: string;
+            /** Range */
+            range: string;
+            /** Since */
+            since: string | null;
+            /** Snapshots */
+            snapshots: components["schemas"]["SnapshotPoint"][];
+        };
+        /**
+         * HoldingCreate
+         * @description One purchase of a stock, entered by hand. If the stock is already held, this is another purchase of it.
+         */
+        HoldingCreate: {
+            /** Average Price */
+            average_price: string;
+            /** Company Name */
+            company_name?: string | null;
+            /**
+             * Exchange
+             * @enum {string}
+             */
+            exchange: "NSE" | "BSE";
+            /** Purchase Date */
+            purchase_date?: string | null;
+            /** Quantity */
+            quantity: string;
+            /** Symbol */
+            symbol: string;
+        };
+        /** HoldingSaved */
+        HoldingSaved: {
+            /** Id */
+            id: string;
+            /** Merged */
+            merged: boolean;
+            /** Message */
+            message: string | null;
+            /** Ticker */
+            ticker: string;
+            /** Verified */
+            verified: boolean;
+        };
+        /** HoldingUpdate */
+        HoldingUpdate: {
+            /** Average Price */
+            average_price?: string | null;
+            /** Company Name */
+            company_name?: string | null;
+            /** Purchase Date */
+            purchase_date?: string | null;
+            /** Quantity */
+            quantity?: string | null;
+        };
         /**
          * Horizon
          * @description How far to look: a number of months, or an age (which needs the reference age on the household profile).
@@ -3716,6 +3916,13 @@ export interface components {
             plain_english_summary: string;
             /** Plain Hindi Summary */
             plain_hindi_summary: string;
+        };
+        /** InvestedPoint */
+        InvestedPoint: {
+            /** Date */
+            date: string;
+            /** Invested */
+            invested: string;
         };
         /** InvestmentCreateRequest */
         InvestmentCreateRequest: {
@@ -4315,6 +4522,72 @@ export interface components {
             /** Updated At */
             updated_at: string;
         };
+        /** PortfolioPosition */
+        PortfolioPosition: {
+            /** Average Cost */
+            average_cost: string | null;
+            /** Closed */
+            closed: boolean;
+            /** Company Name */
+            company_name: string;
+            /** Dividends */
+            dividends: string;
+            /** Editable */
+            editable: boolean;
+            /**
+             * Exchange
+             * @enum {string}
+             */
+            exchange: "NSE" | "BSE";
+            /** Id */
+            id: string;
+            /** Invested */
+            invested: string;
+            /** Market Value */
+            market_value: string | null;
+            /** Price */
+            price: string | null;
+            /** Price Fetched At */
+            price_fetched_at: string | null;
+            /** Price Source */
+            price_source: string | null;
+            /**
+             * Price Status
+             * @enum {string}
+             */
+            price_status: "fresh" | "stale" | "unavailable";
+            /** Purchase Date */
+            purchase_date: string | null;
+            /** Purchase Date Entered */
+            purchase_date_entered: boolean;
+            /** Quantity */
+            quantity: string;
+            /** Realised */
+            realised: string;
+            /** Symbol */
+            symbol: string;
+            /** Ticker */
+            ticker: string;
+            /** Unrealised */
+            unrealised: string | null;
+            /** Unrealised Pct */
+            unrealised_pct: string | null;
+            /** Weight Pct */
+            weight_pct: string | null;
+        };
+        /** PortfolioResponse */
+        PortfolioResponse: {
+            /** Disclaimer */
+            disclaimer: string;
+            /** Excluded */
+            excluded: components["schemas"]["Excluded"][];
+            /** Holdings */
+            holdings: components["schemas"]["PortfolioPosition"][];
+            /** Latest Price At */
+            latest_price_at: string | null;
+            refresh: components["schemas"]["RefreshInfo"] | null;
+            totals: components["schemas"]["Totals"];
+        };
         /** PositionOut */
         PositionOut: {
             /** Asset Name */
@@ -4627,6 +4900,22 @@ export interface components {
             message: string;
             /** Month */
             month: string;
+        };
+        /** RefreshInfo */
+        RefreshInfo: {
+            /** Error Code */
+            error_code: string | null;
+            /** Message */
+            message: string | null;
+            /** Requested */
+            requested: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "ok" | "partial" | "failed";
+            /** Updated */
+            updated: number;
         };
         /** RejectedAlternative */
         RejectedAlternative: {
@@ -5056,6 +5345,22 @@ export interface components {
              */
             reduce_step: string;
         };
+        /** SearchResponse */
+        SearchResponse: {
+            /** Query */
+            query: string;
+            /** Results */
+            results: components["schemas"]["SearchResult"][];
+        };
+        /** SearchResult */
+        SearchResult: {
+            /** Company Name */
+            company_name: string;
+            /** Symbol */
+            symbol: string;
+            /** Tickers */
+            tickers: components["schemas"]["SearchTicker"][];
+        };
         /** SearchSummary */
         SearchSummary: {
             /** Best Not Proven */
@@ -5085,6 +5390,16 @@ export interface components {
              * @enum {string}
              */
             status: "found" | "infeasible" | "incomplete";
+        };
+        /** SearchTicker */
+        SearchTicker: {
+            /**
+             * Exchange
+             * @enum {string}
+             */
+            exchange: "NSE" | "BSE";
+            /** Ticker */
+            ticker: string;
         };
         /** SignupRequest */
         SignupRequest: {
@@ -5200,6 +5515,17 @@ export interface components {
             /** Text */
             text: string;
         };
+        /** SnapshotPoint */
+        SnapshotPoint: {
+            /** Complete */
+            complete: boolean;
+            /** Date */
+            date: string;
+            /** Invested */
+            invested: string;
+            /** Market Value */
+            market_value: string;
+        };
         /** StrategyComparisonRequest */
         StrategyComparisonRequest: {
             /** Debts */
@@ -5238,6 +5564,35 @@ export interface components {
             payoff_order: components["schemas"]["StrategyPayoffOrder"][];
             /** Total Interest Paid */
             total_interest_paid: string;
+        };
+        /** Totals */
+        Totals: {
+            /** Complete */
+            complete: boolean;
+            /** Dividends */
+            dividends: string;
+            /** Invested Priced */
+            invested_priced: string;
+            /** Invested Unpriced */
+            invested_unpriced: string;
+            /** Open Positions */
+            open_positions: number;
+            /** Priced Positions */
+            priced_positions: number;
+            /** Realised */
+            realised: string;
+            /** Total Profit */
+            total_profit: string;
+            /** Total Return Pct */
+            total_return_pct: string | null;
+            /** Unpriced Positions */
+            unpriced_positions: number;
+            /** Unrealised */
+            unrealised: string;
+            /** Unrealised Pct */
+            unrealised_pct: string | null;
+            /** Value */
+            value: string;
         };
         /** TradeoffOutcome */
         TradeoffOutcome: {
@@ -10460,6 +10815,412 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_portfolio_api_v1_portfolio_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    portfolio_history_api_v1_portfolio_history_get: {
+        parameters: {
+            query?: {
+                range?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    add_holding_api_v1_portfolio_holdings_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HoldingCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HoldingSaved"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    edit_holding_api_v1_portfolio_holdings__holding_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                holding_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HoldingUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HoldingSaved"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_holding_api_v1_portfolio_holdings__holding_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                holding_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    refresh_portfolio_api_v1_portfolio_refresh_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    search_stocks_api_v1_portfolio_search_get: {
+        parameters: {
+            query: {
+                q: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchResponse"];
+                };
             };
             /** @description Sign in required, or the token is missing, malformed or expired. */
             401: {

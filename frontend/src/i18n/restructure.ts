@@ -4,6 +4,7 @@ const en = {
   equities: {
     calculator: 'Investment calculator',
     holdings: 'Holdings and balances',
+    portfolio: 'Stock portfolio',
     tabs: 'Equities views',
     note: 'Projections use the growth rate you enter. They are not guaranteed, and no live market prices are used unless you look up a quote yourself.',
   },
@@ -284,6 +285,7 @@ const hi: RestructureCopy = {
   equities: {
     calculator: 'निवेश कैलकुलेटर',
     holdings: 'होल्डिंग और बैलेंस',
+    portfolio: 'शेयर पोर्टफ़ोलियो',
     tabs: 'इक्विटी के दृश्य',
     note: 'अनुमान आपके दिए बढ़त-दर पर आधारित हैं। ये गारंटी नहीं हैं, और जब तक आप खुद भाव न देखें, कोई लाइव बाज़ार भाव इस्तेमाल नहीं होता।',
   },

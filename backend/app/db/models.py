@@ -236,6 +236,31 @@ class InvestmentTransaction(Base):
     holding = relationship("AssetInvestment", back_populates="transactions")
 
 
+class PortfolioSnapshot(Base):
+    """One dated reading of a person's stock portfolio value, taken when prices were last refreshed.
+
+    The price provider has no historical prices, so a value history can only be built from these readings, going forward
+    from the first one. At most one row per person per day (the latest reading that day replaces the earlier)."""
+
+    __tablename__ = "portfolio_snapshots"
+    __table_args__ = (UniqueConstraint("user_id", "snapshot_date", name="uq_portfolio_snapshot_user_date"),)
+
+    id = Column(String(36), primary_key=True, default=_gen_uuid)
+    user_id = Column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    snapshot_date = Column(String(10), nullable=False)  # YYYY-MM-DD (UTC)
+    market_value = Column(Numeric(20, 2), nullable=False)  # value of the positions that had a price
+    invested = Column(Numeric(20, 2), nullable=False)  # cost of those same positions
+    priced_count = Column(Integer, nullable=False)
+    holding_count = Column(Integer, nullable=False)  # open positions, priced or not
+    complete = Column(Boolean, nullable=False, default=False)  # every open position had a price
+    created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
+    updated_at = Column(
+        DateTime(timezone=True), default=_now_utc, onupdate=_now_utc, nullable=False
+    )
+
+
 class Liability(Base):
     __tablename__ = "liabilities"
 

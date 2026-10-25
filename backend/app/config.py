@@ -62,6 +62,12 @@ class Settings(BaseSettings):
     GEMINI_TIMEOUT_SECONDS: float = 20.0
     AI_MAX_INPUT_CHARS: int = 1500
 
+    # Stock prices for the portfolio tracker (https://github.com/0xramm/Indian-Stock-Market-API). The backend is the
+    # only caller; the browser never sees this address. The project's published address is plain HTTP and was not
+    # reachable when this was written: point this at an instance you run (ideally behind HTTPS).
+    MARKET_API_BASE_URL: str = "http://65.0.104.9"
+    MARKET_API_TIMEOUT_SECONDS: float = 8.0
+
     # Financial Engine Settings
     DEFAULT_GOAL_INFLATION: str = "0.05"
     MODEL_VERSION: str = "v1.3-constraint-aware"
@@ -77,6 +83,14 @@ class Settings(BaseSettings):
         for prefix in ("postgres://", "postgresql://"):
             if url.startswith(prefix):
                 return "postgresql+psycopg://" + url[len(prefix) :]
+        return url
+
+    @field_validator("MARKET_API_BASE_URL", mode="after")
+    @classmethod
+    def _market_api_url(cls, value: str) -> str:
+        url = value.strip().rstrip("/")
+        if not (url.startswith("http://") or url.startswith("https://")):
+            raise ValueError("MARKET_API_BASE_URL must start with http:// or https://")
         return url
 
     @model_validator(mode="after")

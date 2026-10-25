@@ -3765,6 +3765,30 @@
         "title": "EscalationResponse",
         "type": "object"
       },
+      "Excluded": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "reason"
+        ],
+        "title": "Excluded",
+        "type": "object"
+      },
       "ExpenditureLine": {
         "additionalProperties": false,
         "properties": {
@@ -5180,6 +5204,211 @@
           "status"
         ],
         "title": "HealthResponse",
+        "type": "object"
+      },
+      "HistoryResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "invested_timeline": {
+            "items": {
+              "$ref": "#/components/schemas/InvestedPoint"
+            },
+            "title": "Invested Timeline",
+            "type": "array"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "range": {
+            "title": "Range",
+            "type": "string"
+          },
+          "since": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Since"
+          },
+          "snapshots": {
+            "items": {
+              "$ref": "#/components/schemas/SnapshotPoint"
+            },
+            "title": "Snapshots",
+            "type": "array"
+          }
+        },
+        "required": [
+          "range",
+          "since",
+          "snapshots",
+          "invested_timeline",
+          "note"
+        ],
+        "title": "HistoryResponse",
+        "type": "object"
+      },
+      "HoldingCreate": {
+        "additionalProperties": false,
+        "description": "One purchase of a stock, entered by hand. If the stock is already held, this is another purchase of it.",
+        "properties": {
+          "average_price": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Average Price",
+            "type": "string"
+          },
+          "company_name": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Name"
+          },
+          "exchange": {
+            "enum": [
+              "NSE",
+              "BSE"
+            ],
+            "title": "Exchange",
+            "type": "string"
+          },
+          "purchase_date": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purchase Date"
+          },
+          "quantity": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "symbol": {
+            "maxLength": 20,
+            "minLength": 1,
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "exchange",
+          "quantity",
+          "average_price"
+        ],
+        "title": "HoldingCreate",
+        "type": "object"
+      },
+      "HoldingSaved": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "merged": {
+            "title": "Merged",
+            "type": "boolean"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          },
+          "verified": {
+            "title": "Verified",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "ticker",
+          "merged",
+          "verified",
+          "message"
+        ],
+        "title": "HoldingSaved",
+        "type": "object"
+      },
+      "HoldingUpdate": {
+        "additionalProperties": false,
+        "properties": {
+          "average_price": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Price"
+          },
+          "company_name": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Name"
+          },
+          "purchase_date": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purchase Date"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          }
+        },
+        "title": "HoldingUpdate",
         "type": "object"
       },
       "Horizon": {
@@ -6687,6 +6916,26 @@
           "plain_hindi_summary"
         ],
         "title": "IntentSuggestions",
+        "type": "object"
+      },
+      "InvestedPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "invested": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Invested",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "invested"
+        ],
+        "title": "InvestedPoint",
         "type": "object"
       },
       "InvestmentCreateRequest": {
@@ -8621,6 +8870,264 @@
         "title": "PolicyResponse",
         "type": "object"
       },
+      "PortfolioPosition": {
+        "additionalProperties": false,
+        "properties": {
+          "average_cost": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Cost"
+          },
+          "closed": {
+            "title": "Closed",
+            "type": "boolean"
+          },
+          "company_name": {
+            "title": "Company Name",
+            "type": "string"
+          },
+          "dividends": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Dividends",
+            "type": "string"
+          },
+          "editable": {
+            "title": "Editable",
+            "type": "boolean"
+          },
+          "exchange": {
+            "enum": [
+              "NSE",
+              "BSE"
+            ],
+            "title": "Exchange",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "invested": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Invested",
+            "type": "string"
+          },
+          "market_value": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Market Value"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "price_fetched_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Fetched At"
+          },
+          "price_source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Source"
+          },
+          "price_status": {
+            "enum": [
+              "fresh",
+              "stale",
+              "unavailable"
+            ],
+            "title": "Price Status",
+            "type": "string"
+          },
+          "purchase_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purchase Date"
+          },
+          "purchase_date_entered": {
+            "title": "Purchase Date Entered",
+            "type": "boolean"
+          },
+          "quantity": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "realised": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Realised",
+            "type": "string"
+          },
+          "symbol": {
+            "title": "Symbol",
+            "type": "string"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          },
+          "unrealised": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unrealised"
+          },
+          "unrealised_pct": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unrealised Pct"
+          },
+          "weight_pct": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight Pct"
+          }
+        },
+        "required": [
+          "id",
+          "ticker",
+          "symbol",
+          "exchange",
+          "company_name",
+          "closed",
+          "quantity",
+          "purchase_date",
+          "purchase_date_entered",
+          "average_cost",
+          "invested",
+          "price",
+          "price_status",
+          "price_fetched_at",
+          "price_source",
+          "market_value",
+          "unrealised",
+          "unrealised_pct",
+          "realised",
+          "dividends",
+          "weight_pct",
+          "editable"
+        ],
+        "title": "PortfolioPosition",
+        "type": "object"
+      },
+      "PortfolioResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "disclaimer": {
+            "title": "Disclaimer",
+            "type": "string"
+          },
+          "excluded": {
+            "items": {
+              "$ref": "#/components/schemas/Excluded"
+            },
+            "title": "Excluded",
+            "type": "array"
+          },
+          "holdings": {
+            "items": {
+              "$ref": "#/components/schemas/PortfolioPosition"
+            },
+            "title": "Holdings",
+            "type": "array"
+          },
+          "latest_price_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Price At"
+          },
+          "refresh": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RefreshInfo"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "totals": {
+            "$ref": "#/components/schemas/Totals"
+          }
+        },
+        "required": [
+          "holdings",
+          "totals",
+          "excluded",
+          "latest_price_at",
+          "refresh",
+          "disclaimer"
+        ],
+        "title": "PortfolioResponse",
+        "type": "object"
+      },
       "PositionOut": {
         "additionalProperties": false,
         "properties": {
@@ -9668,6 +10175,59 @@
           "message"
         ],
         "title": "RecoveryViolation",
+        "type": "object"
+      },
+      "RefreshInfo": {
+        "additionalProperties": false,
+        "properties": {
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Code"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "requested": {
+            "title": "Requested",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "partial",
+              "failed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "updated": {
+            "title": "Updated",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "status",
+          "requested",
+          "updated",
+          "error_code",
+          "message"
+        ],
+        "title": "RefreshInfo",
         "type": "object"
       },
       "RejectedAlternative": {
@@ -10832,6 +11392,55 @@
         "title": "SearchLimits",
         "type": "object"
       },
+      "SearchResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/SearchResult"
+            },
+            "title": "Results",
+            "type": "array"
+          }
+        },
+        "required": [
+          "query",
+          "results"
+        ],
+        "title": "SearchResponse",
+        "type": "object"
+      },
+      "SearchResult": {
+        "additionalProperties": false,
+        "properties": {
+          "company_name": {
+            "title": "Company Name",
+            "type": "string"
+          },
+          "symbol": {
+            "title": "Symbol",
+            "type": "string"
+          },
+          "tickers": {
+            "items": {
+              "$ref": "#/components/schemas/SearchTicker"
+            },
+            "title": "Tickers",
+            "type": "array"
+          }
+        },
+        "required": [
+          "symbol",
+          "company_name",
+          "tickers"
+        ],
+        "title": "SearchResult",
+        "type": "object"
+      },
       "SearchSummary": {
         "additionalProperties": false,
         "properties": {
@@ -10908,6 +11517,29 @@
           "notes"
         ],
         "title": "SearchSummary",
+        "type": "object"
+      },
+      "SearchTicker": {
+        "additionalProperties": false,
+        "properties": {
+          "exchange": {
+            "enum": [
+              "NSE",
+              "BSE"
+            ],
+            "title": "Exchange",
+            "type": "string"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "exchange",
+          "ticker"
+        ],
+        "title": "SearchTicker",
         "type": "object"
       },
       "SignupRequest": {
@@ -11236,6 +11868,37 @@
         "title": "SituationRequest",
         "type": "object"
       },
+      "SnapshotPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "invested": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Invested",
+            "type": "string"
+          },
+          "market_value": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Market Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "market_value",
+          "invested",
+          "complete"
+        ],
+        "title": "SnapshotPoint",
+        "type": "object"
+      },
       "StrategyComparisonRequest": {
         "additionalProperties": false,
         "properties": {
@@ -11346,6 +12009,103 @@
           "payoff_order"
         ],
         "title": "StrategySummary",
+        "type": "object"
+      },
+      "Totals": {
+        "additionalProperties": false,
+        "properties": {
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "dividends": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Dividends",
+            "type": "string"
+          },
+          "invested_priced": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Invested Priced",
+            "type": "string"
+          },
+          "invested_unpriced": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Invested Unpriced",
+            "type": "string"
+          },
+          "open_positions": {
+            "title": "Open Positions",
+            "type": "integer"
+          },
+          "priced_positions": {
+            "title": "Priced Positions",
+            "type": "integer"
+          },
+          "realised": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Realised",
+            "type": "string"
+          },
+          "total_profit": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total Profit",
+            "type": "string"
+          },
+          "total_return_pct": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Return Pct"
+          },
+          "unpriced_positions": {
+            "title": "Unpriced Positions",
+            "type": "integer"
+          },
+          "unrealised": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Unrealised",
+            "type": "string"
+          },
+          "unrealised_pct": {
+            "anyOf": [
+              {
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unrealised Pct"
+          },
+          "value": {
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "open_positions",
+          "priced_positions",
+          "unpriced_positions",
+          "invested_priced",
+          "invested_unpriced",
+          "value",
+          "unrealised",
+          "unrealised_pct",
+          "realised",
+          "dividends",
+          "total_profit",
+          "total_return_pct",
+          "complete"
+        ],
+        "title": "Totals",
         "type": "object"
       },
       "TradeoffOutcome": {
@@ -18839,6 +19599,534 @@
         "summary": "Update Plan",
         "tags": [
           "plans"
+        ]
+      }
+    },
+    "/api/v1/portfolio": {
+      "get": {
+        "description": "The person's stock positions valued at the latest stored prices, with profit and loss. It does not call the price\nservice: use refresh for that.",
+        "operationId": "get_portfolio_api_v1_portfolio_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Portfolio",
+        "tags": [
+          "portfolio"
+        ]
+      }
+    },
+    "/api/v1/portfolio/history": {
+      "get": {
+        "description": "What can honestly be shown over time.\n\nThe price service has no historical prices, so a value history cannot be rebuilt for dates before this feature was\nused. `snapshots` are the readings taken each time prices were refreshed, going forward from the first. The\n`invested_timeline` is real history: what was invested when, from the dated transactions, needing no prices.",
+        "operationId": "portfolio_history_api_v1_portfolio_history_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "range",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "pattern": "^(1m|3m|6m|1y|all)$",
+              "title": "Range",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Portfolio History",
+        "tags": [
+          "portfolio"
+        ]
+      }
+    },
+    "/api/v1/portfolio/holdings": {
+      "post": {
+        "description": "Record a purchase of a stock. If it is already held, this is another purchase of it (the ledger works out the\naverage cost). Nothing the browser says about prices is stored: only quantity, price paid and date.",
+        "operationId": "add_holding_api_v1_portfolio_holdings_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HoldingCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoldingSaved"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Holding",
+        "tags": [
+          "portfolio"
+        ]
+      }
+    },
+    "/api/v1/portfolio/holdings/{holding_id}": {
+      "delete": {
+        "description": "Remove a holding and its transactions.",
+        "operationId": "delete_holding_api_v1_portfolio_holdings__holding_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "holding_id",
+            "required": true,
+            "schema": {
+              "title": "Holding Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Holding",
+        "tags": [
+          "portfolio"
+        ]
+      },
+      "put": {
+        "description": "Change the quantity, price paid, date or name of a holding that has one purchase. A holding with several\ntransactions is changed in the transaction ledger, where each one can be edited on its own.",
+        "operationId": "edit_holding_api_v1_portfolio_holdings__holding_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "holding_id",
+            "required": true,
+            "schema": {
+              "title": "Holding Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HoldingUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoldingSaved"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Edit Holding",
+        "tags": [
+          "portfolio"
+        ]
+      }
+    },
+    "/api/v1/portfolio/refresh": {
+      "post": {
+        "description": "Ask the price service for the latest prices of the person's open positions, store what it returned, and value the\nportfolio. If the service fails, the stored prices stay as they were and are shown with their age.",
+        "operationId": "refresh_portfolio_api_v1_portfolio_refresh_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Refresh Portfolio",
+        "tags": [
+          "portfolio"
+        ]
+      }
+    },
+    "/api/v1/portfolio/search": {
+      "get": {
+        "description": "NSE and BSE stocks matching a name or symbol, from the price service. A service failure is an error, not an\nempty list.",
+        "operationId": "search_stocks_api_v1_portfolio_search_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": true,
+            "schema": {
+              "maxLength": 40,
+              "minLength": 2,
+              "title": "Q",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in required, or the token is missing, malformed or expired."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No such record for this account."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many attempts. Try again later."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Search Stocks",
+        "tags": [
+          "portfolio"
         ]
       }
     },

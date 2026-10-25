@@ -75,6 +75,12 @@ import type {
   SituationDraft,
   TrajectoryRequest,
   TrajectoryResult,
+  PortfolioResponse,
+  PortfolioHistory,
+  PortfolioSearch,
+  PortfolioHoldingCreate,
+  PortfolioHoldingUpdate,
+  PortfolioHoldingSaved,
 } from './types'
 
 const BASE = import.meta.env.VITE_API_BASE_URL ?? ''
@@ -230,6 +236,14 @@ export const api = {
     return response.blob()
   },
   debtTrajectory: (signal?: AbortSignal) => get<DebtTrajectory>('/debt/trajectory', signal),
+  // Stock portfolio (prices are fetched by the server; the browser never calls the price service)
+  portfolio: (signal?: AbortSignal) => get<PortfolioResponse>('/portfolio', signal),
+  portfolioRefresh: (signal?: AbortSignal) => post<PortfolioResponse>('/portfolio/refresh', {}, signal),
+  portfolioSearch: (query: string, signal?: AbortSignal) => get<PortfolioSearch>(`/portfolio/search?q=${encodeURIComponent(query)}`, signal),
+  portfolioHistory: (range: string, signal?: AbortSignal) => get<PortfolioHistory>(`/portfolio/history?range=${encodeURIComponent(range)}`, signal),
+  portfolioAdd: (body: PortfolioHoldingCreate) => post<PortfolioHoldingSaved>('/portfolio/holdings', body),
+  portfolioEdit: (id: string, body: PortfolioHoldingUpdate) => send<PortfolioHoldingSaved>('PUT', `/portfolio/holdings/${id}`, body),
+  portfolioDelete: (id: string) => request<void>(`/portfolio/holdings/${id}`, { method: 'DELETE' }),
   // Financial Trajectory
   trajectory: (body: TrajectoryRequest, signal?: AbortSignal) => post<TrajectoryResult>('/trajectory/project', body, signal),
   // Holdings ledger

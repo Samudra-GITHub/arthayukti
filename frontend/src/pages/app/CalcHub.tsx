@@ -5,6 +5,7 @@ import { CalculatorsPage } from './Calculators'
 import { DebtCalculator } from './DebtCalc'
 import { HoldingLedger } from './HoldingLedger'
 import { AssetsPage, DebtsPage, InsurancePage } from './Records'
+import { StockPortfolioPage } from './StockPortfolio'
 
 /** Insurance is its own area: policies, premiums and renewal reminders. */
 export function InsuranceModule() {
@@ -30,11 +31,11 @@ export function DebtsModule() {
 /** Equities: the investment calculator (growth, tax, inflation, saved scenarios) and the holdings it relates to. */
 export function EquitiesModule() {
   const t = useRestructureCopy().equities
-  const [view, setView] = useState<'calculator' | 'holdings'>('calculator')
+  const [view, setView] = useState<'calculator' | 'holdings' | 'portfolio'>('calculator')
   return (
     <>
       <div role="group" aria-label={t.tabs} className="flex w-fit gap-1 rounded-xl bg-surface/60 p-1 text-[14px]">
-        {(['calculator', 'holdings'] as const).map((id) => (
+        {(['calculator', 'holdings', 'portfolio'] as const).map((id) => (
           <button
             key={id}
             type="button"
@@ -52,9 +53,11 @@ export function EquitiesModule() {
           Open Investment Calculator &rarr;
         </a>
       </div>
-      <Notice>{t.note}</Notice>
+      {view === 'portfolio' ? null : <Notice>{t.note}</Notice>}
       {view === 'calculator' ? (
         <CalculatorsPage />
+      ) : view === 'portfolio' ? (
+        <StockPortfolioPage />
       ) : (
         <>
           <AssetsPage />

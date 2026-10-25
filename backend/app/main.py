@@ -24,6 +24,7 @@ from app.api import (
     ledger,
     market,
     plans,
+    portfolio,
     recommendations,
     recovery,
     rescue,
@@ -118,6 +119,7 @@ def create_app() -> FastAPI:
         expenditure,
         ledger,
         trajectory,
+        portfolio,
     ):
         app.include_router(module.router, prefix="/api/v1")
 
