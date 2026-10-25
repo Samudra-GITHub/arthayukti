@@ -11,7 +11,17 @@ from pydantic import BaseModel, Field, model_validator
 
 from app.schemas.plan import Plan
 from app.schemas.scenario import Scenario
-from app.schemas.types import Amount, ApiModel, DecimalStr, GrowthRate, Id, Label, Money, Month, Rate
+from app.schemas.types import (
+    Amount,
+    ApiModel,
+    DecimalStr,
+    GrowthRate,
+    Id,
+    Label,
+    Money,
+    Month,
+    Rate,
+)
 from app.timeline import MAX_HORIZON_MONTHS
 
 View = Literal["baseline", "selected_goals", "scenario"]

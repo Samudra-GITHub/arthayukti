@@ -36,7 +36,7 @@ class AIFailure(Exception):
 
 
 class GeminiClient(Protocol):
-    def generate_json(self, system: str, user: str) -> Any:
+    def generate_json(self, system: str, user: str, max_output_tokens: int = 1200) -> Any:
         """Ask for a JSON answer and return it parsed. Raises AIFailure."""
 
 
@@ -55,14 +55,14 @@ class HttpGeminiClient:
         self._max_retries = max_retries
         self._retry_delay = retry_delay
 
-    def generate_json(self, system: str, user: str) -> Any:
+    def generate_json(self, system: str, user: str, max_output_tokens: int = 1200) -> Any:
         body = {
             "systemInstruction": {"parts": [{"text": system}]},
             "contents": [{"role": "user", "parts": [{"text": user}]}],
             "generationConfig": {
                 "responseMimeType": "application/json",
                 "temperature": 0.2,
-                "maxOutputTokens": 1200,
+                "maxOutputTokens": max_output_tokens,
             },
         }
         request = urllib.request.Request(

@@ -747,3 +747,64 @@ class ExpenditureChange(Base):
     created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
 
     plan = relationship("ExpenditurePlan", back_populates="changes")
+
+
+class AdvisorAnalysis(Base):
+    """One run of the AI Financial Advisor. Keeps references and the result, never the key, prompt or raw model reply.
+
+    `snapshot_hash` fingerprints the records the advice rests on, so a later change to them marks the analysis stale."""
+
+    __tablename__ = "advisor_analyses"
+
+    id = Column(String(36), primary_key=True, default=_gen_uuid)
+    user_id = Column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    plan_id = Column(String(36), nullable=False)
+    snapshot_id = Column(String(40), nullable=False)
+    snapshot_hash = Column(String(64), nullable=False)
+    model_version = Column(String(40), nullable=False)
+    prompt_version = Column(String(40), nullable=False)
+    ai_used = Column(Boolean, nullable=False, default=False)
+    result_json = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
+
+
+class AdvisorScenarioRecord(Base):
+    """An isolated scenario result created for an analysis. It never changes a source record."""
+
+    __tablename__ = "advisor_scenarios"
+
+    id = Column(String(36), primary_key=True, default=_gen_uuid)
+    user_id = Column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    analysis_id = Column(
+        String(36), ForeignKey("advisor_analyses.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    snapshot_hash = Column(String(64), nullable=False)
+    tool = Column(String(60), nullable=False)
+    result_json = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
+
+
+class AdvisorDecision(Base):
+    """What the person decided about one recommendation. Accepting never changes a record by itself."""
+
+    __tablename__ = "advisor_decisions"
+    __table_args__ = (UniqueConstraint("analysis_id", "recommendation_id", name="uq_advisor_decision"),)
+
+    id = Column(String(36), primary_key=True, default=_gen_uuid)
+    user_id = Column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    analysis_id = Column(
+        String(36), ForeignKey("advisor_analyses.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    recommendation_id = Column(String(60), nullable=False)
+    status = Column(String(20), nullable=False)
+    applied_changes_json = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
+    updated_at = Column(
+        DateTime(timezone=True), default=_now_utc, onupdate=_now_utc, nullable=False
+    )

@@ -28,6 +28,8 @@ export interface Store {
   saveError: string | null
   /** Saves the plan on screen, or `next` when a plan has just been built and not yet shown. */
   savePlan: (next?: Plan) => Promise<boolean>
+  /** Reads the saved plan again and shows it, for when the server changed it (an advisor edit the person confirmed). */
+  reloadPlan: () => Promise<void>
   /** Puts a plan built elsewhere (the onboarding wizard) on screen as the person's own. */
   replacePlan: (plan: Plan) => void
   language: Language

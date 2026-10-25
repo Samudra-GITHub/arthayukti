@@ -361,6 +361,7 @@ def project_trajectory(
     except ValueError as error:
         # An input the engine refuses (for example a scenario that does not name the selected goals) is the caller's.
         raise ApiError(422, "trajectory_invalid", str(error)) from error
+    result.pop("goal_outcomes", None)
     ledger = result.pop("monthly_ledger")
     if not req.include_monthly_ledger:
         ledger = None

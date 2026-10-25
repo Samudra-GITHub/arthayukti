@@ -338,7 +338,7 @@ def test_the_yearly_table_reconciles_with_the_monthly_ledger_and_chains_year_to_
     yearly = result["yearly"]
     assert [(y["year"], y["months_included"]) for y in yearly] == [(2027, 12), (2028, 12), (2029, 6)]
     assert all(y["reconciles"] for y in yearly)
-    for earlier, later in zip(yearly, yearly[1:]):
+    for earlier, later in zip(yearly, yearly[1:], strict=False):
         assert earlier["closing_net_worth"] == later["opening_net_worth"] and earlier["closing_cash"] == later["opening_cash"]
     for y in yearly:
         assert D(y["closing_net_worth"]) - D(y["opening_net_worth"]) == D(y["net_worth_change"])

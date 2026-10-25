@@ -82,6 +82,13 @@ import type {
   SituationDraft,
   TrajectoryRequest,
   TrajectoryResult,
+  AdvisorAnalysis,
+  AdvisorChange,
+  AdvisorChat,
+  AdvisorCompare,
+  AdvisorDecision,
+  AdvisorDecisionRequest,
+  AdvisorScenario,
   PortfolioResponse,
   PortfolioHistory,
   PortfolioSearch,
@@ -288,6 +295,15 @@ export const api = {
   portfolioDelete: (id: string) => request<void>(`/portfolio/holdings/${id}`, { method: 'DELETE' }),
   // Financial Trajectory
   trajectory: (body: TrajectoryRequest, signal?: AbortSignal) => post<TrajectoryResult>('/trajectory/project', body, signal),
+  // AI Financial Advisor (every figure is calculated by the server; the key never reaches the browser)
+  advisorAnalyze: (body: { plan_id?: string; language: 'en' | 'hi'; use_ai: boolean }) => post<AdvisorAnalysis>('/advisor/analyze', body),
+  advisorLatest: (signal?: AbortSignal) => get<AdvisorAnalysis>('/advisor/analyses/latest', signal),
+  advisorAnalysis: (id: string, signal?: AbortSignal) => get<AdvisorAnalysis>(`/advisor/analyses/${id}`, signal),
+  advisorScenario: (analysisId: string, change: AdvisorChange) => post<AdvisorScenario>('/advisor/scenarios', { analysis_id: analysisId, change }),
+  advisorCompare: (analysisId: string, scenarioIds: string[]) => post<AdvisorCompare>('/advisor/compare', { analysis_id: analysisId, scenario_ids: scenarioIds }),
+  advisorDecision: (analysisId: string, recommendationId: string, body: AdvisorDecisionRequest) =>
+    post<AdvisorDecision>(`/advisor/recommendations/${encodeURIComponent(recommendationId)}/decision?analysis_id=${encodeURIComponent(analysisId)}`, body),
+  advisorChat: (analysisId: string, message: string, language: 'en' | 'hi') => post<AdvisorChat>('/advisor/chat', { analysis_id: analysisId, message, language }),
   // Holdings ledger
   holdingTransactions: (holdingId: string, signal?: AbortSignal) =>
     get<HoldingTransaction[]>(`/financials/investments/${holdingId}/transactions`, signal),

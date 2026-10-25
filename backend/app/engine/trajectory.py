@@ -1126,6 +1126,8 @@ def run_trajectory(inp: Inputs) -> dict:
         },
         "drivers": {k: quantize(v) for k, v in d.items()},
         "goals": goals_out,
+        # Per-goal funding detail for in-process callers (the advisor). The API removes it before building the response.
+        "goal_outcomes": [sim["outcomes"][g.id] for g in inp.plan.goals if g.id in sim["outcomes"]],
         "comparison": (
             None
             if inp.view == "baseline"

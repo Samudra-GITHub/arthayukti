@@ -11,8 +11,8 @@ from datetime import date
 from decimal import Decimal
 
 from fastapi import APIRouter, Depends, Query
-from pydantic import Field
 from fastapi.responses import Response
+from pydantic import Field
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -37,8 +37,6 @@ from app.engine.spending import (
     trajectory,
 )
 from app.errors import ApiError
-from app.schemas.types import ApiModel
-from app.timeline import MAX_HORIZON_MONTHS
 from app.schemas.plan import Plan, SpendingMonth
 from app.schemas.spending import (
     HORIZON_PRESETS,
@@ -61,6 +59,8 @@ from app.schemas.spending import (
     TrajectoryOut,
     TrajectoryYear,
 )
+from app.schemas.types import ApiModel
+from app.timeline import MAX_HORIZON_MONTHS
 
 router = APIRouter(prefix="/expenditure", tags=["expenditure-plans"], responses=AUTH_RESPONSES)
 
@@ -713,7 +713,7 @@ def apply_to_plan(
     amounts, _has_insurance = loaded
     first = month_index(int(body.plan.as_of[:4]), int(body.plan.as_of[5:7]))
     schedule = [
-        SpendingMonth(month="%04d-%02d" % index_year_month(first + t - 1), amount=amount) for t, amount in sorted(amounts.items())
+        SpendingMonth(month="{:04d}-{:02d}".format(*index_year_month(first + t - 1)), amount=amount) for t, amount in sorted(amounts.items())
     ]
     return body.plan.model_copy(update={"spending_schedule": schedule})
 

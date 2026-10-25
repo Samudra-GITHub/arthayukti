@@ -405,7 +405,8 @@ export function SettingsPage() {
 
 export { ProfilePage } from './Profile'
 
-export function AdvisorPage() {
+/** The older "describe a situation" reader, kept under the advisor's Ask tab. */
+export function SituationReader() {
   const m = useModulesCopy()
   const t = m.advisor
   const [question, setQuestion] = useState('')

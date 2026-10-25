@@ -22,6 +22,10 @@ services:
       # SQLite, whose file on Render's free plan is erased on every restart.
       - key: DATABASE_URL
         sync: false
+      # Optional. Turns on AI wording in the advisor and Plan B; without it everything still works, calculated by the engine.
+      # Paste the key in Render's dashboard; it is never sent to the browser.
+      - key: GEMINI_API_KEY
+        sync: false
       # The Vercel site's address, used in password-reset e-mails (no trailing slash).
       - key: FRONTEND_BASE_URL
         sync: false

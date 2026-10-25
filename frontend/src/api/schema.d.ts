@@ -4,6 +4,158 @@
  */
 
 export interface paths {
+    "/api/v1/advisor/analyses/latest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Latest Analysis */
+        get: operations["latest_analysis_api_v1_advisor_analyses_latest_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/advisor/analyses/{analysis_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Analysis */
+        get: operations["get_analysis_api_v1_advisor_analyses__analysis_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/advisor/analyze": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Analyze
+         * @description Assess every goal at its saved date and three years later, try alternative paths, and write the report.
+         */
+        post: operations["analyze_api_v1_advisor_analyze_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/advisor/chat": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Chat
+         * @description A follow-up question on an analysis. It runs approved scenarios on that analysis's snapshot and explains the results.
+         */
+        post: operations["chat_api_v1_advisor_chat_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/advisor/compare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Compare
+         * @description Scenarios of one analysis side by side, each against the same baseline.
+         */
+        post: operations["compare_api_v1_advisor_compare_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/advisor/recommendations/{recommendation_id}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Decide
+         * @description Save, accept, dismiss or complete a recommendation. Accepting shows the exact edits; they are applied only when
+         *     the same request is repeated with apply_changes and the confirm_token from that preview.
+         */
+        post: operations["decide_api_v1_advisor_recommendations__recommendation_id__decision_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/advisor/scenarios": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Scenario
+         * @description One isolated what-if on an analysis's snapshot. No record changes.
+         */
+        post: operations["create_scenario_api_v1_advisor_scenarios_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/advisor/scenarios/{scenario_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Scenario */
+        get: operations["get_scenario_api_v1_advisor_scenarios__scenario_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/ai/consult": {
         parameters: {
             query?: never;
@@ -2233,6 +2385,19 @@ export interface components {
             /** Notes */
             notes?: string | null;
         };
+        /** ActionStep */
+        ActionStep: {
+            /**
+             * Requires Confirmation
+             * @default true
+             * @constant
+             */
+            requires_confirmation: true;
+            /** Step */
+            step: string;
+            /** Timing */
+            timing?: string | null;
+        };
         /**
          * Adjustment
          * @description A change being tested: pause an item, or lower it, over a month range.
@@ -2257,6 +2422,64 @@ export interface components {
             adjustment: components["schemas"]["Adjustment"];
             /** Text */
             text: string;
+        };
+        /** AdvisorCompareRequest */
+        AdvisorCompareRequest: {
+            /** Analysis Id */
+            analysis_id: string;
+            /** Scenario Ids */
+            scenario_ids: string[];
+        };
+        /** AdvisorCompareResult */
+        AdvisorCompareResult: {
+            /** Analysis Id */
+            analysis_id: string;
+            baseline: components["schemas"]["PathMetrics"];
+            /** Scenarios */
+            scenarios: components["schemas"]["ScenarioResult"][];
+            /** Snapshot Id */
+            snapshot_id: string;
+            /**
+             * Validation Status
+             * @enum {string}
+             */
+            validation_status: "valid" | "mixed_snapshots";
+        };
+        /** AdvisorReport */
+        AdvisorReport: {
+            /** Action Plan */
+            action_plan: components["schemas"]["ActionStep"][];
+            /** Assumptions */
+            assumptions: components["schemas"]["AssumptionNote"][];
+            /** Data Gaps */
+            data_gaps: string[];
+            /** Follow Up Questions */
+            follow_up_questions: string[];
+            /** Key Findings */
+            key_findings: components["schemas"]["KeyFinding"][];
+            /** Overall Summary */
+            overall_summary: string;
+            /** Recommendations */
+            recommendations: components["schemas"]["Recommendation"][];
+            /** Tradeoffs */
+            tradeoffs: components["schemas"]["Tradeoff"][];
+            /** Uncertainty */
+            uncertainty: string;
+        };
+        /** AdvisorTrajectoryYear */
+        AdvisorTrajectoryYear: {
+            /** Closing Assets */
+            closing_assets: string;
+            /** Closing Cash */
+            closing_cash: string;
+            /** Closing Liabilities */
+            closing_liabilities: string;
+            /** Closing Net Worth */
+            closing_net_worth: string;
+            /** Closing Net Worth Real */
+            closing_net_worth_real?: string | null;
+            /** Year */
+            year: number;
         };
         /** AgreementCreate */
         AgreementCreate: {
@@ -2393,6 +2616,78 @@ export interface components {
             /** Remaining Balance */
             remaining_balance: string;
         };
+        /** AnalysisOut */
+        AnalysisOut: {
+            /** Ai Message */
+            ai_message: string | null;
+            /**
+             * Ai Status
+             * @enum {string}
+             */
+            ai_status: "not_requested" | "not_configured" | "ok" | "failed" | "invalid_output";
+            /** Ai Used */
+            ai_used: boolean;
+            /** Analysis Id */
+            analysis_id: string;
+            /** As Of */
+            as_of: string;
+            baseline_metrics: components["schemas"]["PathMetrics"];
+            /** Created At */
+            created_at: string;
+            /**
+             * Currency
+             * @constant
+             */
+            currency: "INR";
+            data_quality: components["schemas"]["DataQuality"];
+            /** Disclaimer */
+            disclaimer: string;
+            /** Goal Date Comparison */
+            goal_date_comparison: components["schemas"]["GoalDateComparison"][];
+            /** Horizon Months */
+            horizon_months: number;
+            /** Id */
+            id: string;
+            /** Model Version */
+            model_version: string;
+            /** Plan Id */
+            plan_id: string;
+            /** Plan Name */
+            plan_name: string;
+            /** Prompt Version */
+            prompt_version: string;
+            report: components["schemas"]["AdvisorReport"];
+            /** Scenarios */
+            scenarios: components["schemas"]["ScenarioResult"][];
+            /** Snapshot Hash */
+            snapshot_hash: string;
+            /** Snapshot Id */
+            snapshot_id: string;
+            /** Stale */
+            stale: boolean;
+            /** Stale Reason */
+            stale_reason: string | null;
+            /** Trajectory Years */
+            trajectory_years: components["schemas"]["AdvisorTrajectoryYear"][];
+            /** Validation Notes */
+            validation_notes: components["schemas"]["ValidationNote"][];
+        };
+        /** AnalyzeRequest */
+        AnalyzeRequest: {
+            /**
+             * Language
+             * @default en
+             * @enum {string}
+             */
+            language: "en" | "hi";
+            /** Plan Id */
+            plan_id?: string | null;
+            /**
+             * Use Ai
+             * @default true
+             */
+            use_ai: boolean;
+        };
         /** ApplyLedgerOut */
         ApplyLedgerOut: {
             /** Precision Note */
@@ -2410,6 +2705,32 @@ export interface components {
              */
             months: number;
             plan: components["schemas"]["Plan"];
+        };
+        /** AssumptionChangeRequest */
+        AssumptionChangeRequest: {
+            /**
+             * Name
+             * @enum {string}
+             */
+            name: "savings_return_annual" | "general_inflation_annual" | "income_growth_annual" | "expense_growth_annual";
+            /** New Value */
+            new_value: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            tool: "simulate_assumption_change";
+        };
+        /** AssumptionNote */
+        AssumptionNote: {
+            /** Label */
+            label: string;
+            /** Period */
+            period?: string | null;
+            /** Source */
+            source: string;
+            /** Value */
+            value: string;
         };
         /** AssumptionOverrides */
         AssumptionOverrides: {
@@ -2909,6 +3230,32 @@ export interface components {
              */
             kind: "permanent" | "temporary";
         };
+        /** ChatRequest */
+        ChatRequest: {
+            /** Analysis Id */
+            analysis_id: string;
+            /**
+             * Language
+             * @default en
+             * @enum {string}
+             */
+            language: "en" | "hi";
+            /** Message */
+            message: string;
+        };
+        /** ChatResponse */
+        ChatResponse: {
+            /** Ai Used */
+            ai_used: boolean;
+            /** Answer */
+            answer: string;
+            /** Notice */
+            notice: string;
+            /** Scenario Ids */
+            scenario_ids: string[];
+            /** Scenarios */
+            scenarios: components["schemas"]["ScenarioResult"][];
+        };
         /** Checkpoint */
         Checkpoint: {
             /** Age */
@@ -3022,6 +3369,29 @@ export interface components {
             /** Goal Id */
             goal_id: string;
         };
+        /** DataQuality */
+        DataQuality: {
+            /** Assumptions */
+            assumptions: string[];
+            /**
+             * Completeness
+             * @enum {string}
+             */
+            completeness: "complete" | "partial" | "insufficient";
+            /** Conflicts */
+            conflicts: string[];
+            /** Missing Fields */
+            missing_fields: string[];
+            /** Stale Values */
+            stale_values: string[];
+        };
+        /** DebtFree */
+        DebtFree: {
+            /** Month */
+            month: string | null;
+            /** Name */
+            name: string;
+        };
         /** DebtFreeDate */
         DebtFreeDate: {
             /** Balance Now */
@@ -3051,6 +3421,28 @@ export interface components {
             monthly_emi: string;
             /** Name */
             name: string;
+        };
+        /** DebtStrategyRequest */
+        DebtStrategyRequest: {
+            /** Duration Months */
+            duration_months?: number | null;
+            /** Extra */
+            extra: string;
+            /**
+             * Kind
+             * @default monthly
+             * @enum {string}
+             */
+            kind: "monthly" | "one_time";
+            /** Loan Id */
+            loan_id: string;
+            /** Start Month */
+            start_month?: string | null;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            tool: "simulate_debt_strategy";
         };
         /** DebtTrajectoryLoan */
         DebtTrajectoryLoan: {
@@ -3110,6 +3502,60 @@ export interface components {
             principal: string;
             /** Year */
             year: number;
+        };
+        /** DecisionOut */
+        DecisionOut: {
+            /** Applied */
+            applied: boolean;
+            /** Confirm Token */
+            confirm_token: string | null;
+            /** Needs Confirmation */
+            needs_confirmation: boolean;
+            /** Proposed Changes */
+            proposed_changes: components["schemas"]["ProposedChange"][];
+            /** Recommendation Id */
+            recommendation_id: string;
+            /** Stale After */
+            stale_after: boolean;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "proposed" | "saved" | "accepted" | "dismissed" | "completed";
+        };
+        /** DecisionRequest */
+        DecisionRequest: {
+            /**
+             * Apply Changes
+             * @default false
+             */
+            apply_changes: boolean;
+            /** Confirm Token */
+            confirm_token?: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "proposed" | "saved" | "accepted" | "dismissed" | "completed";
+        };
+        /** Deltas */
+        Deltas: {
+            /** Goal Changes */
+            goal_changes: components["schemas"]["GoalChange"][];
+            /** Goals Achievable */
+            goals_achievable: number;
+            /** Horizon Net Worth */
+            horizon_net_worth: string | null;
+            /** Horizon Net Worth Real */
+            horizon_net_worth_real: string | null;
+            /** Minimum Cash */
+            minimum_cash: string | null;
+            /** Monthly Surplus */
+            monthly_surplus: string | null;
+            /** Total Funding Gap */
+            total_funding_gap: string | null;
+            /** Uncovered Cash Months */
+            uncovered_cash_months: number;
         };
         /** DependantDetail */
         DependantDetail: {
@@ -3495,6 +3941,24 @@ export interface components {
              */
             type: "expense_change";
         };
+        /** ExpenseChangeRequest */
+        ExpenseChangeRequest: {
+            /** Amount */
+            amount?: string | null;
+            /** Categories */
+            categories?: string[];
+            /** Duration Months */
+            duration_months?: number | null;
+            /** Percent */
+            percent?: string | null;
+            /** Start Month */
+            start_month?: string | null;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            tool: "simulate_expense_change";
+        };
         /** ExplainRequest */
         ExplainRequest: {
             input: components["schemas"]["RecoveryInput"];
@@ -3745,6 +4209,91 @@ export interface components {
              */
             type: "home" | "education" | "loan_payoff" | "emergency_fund" | "retirement" | "custom";
         };
+        /** GoalAssessment */
+        GoalAssessment: {
+            /** Available Funding */
+            available_funding: string | null;
+            /** Delay Months */
+            delay_months: number | null;
+            /** Effects On Others */
+            effects_on_others: components["schemas"]["OtherGoalEffect"][];
+            /** Funding Gap */
+            funding_gap: string | null;
+            /** Projected Completion */
+            projected_completion: string | null;
+            /** Reasons */
+            reasons: string[];
+            /** Required Monthly */
+            required_monthly: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "achievable" | "at_risk" | "underfunded" | "cannot_assess";
+            /** Target Amount Today */
+            target_amount_today: string;
+            /** Target At Date */
+            target_at_date: string | null;
+            /** Target Date */
+            target_date: string;
+        };
+        /** GoalChange */
+        GoalChange: {
+            /** Gap Change */
+            gap_change: string;
+            /** Goal Id */
+            goal_id: string;
+            /** Label */
+            label: string;
+            /**
+             * Status After
+             * @enum {string}
+             */
+            status_after: "achievable" | "at_risk" | "underfunded" | "cannot_assess";
+            /**
+             * Status Before
+             * @enum {string}
+             */
+            status_before: "achievable" | "at_risk" | "underfunded" | "cannot_assess";
+        };
+        /** GoalChangeRequest */
+        GoalChangeRequest: {
+            /** Goal Id */
+            goal_id: string;
+            /** Target Amount Today */
+            target_amount_today?: string | null;
+            /** Target Date */
+            target_date?: string | null;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            tool: "simulate_goal_change";
+        };
+        /** GoalDateComparison */
+        GoalDateComparison: {
+            /** Caveats */
+            caveats: string[];
+            /** Goal Id */
+            goal_id: string;
+            /** Label */
+            label: string;
+            original: components["schemas"]["GoalAssessment"];
+            plus_3_years: components["schemas"]["GoalAssessment"];
+            /** Priority */
+            priority: number;
+            /** Saved Target Date */
+            saved_target_date: string;
+            /**
+             * Target Definition
+             * @enum {string}
+             */
+            target_definition: "today_money" | "nominal";
+            /** Time Sensitive */
+            time_sensitive: boolean;
+            /** Type */
+            type: string;
+        };
         /**
          * GoalEffect
          * @description What a funded goal does to the balance sheet. A custom goal's effect is never guessed from its name.
@@ -3789,6 +4338,24 @@ export interface components {
             target_date: string;
             /** Type */
             type: string;
+        };
+        /** GoalMini */
+        GoalMini: {
+            /** Funding Gap */
+            funding_gap: string;
+            /** Goal Id */
+            goal_id: string;
+            /** Label */
+            label: string;
+            /** Projected Completion */
+            projected_completion: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "achievable" | "at_risk" | "underfunded" | "cannot_assess";
+            /** Target Date */
+            target_date: string;
         };
         /** GoalOutcome */
         GoalOutcome: {
@@ -4325,6 +4892,31 @@ export interface components {
             /** Invested */
             invested: string;
         };
+        /** InvestmentChangeRequest */
+        InvestmentChangeRequest: {
+            /** Amount */
+            amount: string;
+            /** Duration Months */
+            duration_months?: number | null;
+            /**
+             * Frequency
+             * @default monthly
+             * @enum {string}
+             */
+            frequency: "monthly" | "quarterly";
+            /** Start Month */
+            start_month?: string | null;
+            /**
+             * Step Up Percent
+             * @default 0
+             */
+            step_up_percent: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            tool: "simulate_investment_change";
+        };
         /** InvestmentCreateRequest */
         InvestmentCreateRequest: {
             /** Asset Name */
@@ -4403,6 +4995,20 @@ export interface components {
             amount: string;
             /** Item Id */
             item_id: string;
+        };
+        /** KeyFinding */
+        KeyFinding: {
+            /** Id */
+            id: string;
+            /** Metric Ref */
+            metric_ref?: string | null;
+            /**
+             * Severity
+             * @enum {string}
+             */
+            severity: "info" | "warning" | "critical";
+            /** Text */
+            text: string;
         };
         /** LedgerMonth */
         LedgerMonth: {
@@ -4665,6 +5271,23 @@ export interface components {
              */
             type: "one_time_income";
         };
+        /** OtherGoalEffect */
+        OtherGoalEffect: {
+            /** Goal Id */
+            goal_id: string;
+            /** Label */
+            label: string;
+            /**
+             * Status After
+             * @enum {string}
+             */
+            status_after: "achievable" | "at_risk" | "underfunded" | "cannot_assess";
+            /**
+             * Status Before
+             * @enum {string}
+             */
+            status_before: "achievable" | "at_risk" | "underfunded" | "cannot_assess";
+        };
         /** ParseIntentRequest */
         ParseIntentRequest: {
             /** Prompt */
@@ -4681,6 +5304,31 @@ export interface components {
         PasswordResetRequest: {
             /** Email */
             email: string;
+        };
+        /** PathMetrics */
+        PathMetrics: {
+            /** Debt Free */
+            debt_free: components["schemas"]["DebtFree"][];
+            /** Goals */
+            goals: components["schemas"]["GoalMini"][];
+            /** Goals Achievable */
+            goals_achievable: number;
+            /** Goals Total */
+            goals_total: number;
+            /** Horizon Net Worth */
+            horizon_net_worth: string;
+            /** Horizon Net Worth Real */
+            horizon_net_worth_real: string | null;
+            /** Minimum Cash */
+            minimum_cash: string;
+            /** Minimum Cash Month */
+            minimum_cash_month: string;
+            /** Monthly Surplus */
+            monthly_surplus: string | null;
+            /** Total Funding Gap */
+            total_funding_gap: string;
+            /** Uncovered Cash Months */
+            uncovered_cash_months: number;
         };
         /**
          * Permission
@@ -5175,6 +5823,27 @@ export interface components {
             uncovered_deficit_months: string[];
         };
         /**
+         * ProposedChange
+         * @description One exact edit to a record the person owns. Nothing is applied until they confirm this exact list.
+         */
+        ProposedChange: {
+            /** After */
+            after: string;
+            /** Before */
+            before: string;
+            /** Field */
+            field: string;
+            /** Id */
+            id: string;
+            /** Label */
+            label: string;
+            /**
+             * Record
+             * @enum {string}
+             */
+            record: "goal" | "expense";
+        };
+        /**
          * ProtectedBalance
          * @description Money set aside for a goal or retirement. The evaluator never withdraws from it.
          */
@@ -5214,6 +5883,56 @@ export interface components {
             id: string;
             /** Rate */
             rate: string;
+        };
+        /** Recommendation */
+        Recommendation: {
+            /** Action */
+            action: string;
+            /** Calculated */
+            calculated: boolean;
+            /**
+             * Category
+             * @enum {string}
+             */
+            category: "spending" | "investment" | "goal_timing" | "goal_amount" | "debt" | "income" | "assumption" | "combined" | "other";
+            /**
+             * Confidence
+             * @enum {string}
+             */
+            confidence: "low" | "medium" | "high";
+            /**
+             * Has Source Changes
+             * @default false
+             */
+            has_source_changes: boolean;
+            /** Id */
+            id: string;
+            /**
+             * Priority
+             * @enum {string}
+             */
+            priority: "high" | "medium" | "low";
+            /** Rationale */
+            rationale: string;
+            /** Risks */
+            risks: string[];
+            /** Scenario Id */
+            scenario_id: string | null;
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "engine" | "ai";
+            /**
+             * Status
+             * @default proposed
+             * @enum {string}
+             */
+            status: "proposed" | "saved" | "accepted" | "dismissed" | "completed";
+            /** Steps */
+            steps: string[];
+            /** Title */
+            title: string;
         };
         /**
          * RecommendationComparisonRequest
@@ -5823,6 +6542,49 @@ export interface components {
             /** Priority Order */
             priority_order?: string[] | null;
         };
+        /** ScenarioRequest */
+        ScenarioRequest: {
+            /** Analysis Id */
+            analysis_id: string;
+            /** Change */
+            change: components["schemas"]["ExpenseChangeRequest"] | components["schemas"]["InvestmentChangeRequest"] | components["schemas"]["GoalChangeRequest"] | components["schemas"]["DebtStrategyRequest"] | components["schemas"]["AssumptionChangeRequest"];
+        };
+        /** ScenarioResult */
+        ScenarioResult: {
+            /** Analysis Id */
+            analysis_id: string;
+            /** Assumptions */
+            assumptions: string[];
+            baseline_metrics: components["schemas"]["PathMetrics"];
+            deltas: components["schemas"]["Deltas"];
+            /** Details */
+            details: {
+                [key: string]: unknown;
+            };
+            /** Feasible */
+            feasible: boolean;
+            /** Goal Effects Modelled */
+            goal_effects_modelled: boolean;
+            /** Id */
+            id: string;
+            /** Inputs */
+            inputs: {
+                [key: string]: unknown;
+            };
+            metrics: components["schemas"]["PathMetrics"];
+            /** Model Version */
+            model_version: string;
+            /** Proposed Changes */
+            proposed_changes: components["schemas"]["ProposedChange"][];
+            /** Snapshot Id */
+            snapshot_id: string;
+            /** Title */
+            title: string;
+            /** Tool */
+            tool: string;
+            /** Violations */
+            violations: string[];
+        };
         /**
          * SearchLimits
          * @description Explicit bounds on the search. Reaching `max_candidates` makes the answer incomplete, never "no solution".
@@ -6125,6 +6887,17 @@ export interface components {
             unrealised_pct: string | null;
             /** Value */
             value: string;
+        };
+        /** Tradeoff */
+        Tradeoff: {
+            /** Affected */
+            affected: string;
+            /** Improves */
+            improves: string[];
+            /** Recommendation Id */
+            recommendation_id?: string | null;
+            /** Worsens */
+            worsens: string[];
         };
         /** TradeoffOutcome */
         TradeoffOutcome: {
@@ -6518,6 +7291,13 @@ export interface components {
             /** Is Active */
             is_active: boolean;
         };
+        /** ValidationNote */
+        ValidationNote: {
+            /** Code */
+            code: string;
+            /** Message */
+            message: string;
+        };
         /**
          * Valuation
          * @description What the units are worth, and where that figure comes from. Never invented.
@@ -6634,6 +7414,482 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    latest_analysis_api_v1_advisor_analyses_latest_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisOut"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_analysis_api_v1_advisor_analyses__analysis_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                analysis_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisOut"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    analyze_api_v1_advisor_analyze_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnalyzeRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisOut"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    chat_api_v1_advisor_chat_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChatRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    compare_api_v1_advisor_compare_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdvisorCompareRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdvisorCompareResult"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    decide_api_v1_advisor_recommendations__recommendation_id__decision_post: {
+        parameters: {
+            query: {
+                analysis_id: string;
+            };
+            header?: never;
+            path: {
+                recommendation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DecisionOut"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_scenario_api_v1_advisor_scenarios_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScenarioRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScenarioResult"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_scenario_api_v1_advisor_scenarios__scenario_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scenario_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScenarioResult"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     ai_consult_api_v1_ai_consult_post: {
         parameters: {
             query?: never;

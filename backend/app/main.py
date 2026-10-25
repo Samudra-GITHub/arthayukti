@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.api import (
+    advisor,
     ai,
     ai_assist,
     analysis,
@@ -122,6 +123,7 @@ def create_app() -> FastAPI:
         trajectory,
         portfolio,
         spending,
+        advisor,
     ):
         app.include_router(module.router, prefix="/api/v1")
 

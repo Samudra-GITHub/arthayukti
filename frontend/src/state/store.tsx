@@ -145,6 +145,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     return () => controller.abort()
   }, [auth.status, accountState])
 
+  const reloadPlan = useCallback(async () => {
+    if (!planId) return
+    try {
+      const record = await api.plan(planId)
+      setPlan(record.plan)
+      setSavedJson(JSON.stringify(record.plan))
+    } catch {
+      // The plan on screen stays as it was; the next sign-in reads the saved one.
+    }
+  }, [planId])
+
   const replacePlan = useCallback((next: Plan) => {
     setSample(null)
     setPlan(next)
@@ -404,6 +415,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     saving,
     saveError,
     savePlan,
+    reloadPlan,
     replacePlan,
     language,
     setLanguage,
