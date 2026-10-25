@@ -81,8 +81,14 @@ def _settings(db: Session, user: User) -> ExpenditureSettings:
             user_id=user.id, base_inflation=DEFAULT_GLOBAL_INFLATION, horizon_years=5, hidden_categories_json="[]"
         )
         db.add(row)
-        db.commit()
-        db.refresh(row)
+        try:
+            db.commit()
+        except IntegrityError:
+            # Another request made the row first (the page asks for several things at once): use theirs.
+            db.rollback()
+            row = db.query(ExpenditureSettings).filter(ExpenditureSettings.user_id == user.id).one()
+        else:
+            db.refresh(row)
     return row
 
 

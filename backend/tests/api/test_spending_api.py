@@ -258,3 +258,13 @@ def test_spending_data_is_part_of_the_export_and_removed_with_the_account():
         assert db.query(ExpenditurePlan).filter(ExpenditurePlan.id == plan["id"]).count() == 0
         assert db.query(ExpenditureCategory).filter(ExpenditureCategory.id == category["id"]).count() == 0
         assert db.query(ExpenditureChange).filter(ExpenditureChange.plan_id == plan["id"]).count() == 0
+
+
+def test_first_requests_made_at_the_same_time_do_not_fail():
+    from concurrent.futures import ThreadPoolExecutor
+
+    client = authed_client()
+    paths = ["/settings", "/categories", "/trajectory", "/plans"] * 3
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        codes = list(pool.map(lambda path: client.get(f"/api/v1/expenditure{path}").status_code, paths))
+    assert codes == [200] * len(paths)
