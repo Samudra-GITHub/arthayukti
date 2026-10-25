@@ -12,6 +12,7 @@ from app.schemas.financials import (
 from app.schemas.household import HouseholdProfileResponse
 from app.schemas.insurance import PolicyResponse
 from app.schemas.plan import Plan
+from app.schemas.recovery_plan import AgreementDraft
 from app.schemas.types import ApiModel
 
 # bcrypt only reads the first 72 bytes, so longer passwords would be silently truncated.
@@ -116,6 +117,13 @@ class ExportCalculatorScenario(ApiModel):
     config: CalculatorConfig
 
 
+class ExportRecoveryAgreement(ApiModel):
+    id: str
+    name: str
+    version: int
+    draft: AgreementDraft
+
+
 class ExportResponse(ApiModel):
     user: ExportUser
     plans: list[ExportPlan]
@@ -126,3 +134,4 @@ class ExportResponse(ApiModel):
     transactions: list[TransactionResponse]
     household_profile: HouseholdProfileResponse
     calculator_scenarios: list[ExportCalculatorScenario] = []
+    recovery_agreements: list[ExportRecoveryAgreement] = []

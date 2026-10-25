@@ -30,6 +30,7 @@ from app.db.models import (
     InsurancePolicy,
     Liability,
     PasswordReset,
+    RecoveryAgreement,
     SavedPlan,
     User,
 )
@@ -39,6 +40,7 @@ from app.schemas.auth import (
     ExportCalculatorScenario,
     ExportPlan,
     ExportPolicy,
+    ExportRecoveryAgreement,
     ExportResponse,
     ExportUser,
     LoginRequest,
@@ -50,6 +52,7 @@ from app.schemas.auth import (
 )
 from app.schemas.calculators import CalculatorConfig
 from app.schemas.plan import Plan
+from app.schemas.recovery_plan import AgreementDraft
 from app.security import (
     create_access_token,
     hash_password,
@@ -267,6 +270,12 @@ def export_user_data(
         .order_by(CalculatorScenario.name)
         .all()
     )
+    agreements = (
+        db.query(RecoveryAgreement)
+        .filter(RecoveryAgreement.user_id == uid)
+        .order_by(RecoveryAgreement.name)
+        .all()
+    )
     return ExportResponse(
         user=ExportUser(
             id=current_user.id,
@@ -296,6 +305,15 @@ def export_user_data(
         liabilities=[_to_liab_response(liab) for liab in liabilities],
         transactions=[_to_tx_response(t) for t in transactions],
         household_profile=_to_profile_response(household),
+        recovery_agreements=[
+            ExportRecoveryAgreement(
+                id=r.id,
+                name=r.name,
+                version=r.versions[-1].version,
+                draft=AgreementDraft.model_validate_json(r.versions[-1].draft_json),
+            )
+            for r in agreements
+        ],
         calculator_scenarios=[
             ExportCalculatorScenario(
                 id=c.id, name=c.name, config=CalculatorConfig.model_validate_json(c.config_json)

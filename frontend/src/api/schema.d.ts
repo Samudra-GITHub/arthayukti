@@ -1141,6 +1141,126 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/recovery/agreements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Agreements */
+        get: operations["list_agreements_api_v1_recovery_agreements_get"];
+        put?: never;
+        /**
+         * Create Agreement
+         * @description Save the chosen plan as version 1. Sending the same `client_token` again returns the agreement already saved.
+         */
+        post: operations["create_agreement_api_v1_recovery_agreements_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/recovery/agreements/{agreement_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Agreement */
+        get: operations["get_agreement_api_v1_recovery_agreements__agreement_id__get"];
+        /**
+         * Revise Agreement
+         * @description Add a new version. The previous one is kept. `expected_version` must match the latest, or nothing is saved.
+         */
+        put: operations["revise_agreement_api_v1_recovery_agreements__agreement_id__put"];
+        post?: never;
+        /** Delete Agreement */
+        delete: operations["delete_agreement_api_v1_recovery_agreements__agreement_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/recovery/agreements/{agreement_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Review
+         * @description Check the latest version against today's figures. Nothing is saved or changed.
+         */
+        post: operations["review_api_v1_recovery_agreements__agreement_id__review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/recovery/agreements/{agreement_id}/versions/{version}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Version */
+        get: operations["get_version_api_v1_recovery_agreements__agreement_id__versions__version__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/recovery/evaluate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Evaluate
+         * @description Run one specified plan month by month.
+         */
+        post: operations["evaluate_api_v1_recovery_evaluate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/recovery/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Search
+         * @description Search the changes you allow and compare the plans that satisfy every rule.
+         */
+        post: operations["search_api_v1_recovery_search_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/rescue/analyze": {
         parameters: {
             query?: never;
@@ -1395,6 +1515,116 @@ export interface components {
             is_liquid?: boolean | null;
             /** Notes */
             notes?: string | null;
+        };
+        /**
+         * Adjustment
+         * @description A change being tested: pause an item, or lower it, over a month range.
+         */
+        Adjustment: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "pause" | "reduce_to";
+            /** From Month */
+            from_month: string;
+            /** Item Id */
+            item_id: string;
+            /** Monthly */
+            monthly?: string | null;
+            /** To Month */
+            to_month?: string | null;
+        };
+        /** AdjustmentDescription */
+        AdjustmentDescription: {
+            adjustment: components["schemas"]["Adjustment"];
+            /** Text */
+            text: string;
+        };
+        /** AgreementCreate */
+        AgreementCreate: {
+            /** Client Token */
+            client_token?: string | null;
+            draft: components["schemas"]["AgreementDraft"];
+            /** Name */
+            name: string;
+        };
+        /**
+         * AgreementDraft
+         * @description What is saved: the situation, the chosen adjustments, restoration rules and the person's own words.
+         */
+        AgreementDraft: {
+            /**
+             * Disruption Note
+             * @default
+             */
+            disruption_note: string;
+            /**
+             * Fallback Note
+             * @default
+             */
+            fallback_note: string;
+            input: components["schemas"]["RecoveryInput"];
+            /**
+             * Rationale
+             * @default
+             */
+            rationale: string;
+            /** Selected Label */
+            selected_label?: string | null;
+            /** Source Plan Id */
+            source_plan_id?: string | null;
+            /** Source Plan Name */
+            source_plan_name?: string | null;
+        };
+        /** AgreementOut */
+        AgreementOut: {
+            /** Changes From Previous */
+            changes_from_previous: components["schemas"]["VersionChange"][];
+            /** Created At */
+            created_at: string;
+            draft: components["schemas"]["AgreementDraft"];
+            evaluation: components["schemas"]["RecoveryEvaluation"];
+            /** Id */
+            id: string;
+            /** Limitations */
+            limitations: string[];
+            /** Name */
+            name: string;
+            /** Updated At */
+            updated_at: string;
+            /** Version */
+            version: number;
+            /** Versions */
+            versions: components["schemas"]["VersionSummary"][];
+        };
+        /** AgreementRevise */
+        AgreementRevise: {
+            /**
+             * Change Note
+             * @default
+             */
+            change_note: string;
+            draft: components["schemas"]["AgreementDraft"];
+            /** Expected Version */
+            expected_version: number;
+            /** Name */
+            name?: string | null;
+        };
+        /** AgreementSummary */
+        AgreementSummary: {
+            /** Feasible */
+            feasible: boolean;
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Review Month */
+            review_month: string | null;
+            /** Updated At */
+            updated_at: string;
+            /** Version */
+            version: number;
         };
         /** AmortizationRequest */
         AmortizationRequest: {
@@ -1810,6 +2040,34 @@ export interface components {
             mode: "individual" | "common_date";
         };
         /**
+         * CashItem
+         * @description A monthly outflow. Goal contributions are transfers to savings, not spending.
+         */
+        CashItem: {
+            /** Balance Id */
+            balance_id?: string | null;
+            /** From Month */
+            from_month?: string | null;
+            /** Id */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "essential" | "mandatory_debt" | "protected_obligation" | "flexible" | "goal_contribution";
+            /** Label */
+            label: string;
+            /** Monthly */
+            monthly: string;
+            /**
+             * Protected
+             * @default true
+             */
+            protected: boolean;
+            /** To Month */
+            to_month?: string | null;
+        };
+        /**
          * Commitment
          * @description An existing fixed payment (for example an EMI) that stops after remaining_months.
          */
@@ -2125,6 +2383,16 @@ export interface components {
             /** Type */
             type: string;
         };
+        /** ExportRecoveryAgreement */
+        ExportRecoveryAgreement: {
+            draft: components["schemas"]["AgreementDraft"];
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Version */
+            version: number;
+        };
         /** ExportResponse */
         ExportResponse: {
             /** Accounts */
@@ -2143,6 +2411,11 @@ export interface components {
             plans: components["schemas"]["ExportPlan"][];
             /** Policies */
             policies: components["schemas"]["ExportPolicy"][];
+            /**
+             * Recovery Agreements
+             * @default []
+             */
+            recovery_agreements: components["schemas"]["ExportRecoveryAgreement"][];
             /** Transactions */
             transactions: components["schemas"]["TransactionResponse"][];
             user: components["schemas"]["ExportUser"];
@@ -2501,6 +2774,18 @@ export interface components {
             years: components["schemas"]["IncomeYear"][];
         };
         /**
+         * IncomeSegment
+         * @description Net monthly income over a range. `to_month=None` means the end of the horizon, duration unknown.
+         */
+        IncomeSegment: {
+            /** From Month */
+            from_month: string;
+            /** Monthly Net */
+            monthly_net: string;
+            /** To Month */
+            to_month?: string | null;
+        };
+        /**
          * IncomeStepUp
          * @description From `year` (January) the stream's base amount is replaced by `amount`, in the stream's frequency.
          */
@@ -2558,6 +2843,22 @@ export interface components {
             months_included: number;
             /** Year */
             year: number;
+        };
+        /**
+         * InfeasibilityReport
+         * @description When no permitted plan works: the strongest plan you allow, and why it still falls short.
+         */
+        InfeasibilityReport: {
+            /** Conflicts */
+            conflicts: string[];
+            /** First Violation */
+            first_violation: string;
+            /** Shortfall */
+            shortfall: string;
+            /** Strongest Plan */
+            strongest_plan: components["schemas"]["AdjustmentDescription"][];
+            /** You Could Consider */
+            you_could_consider: string[];
         };
         /** InsuranceDashboardSummary */
         InsuranceDashboardSummary: {
@@ -2685,6 +2986,15 @@ export interface components {
             quantity?: string | null;
             /** Symbol */
             symbol?: string | null;
+        };
+        /** ItemMonth */
+        ItemMonth: {
+            /** Adjusted */
+            adjusted: boolean;
+            /** Amount */
+            amount: string;
+            /** Item Id */
+            item_id: string;
         };
         /** LiabilityCreateRequest */
         LiabilityCreateRequest: {
@@ -2900,6 +3210,23 @@ export interface components {
             /** Email */
             email: string;
         };
+        /**
+         * Permission
+         * @description What the person allows to change. Without one, an item cannot be adjusted.
+         */
+        Permission: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "pause" | "reduce_to";
+            /** Item Id */
+            item_id: string;
+            /** Max Months */
+            max_months?: number | null;
+            /** Min Monthly */
+            min_monthly?: string | null;
+        };
         /** Plan */
         Plan: {
             /** As Of */
@@ -2926,6 +3253,54 @@ export interface components {
              * @default 0.00
              */
             unassigned_savings: string;
+        };
+        /** PlanMetrics */
+        PlanMetrics: {
+            /** Balances End */
+            balances_end: {
+                [key: string]: string;
+            };
+            /** Final Liquid */
+            final_liquid: string;
+            /** Flexible Reduction Total */
+            flexible_reduction_total: string;
+            /** Floor Headroom */
+            floor_headroom: string;
+            /** Goal Contributions Deferred */
+            goal_contributions_deferred: string;
+            /** Goal Contributions Made */
+            goal_contributions_made: string;
+            /** Goal Delay */
+            goal_delay: string;
+            /** Minimum Liquid */
+            minimum_liquid: string;
+            /** Paused Months */
+            paused_months: number;
+            /** Reduced Months */
+            reduced_months: number;
+            /** Restoration Complete Month */
+            restoration_complete_month: string | null;
+        };
+        /** PlanOption */
+        PlanOption: {
+            /** Adjustments */
+            adjustments: components["schemas"]["AdjustmentDescription"][];
+            evaluation: components["schemas"]["RecoveryEvaluation"];
+            /** Id */
+            id: string;
+            /** Key Assumptions */
+            key_assumptions: string[];
+            /** Label */
+            label: string;
+            metrics: components["schemas"]["PlanMetrics"];
+            /** Rank */
+            rank: number;
+            /** What Would Break It */
+            what_would_break_it: string[];
+            /** What You Give Up */
+            what_you_give_up: string[];
+            /** Why It Works */
+            why_it_works: string[];
         };
         /** PlanRecord */
         PlanRecord: {
@@ -3109,6 +3484,18 @@ export interface components {
             uncovered_deficit_months: string[];
         };
         /**
+         * ProtectedBalance
+         * @description Money set aside for a goal or retirement. The evaluator never withdraws from it.
+         */
+        ProtectedBalance: {
+            /** Balance */
+            balance: string;
+            /** Id */
+            id: string;
+            /** Label */
+            label: string;
+        };
+        /**
          * RecommendationComparisonRequest
          * @description Give `plan_id` to use the signed-in user's saved plan, or `plan` for an explicit hypothetical.
          */
@@ -3154,6 +3541,142 @@ export interface components {
             recommended_reserve_months: number;
             /** Total Monthly Required */
             total_monthly_required: string;
+        };
+        /** RecoveryEvaluation */
+        RecoveryEvaluation: {
+            /** Assumptions */
+            assumptions: string[];
+            /** Balances End */
+            balances_end: {
+                [key: string]: string;
+            };
+            /** Feasible */
+            feasible: boolean;
+            /** Final Liquid */
+            final_liquid: string;
+            /** First Violation Month */
+            first_violation_month: string | null;
+            /** Income End Unknown */
+            income_end_unknown: boolean;
+            /** Minimum Liquid */
+            minimum_liquid: string;
+            /** Months */
+            months: components["schemas"]["RecoveryMonth"][];
+            /** Protected Balances Withdrawn */
+            protected_balances_withdrawn: string;
+            /** Restorations */
+            restorations?: components["schemas"]["RestorationOutcome"][];
+            review?: components["schemas"]["ReviewSnapshot"] | null;
+            /** Violations */
+            violations: components["schemas"]["RecoveryViolation"][];
+        };
+        /** RecoveryInput */
+        RecoveryInput: {
+            /** Adjustments */
+            adjustments?: components["schemas"]["Adjustment"][];
+            /** Income */
+            income: components["schemas"]["IncomeSegment"][];
+            /** Items */
+            items: components["schemas"]["CashItem"][];
+            /** Liquid Cash */
+            liquid_cash: string;
+            /** Months */
+            months: number;
+            /** Permissions */
+            permissions?: components["schemas"]["Permission"][];
+            /** Protected Balances */
+            protected_balances?: components["schemas"]["ProtectedBalance"][];
+            /** Recovery Confirmed From */
+            recovery_confirmed_from?: string | null;
+            /** Reserve Floor */
+            reserve_floor: string;
+            /** Restorations */
+            restorations?: components["schemas"]["RestorationRule"][];
+            /** Review Month */
+            review_month?: string | null;
+            /** Start Month */
+            start_month: string;
+        };
+        /** RecoveryMonth */
+        RecoveryMonth: {
+            /** Cash Change */
+            cash_change: string;
+            /** Flexible Outflow */
+            flexible_outflow: string;
+            /** Floor Met */
+            floor_met: boolean;
+            /** Goal Transfers */
+            goal_transfers: string;
+            /** Income */
+            income: string;
+            /** Items */
+            items: components["schemas"]["ItemMonth"][];
+            /** Liquid End */
+            liquid_end: string;
+            /** Mandatory Outflow */
+            mandatory_outflow: string;
+            /** Mandatory Shortfall */
+            mandatory_shortfall: string;
+            /** Month */
+            month: string;
+            /** Net Worth Change */
+            net_worth_change: string;
+        };
+        /** RecoverySearchRequest */
+        RecoverySearchRequest: {
+            /** Adjust From */
+            adjust_from?: string | null;
+            /** Adjust Months */
+            adjust_months?: number | null;
+            /** Excluded Item Ids */
+            excluded_item_ids?: string[];
+            input: components["schemas"]["RecoveryInput"];
+            limits?: components["schemas"]["SearchLimits"];
+        };
+        /** RecoverySearchResponse */
+        RecoverySearchResponse: {
+            /** Frontier Size */
+            frontier_size: number;
+            infeasibility: components["schemas"]["InfeasibilityReport"] | null;
+            /** Options */
+            options: components["schemas"]["PlanOption"][];
+            /** Ranking Policy */
+            ranking_policy: string;
+            /** Rejected */
+            rejected: components["schemas"]["RejectedAlternative"][];
+            search: components["schemas"]["SearchSummary"];
+            /** Trade Off Note */
+            trade_off_note: string | null;
+        };
+        /** RecoveryViolation */
+        RecoveryViolation: {
+            /** Amount */
+            amount: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "mandatory_shortfall" | "reserve_floor" | "pause_limit";
+            /** Message */
+            message: string;
+            /** Month */
+            month: string;
+        };
+        /** RejectedAlternative */
+        RejectedAlternative: {
+            /** Adjustments */
+            adjustments: components["schemas"]["AdjustmentDescription"][];
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "mandatory_shortfall" | "reserve_floor" | "pause_limit";
+            /** Message */
+            message: string;
+            /** Month */
+            month: string;
+            /** Sacrifice Total */
+            sacrifice_total: string;
         };
         /** RescueAlternativeItem */
         RescueAlternativeItem: {
@@ -3251,6 +3774,125 @@ export interface components {
             run_id: string;
             /** Unresolved Gap */
             unresolved_gap: string | null;
+        };
+        /**
+         * RestorationCondition
+         * @description One test that must hold before a paused or reduced item starts to come back.
+         */
+        RestorationCondition: {
+            /** Amount */
+            amount?: string | null;
+            /** Month */
+            month?: string | null;
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "income_at_least" | "liquid_at_least" | "user_confirmed" | "date_reached";
+        };
+        /** RestorationOutcome */
+        RestorationOutcome: {
+            /** Deferred Months */
+            deferred_months: number;
+            /** Final Monthly */
+            final_monthly: string;
+            /** Item Id */
+            item_id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "not_triggered" | "deferred" | "partial" | "restored";
+            /** Steps */
+            steps: components["schemas"]["RestorationStep"][];
+            /** Triggered Month */
+            triggered_month: string | null;
+        };
+        /**
+         * RestorationRule
+         * @description How an item that was paused or reduced "until restored" comes back.
+         *
+         *     Every condition must hold (a date can be one of them, never the only one). `steps` are the monthly
+         *     amounts to return to, in order; leave it empty to go straight back to the original amount. Each later step
+         *     starts `step_gap_months` after the one before. With `affordability_guard` a step that would take liquid
+         *     cash below the floor is deferred, not applied.
+         */
+        RestorationRule: {
+            /**
+             * Affordability Guard
+             * @default true
+             */
+            affordability_guard: boolean;
+            /** Conditions */
+            conditions: components["schemas"]["RestorationCondition"][];
+            /** Item Id */
+            item_id: string;
+            /**
+             * Step Gap Months
+             * @default 1
+             */
+            step_gap_months: number;
+            /** Steps */
+            steps?: string[];
+        };
+        /** RestorationStep */
+        RestorationStep: {
+            /** Month */
+            month: string;
+            /** Monthly */
+            monthly: string;
+        };
+        /** ReviewItem */
+        ReviewItem: {
+            /** Item Id */
+            item_id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "not_triggered" | "deferred" | "partial" | "restored";
+        };
+        /**
+         * ReviewRequest
+         * @description What is true now. The review recalculates from `as_of_month` using only these updated figures.
+         */
+        ReviewRequest: {
+            /** As Of Month */
+            as_of_month: string;
+            /** Liquid Cash */
+            liquid_cash: string;
+            /** Monthly Income */
+            monthly_income: string;
+            /**
+             * Recovery Confirmed
+             * @default false
+             */
+            recovery_confirmed: boolean;
+        };
+        /** ReviewResult */
+        ReviewResult: {
+            /** As Of Month */
+            as_of_month: string;
+            evaluation: components["schemas"]["RecoveryEvaluation"];
+            /** Fits */
+            fits: boolean;
+            /** Messages */
+            messages: string[];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "still_fits" | "needs_recalculation";
+        };
+        /**
+         * ReviewSnapshot
+         * @description Where each restoration stood at the review month. The date itself restores nothing.
+         */
+        ReviewSnapshot: {
+            /** Items */
+            items: components["schemas"]["ReviewItem"][];
+            /** Month */
+            month: string;
         };
         /** RiskAssessmentHistoryItem */
         RiskAssessmentHistoryItem: {
@@ -3392,6 +4034,57 @@ export interface components {
             name: string;
             /** Priority Order */
             priority_order?: string[] | null;
+        };
+        /**
+         * SearchLimits
+         * @description Explicit bounds on the search. Reaching `max_candidates` makes the answer incomplete, never "no solution".
+         */
+        SearchLimits: {
+            /**
+             * Max Candidates
+             * @default 1500
+             */
+            max_candidates: number;
+            /**
+             * Max Options
+             * @default 3
+             */
+            max_options: number;
+            /**
+             * Reduce Step
+             * @default 1000.00
+             */
+            reduce_step: string;
+        };
+        /** SearchSummary */
+        SearchSummary: {
+            /** Best Not Proven */
+            best_not_proven: boolean;
+            /** Complete */
+            complete: boolean;
+            /** Duplicates Skipped */
+            duplicates_skipped: number;
+            /** Errors */
+            errors: number;
+            /** Evaluated */
+            evaluated: number;
+            /** Feasible Found */
+            feasible_found: number;
+            /** Ignored Permissions */
+            ignored_permissions: string[];
+            /** Notes */
+            notes: string[];
+            /** Rejected By Kind */
+            rejected_by_kind: {
+                [key: string]: number;
+            };
+            /** Space Size */
+            space_size: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "found" | "infeasible" | "incomplete";
         };
         /** SignupRequest */
         SignupRequest: {
@@ -3625,6 +4318,26 @@ export interface components {
             id: string;
             /** Is Active */
             is_active: boolean;
+        };
+        /** VersionChange */
+        VersionChange: {
+            /** After */
+            after: string;
+            /** Before */
+            before: string;
+            /** Field */
+            field: string;
+        };
+        /** VersionSummary */
+        VersionSummary: {
+            /** Change Note */
+            change_note: string;
+            /** Created At */
+            created_at: string;
+            /** Selected Label */
+            selected_label: string | null;
+            /** Version */
+            version: number;
         };
     };
     responses: never;
@@ -7587,6 +8300,539 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ConservativeComparisonResponse"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_agreements_api_v1_recovery_agreements_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgreementSummary"][];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_agreement_api_v1_recovery_agreements_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AgreementCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgreementOut"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_agreement_api_v1_recovery_agreements__agreement_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agreement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgreementOut"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    revise_agreement_api_v1_recovery_agreements__agreement_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agreement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AgreementRevise"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgreementOut"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_agreement_api_v1_recovery_agreements__agreement_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agreement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    review_api_v1_recovery_agreements__agreement_id__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agreement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReviewResult"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_version_api_v1_recovery_agreements__agreement_id__versions__version__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agreement_id: string;
+                version: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgreementOut"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    evaluate_api_v1_recovery_evaluate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecoveryInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecoveryEvaluation"];
+                };
+            };
+            /** @description Sign in required, or the token is missing, malformed or expired. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No such record for this account. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request is invalid. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many attempts. Try again later. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    search_api_v1_recovery_search_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecoverySearchRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecoverySearchResponse"];
                 };
             };
             /** @description Sign in required, or the token is missing, malformed or expired. */
