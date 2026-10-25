@@ -57,10 +57,10 @@ describe('navigation', () => {
     render(<App />)
     await screen.findByRole('heading', { name: 'Where you stand' })
     const text = screen.getAllByRole('navigation', { name: 'Main menu' }).map((n) => n.textContent ?? '').join(' ')
-    for (const label of ['Dashboard', 'User Profile', 'Income and Expenditures', 'Insurance', 'Debts', 'Equities', 'Emergency Funds', 'Financial goals', 'Financial outlook', 'Plan B and Rescue', 'Settings']) {
+    for (const label of ['Dashboard', 'User Profile', 'Income and Expenditures', 'Insurance', 'Debts', 'Equities', 'Calculators', 'Emergency Funds', 'Financial goals', 'Financial outlook', 'Plan B and Rescue', 'Settings']) {
       expect(text).toContain(label)
     }
-    for (const gone of ['Calculators', 'Taxes', 'Import & transactions', 'Household profile', 'Assets & investments', 'Income & expenses']) {
+    for (const gone of ['Taxes', 'Import & transactions', 'Household profile', 'Assets & investments', 'Income & expenses']) {
       expect(text).not.toContain(gone)
     }
   })
@@ -70,7 +70,7 @@ describe('navigation', () => {
     expect(parseRoute('#/import')).toBe('finances')
     expect(parseRoute('#/taxes')).toBe('dashboard')
     expect(parseRoute('#/emergency')).toBe('emergency')
-    expect(parseRoute('#/calculators')).toBe('dashboard') // there is no Calculators section: Insurance, Debts and Equities stand alone
+    expect(parseRoute('#/calculators')).toBe('calculators') // a section of real calculators; Insurance, Debts and Equities stand apart from it
   })
 
   it('opens Plan B from its own navigation entry', async () => {
@@ -93,7 +93,7 @@ describe('Income and Expenditures', () => {
 })
 
 describe('Insurance, Debts and Equities', () => {
-  it('are separate areas of their own, each opening directly with no Calculators section above it', async () => {
+  it('are separate areas of their own, each opening directly, not nested under Calculators', async () => {
     window.location.hash = '/debts'
     backend({ 'GET /financials/liabilities': () => json([]) })
     render(<App />)
@@ -101,7 +101,8 @@ describe('Insurance, Debts and Equities', () => {
     expect(screen.queryByText('Back to Calculators')).not.toBeInTheDocument()
     const menu = screen.getAllByRole('navigation', { name: 'Main menu' })[0]
     for (const name of ['Insurance', 'Debts', 'Equities']) expect(within(menu).getByRole('button', { name })).toBeInTheDocument()
-    expect(within(menu).queryByRole('button', { name: 'Calculators' })).not.toBeInTheDocument()
+    // Calculators is its own entry beside them, not a parent: none of the three is nested under it.
+    expect(within(menu).getByRole('button', { name: 'Calculators' })).toBeInTheDocument()
   })
 
   it('opens Insurance on its own', async () => {

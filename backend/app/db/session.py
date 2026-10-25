@@ -19,8 +19,16 @@ pool_args: dict[str, object] = (
 if not settings.DATABASE_URL.startswith("sqlite"):
     connect_args = {"connect_timeout": 15}
 
+def _engine_url() -> str:
+    url = settings.DATABASE_URL
+    if url in ("sqlite:///./arthayukti.db", "sqlite:///arthayukti.db"):
+        from app.config import BACKEND_DIR
+        return f"sqlite:///{(BACKEND_DIR / 'arthayukti.db').resolve().as_posix()}"
+    return url
+
+
 engine = create_engine(
-    settings.DATABASE_URL,
+    _engine_url(),
     connect_args=connect_args,
     echo=False,
     **pool_args,
