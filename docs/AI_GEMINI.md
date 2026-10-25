@@ -53,7 +53,7 @@ Provider and key problems become the app's normal error shape and a plain messag
 3. Restart the API. `GET /api/v1/ai/status` (signed in) should now say `available: true`.
 4. In production set the same variable in the host's environment settings (Render), not in the repository.
 
-`GEMINI_MODEL` defaults to `gemini-2.5-flash`. **That name has not been confirmed against a live key here.** If Google has retired it, the first call fails with `ai_unavailable`; change the variable, no code change needed.
+`GEMINI_MODEL` defaults to `gemini-3.5-flash-lite`, which answered a live key on 2026-10-26 (the advisor's analysis, tool calls and follow-up chat all worked). If Google retires the name, the first call fails with `ai_unavailable`; change the variable, no code change needed.
 
 ## Testing without a key
 
@@ -61,7 +61,7 @@ Provider and key problems become the app's normal error shape and a plain messag
 
 ## Not verified
 
-- A real Gemini call, in any environment. The request shape (`generateContent`, `systemInstruction`, `responseMimeType: application/json`, `x-goog-api-key`) follows Google's public REST format from memory and is only exercised against a stub.
+- The automated suite never calls Google: every test uses a fake client. A live check is opt-in (`RUN_LIVE_GEMINI=1 pytest tests/test_advisor_live.py`) and was run once against a real key; the model's wording varies from run to run, so it asserts only on safety (no invented ids, no rejected paths recommended).
 - Quality of the model's reading of real descriptions (especially Hindi or mixed-language ones).
 
 ## Not built

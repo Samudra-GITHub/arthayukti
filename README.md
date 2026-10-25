@@ -4,7 +4,7 @@
 
 <br>
 
-[**Live site**](https://arthayukti.vercel.app) · [Financial model](docs/FINANCIAL_MODEL.md) · [AI advisor](docs/AI_ADVISOR.md) · [API](docs/API.md) · [Deployment](docs/DEPLOYMENT.md)
+[**Live site**](https://arthayukti.vercel.app) · [**Project report**](docs/PROJECT_REPORT.md) · [Financial model](docs/FINANCIAL_MODEL.md) · [AI advisor](docs/AI_ADVISOR.md) · [API](docs/API.md) · [Deployment](docs/DEPLOYMENT.md)
 
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
@@ -62,6 +62,14 @@ English and हिन्दी throughout, light and dark themes, and a **Listen
 - **The key stays on the server.** It is never sent to the browser, logged or put in a prompt.
 
 Details: [docs/AI_ADVISOR.md](docs/AI_ADVISOR.md).
+
+## Screenshots
+
+| | |
+| --- | --- |
+| ![Dashboard](docs/assets/screenshots/01-dashboard.jpg) | ![Advisor overview](docs/assets/screenshots/02-advisor-overview.jpg) |
+| ![Goal review](docs/assets/screenshots/03-advisor-goal-review.jpg) | ![Recommendations](docs/assets/screenshots/04-advisor-recommendations.jpg) |
+| ![Compare paths](docs/assets/screenshots/05-advisor-compare.jpg) | ![Financial Trajectory](docs/assets/screenshots/06-trajectory.jpg) |
 
 ## Try it
 
