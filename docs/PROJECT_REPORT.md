@@ -152,7 +152,14 @@ Environment (copy `.env.example` to `backend/.env`; never commit it): `DATABASE_
 
 ## 15. Team contributions and references
 
-- **Samudra Kar:** product direction, backend and frontend implementation, integration, testing and deployment; most commits in the repository. Built using Claude Code.
-- **Shankara Vasishta:** code fixes and new features from a separate working copy, merged into the main code line (one merged contribution); a further teammate contributed the development-database sign-in fallback (hardened and tested before merging). *(Team members: please confirm and extend your own contribution lines before submitting.)*
+**Team statement:** ArthaYukti was built by two co-builders who share the project equally.
+
+| Member | Role | What they brought |
+| --- | --- | --- |
+| **Samudra Kar** | Co-builder: engineering and integration | Product direction; backend and frontend implementation; bringing the team's work into one code line; testing; deployment; AI-assisted development with Claude Code. |
+| **Shankara Vasishta** | Co-builder: features, fixes and review | Feature work and code fixes developed in a separate working copy and merged into the main code line; review of behaviour against the problem statement. |
+
+Commit counts in the repository do not measure who contributed what: the second member's work was merged and committed through one account, and the history shows a single shared code line. A further teammate contributed the development-database sign-in fallback, which was hardened and tested before merging.
+
 - **References:** [Indian-Stock-Market-API](https://github.com/0xramm/Indian-Stock-Market-API) (MIT; price endpoints studied and its unofficial Yahoo Finance basis documented in `docs/STOCK_PORTFOLIO.md`); Google Gemini API documentation; FastAPI, Pydantic, SQLAlchemy, React and Tailwind documentation.
 - **Further reading in the repository:** [financial model](FINANCIAL_MODEL.md) · [Plan B](PLAN_B.md) · [trajectory](FINANCIAL_TRAJECTORY.md) · [AI advisor](AI_ADVISOR.md) · [API](API.md) · [deployment](DEPLOYMENT.md) · [audits and history](reports/).
