@@ -156,6 +156,7 @@ function ProfileForm({ initial, onSaved, navigate, isHi }: ProfileFormProps) {
   // Section 3: Housing & Employment
   const [housingStatus, setHousingStatus] = useState<string>(initial.housing_status ?? '')
   const [employmentStatus, setEmploymentStatus] = useState<string>(initial.employment_status ?? '')
+  const [employmentOther, setEmploymentOther] = useState<string>(initial.employment_other ?? '')
 
   // Section 4: Financial Resilience
   const [debtTypes, setDebtTypes] = useState<string[]>(initial.debt_types ?? [])
@@ -226,6 +227,7 @@ function ProfileForm({ initial, onSaved, navigate, isHi }: ProfileFormProps) {
       supports_father: supportsFather ? (supportsFather as any) : null,
       housing_status: housingStatus ? (housingStatus as any) : null,
       employment_status: employmentStatus ? (employmentStatus as any) : null,
+      ...(employmentStatus === 'other' ? { employment_other: employmentOther.trim() } : {}),
       expected_retirement_age: isRetired ? null : retirementAge ? parseInt(retirementAge, 10) : null,
       financial_dependants: financialDependants ? (financialDependants as any) : null,
       debt_types: debtTypes.length > 0 ? (debtTypes as any) : null,
@@ -451,6 +453,14 @@ function ProfileForm({ initial, onSaved, navigate, isHi }: ProfileFormProps) {
               { value: 'other', label: isHi ? 'अन्य (Other)' : 'Other' },
             ]}
           />
+          {employmentStatus === 'other' ? (
+            <TextField
+              label={isHi ? 'अपना काम बताएँ (वैकल्पिक)' : 'Describe your work (optional)'}
+              value={employmentOther}
+              onChange={setEmploymentOther}
+              maxLength={100}
+            />
+          ) : null}
         </div>
       </Panel>
 
@@ -841,6 +851,13 @@ function RiskAssessmentView({ latest, history, onCompleted, isHi }: RiskAssessme
         ) : latest ? (
           /* RESULTS SCREEN */
           <div className="flex flex-col gap-6">
+            {latest.profile_changed_since ? (
+              <p role="status" className="rounded-xl bg-blush px-4 py-3 text-[14px]">
+                {isHi
+                  ? 'इस आकलन के बाद आपकी प्रोफ़ाइल बदली है, इसलिए जोखिम क्षमता का आकलन पुराना हो सकता है। नए जवाबों के लिए दोबारा आकलन करें।'
+                  : 'Your profile changed after this assessment, so its risk-capacity reading may be out of date. Retake it to refresh the result.'}
+              </p>
+            ) : null}
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="flex flex-col gap-1 rounded-2xl glass p-4">
                 <span className="text-[13px] font-semibold text-muted uppercase">

@@ -26,3 +26,6 @@ Thumbs.db
 # Tool state
 .claude/
 !.env.sample
+
+# Local database backups
+*.db.backup-*

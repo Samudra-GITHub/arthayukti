@@ -151,3 +151,21 @@ describe('timeline', () => {
     expect(items.some((i) => i.label === 'Friend')).toBe(false) // an unknown payoff is not invented
   })
 })
+
+describe('spending source and inflation', () => {
+  it('sends the plan as the spending source and no inflation unless the person chose them', () => {
+    const { request, problems } = buildRequest(defaultChoices())
+    expect(problems).toEqual([])
+    expect(request.spending_source).toBe('plan')
+    expect('inflation_annual' in request).toBe(false)
+  })
+  it('sends the Expenditure plans source and a typed inflation rate as an exact decimal string', () => {
+    const { request, problems } = buildRequest({ ...defaultChoices(), spendingSource: 'expenditure_plans', inflation: '6.5' })
+    expect(problems).toEqual([])
+    expect(request.spending_source).toBe('expenditure_plans')
+    expect(request.inflation_annual).toBe('0.065000')
+  })
+  it('names a bad inflation rate instead of sending it', () => {
+    for (const bad of ['abc', '-1', '31']) expect(buildRequest({ ...defaultChoices(), inflation: bad }).problems).toContain('inflation')
+  })
+})

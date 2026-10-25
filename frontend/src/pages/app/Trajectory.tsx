@@ -152,6 +152,22 @@ export function TrajectoryPage() {
                 error={percentToGrowthRate(choices.premiumGrowth) === null ? t.badGrowth : null}
               />
               <SelectField
+                label={t.spendingSource}
+                hint={t.spendingSourceHint}
+                value={choices.spendingSource}
+                onChange={(spendingSource) => set({ spendingSource })}
+                options={(['plan', 'expenditure_plans'] as const).map((value) => ({ value, label: t.spendingSources[value] }))}
+              />
+              <TextField
+                label={t.inflation}
+                hint={t.inflationHint}
+                value={choices.inflation}
+                onChange={(inflation) => set({ inflation })}
+                inputMode="decimal"
+                maxLength={5}
+                error={choices.inflation.trim() !== '' && percentToGrowthRate(choices.inflation) === null ? t.badInflation : null}
+              />
+              <SelectField
                 label={t.premiumRule}
                 value={choices.premiumRule}
                 onChange={(premiumRule) => set({ premiumRule })}
@@ -250,6 +266,7 @@ interface ResultsProps {
 function Results({ data, t, language, choices, set }: ResultsProps) {
   const [allEvents, setAllEvents] = useState(false)
   const summary = data.summary
+  const yearly = data.yearly ?? []
   const last = data.checkpoints[data.checkpoints.length - 1]
   const lastLabel = monthLabelLong(last.month, language)
   const insufficient = data.completeness.status === 'insufficient'
@@ -290,6 +307,7 @@ function Results({ data, t, language, choices, set }: ResultsProps) {
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
           <Stat label={t.metrics.now} value={formatMoney(summary.current_net_worth)} />
           <Stat label={t.metrics.end(lastLabel)} value={formatMoney(summary.horizon_net_worth)} />
+          {summary.horizon_net_worth_real ? <Stat label={t.metrics.real(lastLabel)} value={formatMoney(summary.horizon_net_worth_real)} note={`${summary.inflation_annual ? Number(summary.inflation_annual) * 100 : 0}% a year`} /> : null}
           <Stat label={t.metrics.cash} value={formatMoney(summary.horizon_cash)} />
           <Stat label={t.metrics.assets} value={formatMoney(summary.horizon_assets)} />
           <Stat label={t.metrics.liabilities} value={formatMoney(summary.horizon_liabilities)} />
@@ -302,6 +320,26 @@ function Results({ data, t, language, choices, set }: ResultsProps) {
       </Panel>
 
       <InputHealth result={data} copy={t} links={choices.links} onLink={link} />
+
+      {yearly.length > 0 ? (
+        <Panel id="trajectory-yearly" title={t.yearly.title}>
+          <Table
+            caption={t.yearly.title}
+            head={[t.yearly.year, t.yearly.age, t.yearly.cashIn, t.yearly.cashOut, t.yearly.closingCash, t.yearly.netWorth, t.yearly.change, ...(yearly[0].closing_net_worth_real !== null && yearly[0].closing_net_worth_real !== undefined ? [t.yearly.real] : [])]}
+            rows={yearly.map((y) => [
+              String(y.year),
+              y.age === null ? '–' : String(y.age),
+              formatMoney(y.cash_in),
+              formatMoney(y.cash_out),
+              formatMoney(y.closing_cash),
+              formatMoney(y.closing_net_worth),
+              formatMoney(y.net_worth_change),
+              ...(y.closing_net_worth_real !== null && y.closing_net_worth_real !== undefined ? [formatMoney(y.closing_net_worth_real)] : []),
+            ])}
+          />
+          <p className="text-[13px] text-muted">{t.yearly.note}</p>
+        </Panel>
+      ) : null}
 
       {data.comparison ? (
         <Panel id="trajectory-comparison" title={t.comparison.title}>

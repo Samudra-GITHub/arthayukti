@@ -27,6 +27,10 @@ export interface TrajectoryChoices {
   rates: Partial<Record<AssetClass, string>>
   premiumGrowth: string
   premiumRule: PremiumRule
+  /** Where planned spending comes from: the plan's own lines, or the plans on the Expenditure page. */
+  spendingSource: 'plan' | 'expenditure_plans'
+  /** General inflation as a percent, to restate net worth in today's money. Empty: no adjustment. */
+  inflation: string
   /** Plan loan payment id -> debt id, when the person said they are the same loan. */
   links: Record<string, string>
 }
@@ -39,6 +43,8 @@ export const defaultChoices = (): TrajectoryChoices => ({
   rates: {},
   premiumGrowth: '',
   premiumRule: 'auto',
+  spendingSource: 'plan',
+  inflation: '',
   links: {},
 })
 
@@ -70,7 +76,7 @@ export function parseAge(text: string): number | null {
 
 export interface Built {
   request: Omit<TrajectoryRequest, 'plan' | 'plan_id' | 'scenario'>
-  problems: ('age' | 'rate' | 'premium')[]
+  problems: ('age' | 'rate' | 'premium' | 'inflation')[]
 }
 
 /** The request body for the chosen options, and what is wrong with them. Nothing here is a financial formula. */
@@ -94,6 +100,8 @@ export function buildRequest(choices: TrajectoryChoices): Built {
   }
   const growth = percentToGrowthRate(choices.premiumGrowth)
   if (growth === null) problems.push('premium')
+  const inflation = choices.inflation.trim() === '' ? undefined : percentToGrowthRate(choices.inflation)
+  if (inflation === null) problems.push('inflation')
   const selected = choices.view === 'baseline' ? [] : choices.goalIds
   return {
     problems,
@@ -106,7 +114,8 @@ export function buildRequest(choices: TrajectoryChoices): Built {
       return_assumptions,
       premium_growth_annual: growth ?? '0.000000',
       premiums_in_spending: choices.premiumRule,
-      spending_source: 'plan',
+      spending_source: choices.spendingSource,
+      ...(inflation ? { inflation_annual: inflation } : {}),
       linked_commitments: Object.entries(choices.links).map(([commitment_id, liability_id]) => ({ commitment_id, liability_id })),
       goal_effects: selected
         .filter((id) => choices.goalEffects[id] !== undefined)
