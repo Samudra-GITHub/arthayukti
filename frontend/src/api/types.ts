@@ -121,3 +121,13 @@ export type PortfolioSearch = Schemas['SearchResponse']
 export type PortfolioHoldingCreate = Schemas['HoldingCreate']
 export type PortfolioHoldingUpdate = Schemas['HoldingUpdate']
 export type PortfolioHoldingSaved = Schemas['HoldingSaved']
+
+// Expenditure plans, categories, settings and the trajectory
+export type SpendingPlan = Schemas['PlanOut']
+export type SpendingPlanInput = Schemas['PlanIn']
+export type SpendingChange = Schemas['ChangeOut']
+export type SpendingChangeInput = Schemas['ChangeIn']
+export type SpendingCategory = Schemas['CategoryOut']
+export type SpendingSettings = Schemas['SettingsOut']
+export type SpendingInflationInput = Schemas['InflationIn']
+export type SpendingTrajectory = Schemas['TrajectoryOut']

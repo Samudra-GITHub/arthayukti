@@ -1,4 +1,11 @@
 import type {
+  SpendingCategory,
+  SpendingChangeInput,
+  SpendingInflationInput,
+  SpendingPlan,
+  SpendingPlanInput,
+  SpendingSettings,
+  SpendingTrajectory,
   AccountCreateRequest,
   AccountResponse,
   AuthResponse,
@@ -148,7 +155,9 @@ function send<T>(method: string, path: string, body: unknown, signal?: AbortSign
 }
 
 const post = <T>(path: string, body: unknown, signal?: AbortSignal) => send<T>('POST', path, body, signal)
+const put = <T>(path: string, body: unknown, signal?: AbortSignal) => send<T>('PUT', path, body, signal)
 const get = <T>(path: string, signal?: AbortSignal) => request<T>(path, { signal })
+const remove = <T = void>(path: string) => request<T>(path, { method: 'DELETE' })
 
 const incomeBody = (source: { planId: string } | { plan: Plan }, horizonMonths: number) =>
   'planId' in source
@@ -229,6 +238,38 @@ export const api = {
     let response: Response
     try {
       response = await fetch(`${PREFIX}/expenditure/projection/csv`, { method: 'POST', headers, body: JSON.stringify(incomeBody(source, horizonMonths)) })
+    } catch {
+      throw new ApiFailure('offline', 'The service is not reachable.')
+    }
+    if (!response.ok) throw new ApiFailure('http_error', `Export failed (${response.status}).`, response.status)
+    return response.blob()
+  },
+  // Expenditure plans (stored per person; every figure on the page comes from the trajectory)
+  spendingPlans: (signal?: AbortSignal) => get<SpendingPlan[]>('/expenditure/plans', signal),
+  spendingCreatePlan: (body: SpendingPlanInput) => post<SpendingPlan>('/expenditure/plans', body),
+  spendingUpdatePlan: (id: string, body: SpendingPlanInput) => put<SpendingPlan>(`/expenditure/plans/${id}`, body),
+  spendingDeletePlan: (id: string) => remove(`/expenditure/plans/${id}`),
+  spendingStopPlan: (id: string) => post<SpendingPlan>(`/expenditure/plans/${id}/stop`, {}),
+  spendingReactivatePlan: (id: string) => post<SpendingPlan>(`/expenditure/plans/${id}/reactivate`, {}),
+  spendingAddChange: (id: string, body: SpendingChangeInput) => post<SpendingPlan>(`/expenditure/plans/${id}/changes`, body),
+  spendingRemoveChange: (id: string, changeId: string) => remove<SpendingPlan>(`/expenditure/plans/${id}/changes/${changeId}`),
+  spendingCategories: (signal?: AbortSignal) => get<SpendingCategory[]>('/expenditure/categories', signal),
+  spendingCreateCategory: (name: string) => post<SpendingCategory>('/expenditure/categories', { name }),
+  spendingUpdateCategory: (id: string, body: { name?: string; archived?: boolean }) => put<SpendingCategory>(`/expenditure/categories/${id}`, body),
+  spendingHideCategory: (key: string, hidden: boolean) => put<SpendingCategory>(`/expenditure/categories/system/${key}`, { hidden }),
+  spendingDeleteCategory: (id: string, reassignTo?: string) =>
+    remove(`/expenditure/categories/${id}${reassignTo ? `?reassign_to=${encodeURIComponent(reassignTo)}` : ''}`),
+  spendingSettings: (signal?: AbortSignal) => get<SpendingSettings>('/expenditure/settings', signal),
+  spendingSetHorizon: (years: number) => put<SpendingSettings>('/expenditure/settings', { horizon_years: years }),
+  spendingSetInflation: (body: SpendingInflationInput) => post<SpendingSettings>('/expenditure/settings/inflation', body),
+  spendingRemoveRateChange: (id: string) => remove<SpendingSettings>(`/expenditure/settings/inflation/${id}`),
+  spendingTrajectory: (signal?: AbortSignal) => get<SpendingTrajectory>('/expenditure/trajectory', signal),
+  spendingTrajectoryCsv: async (granularity: 'yearly' | 'monthly' = 'yearly'): Promise<Blob> => {
+    const headers = new Headers()
+    if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`)
+    let response: Response
+    try {
+      response = await fetch(`${PREFIX}/expenditure/trajectory.csv?granularity=${granularity}`, { headers })
     } catch {
       throw new ApiFailure('offline', 'The service is not reachable.')
     }

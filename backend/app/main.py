@@ -30,6 +30,7 @@ from app.api import (
     rescue,
     risk,
     samples,
+    spending,
     trajectory,
 )
 from app.api.deps import OPTIONAL_AUTH_PATHS
@@ -120,6 +121,7 @@ def create_app() -> FastAPI:
         ledger,
         trajectory,
         portfolio,
+        spending,
     ):
         app.include_router(module.router, prefix="/api/v1")
 

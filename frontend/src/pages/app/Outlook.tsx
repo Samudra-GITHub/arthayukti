@@ -11,6 +11,7 @@ import { useExtrasCopy } from '../../state/useExtrasCopy'
 import { useModulesCopy } from '../../state/useModulesCopy'
 import { useRemote } from '../../state/useRemote'
 import { useStore } from '../../state/useStore'
+import { SpendingDashboard } from '../../components/spending/SpendingDashboard'
 import { RecordedDebts } from './RecordedDebts'
 
 const HORIZONS = ['12', '24', '60'] as const
@@ -158,11 +159,12 @@ export function ExpenditureTrajectoryPage() {
   const t = m.expenditure
   const { plan, language } = useStore()
   const { months, control } = useHorizon()
-  if (!plan) return <Notice>{all.common.needsPlan}</Notice>
+  if (!plan) return <><SpendingDashboard /><Notice>{all.common.needsPlan}</Notice></>
   const lines = plan.expenses ?? []
   const total = addMoney('0.00', ...lines.map((line) => line.monthly))
   return (
     <>
+      <SpendingDashboard />
       <Panel title={t.byLine}>
         <p className="text-muted">{t.what}</p>
         <Table

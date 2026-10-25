@@ -3,6 +3,7 @@ from datetime import UTC, datetime
 
 from sqlalchemy import (
     Boolean,
+    CheckConstraint,
     Column,
     DateTime,
     ForeignKey,
@@ -57,6 +58,18 @@ class User(Base):
     )
     recovery_agreements = relationship(
         "RecoveryAgreement", back_populates="user", cascade="all, delete-orphan"
+    )
+    expenditure_plans = relationship(
+        "ExpenditurePlan", back_populates="user", cascade="all, delete-orphan"
+    )
+    expenditure_categories = relationship(
+        "ExpenditureCategory", back_populates="user", cascade="all, delete-orphan"
+    )
+    expenditure_settings = relationship(
+        "ExpenditureSettings", uselist=False, back_populates="user", cascade="all, delete-orphan"
+    )
+    expenditure_rate_changes = relationship(
+        "ExpenditureRateChange", back_populates="user", cascade="all, delete-orphan"
     )
     risk_assessments = relationship(
         "RiskAssessment", back_populates="user", cascade="all, delete-orphan", order_by="desc(RiskAssessment.completed_at)"
@@ -598,3 +611,138 @@ class RecoveryAgreementVersion(Base):
     created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
 
     agreement = relationship("RecoveryAgreement", back_populates="versions")
+
+
+class ExpenditureCategory(Base):
+    """A person's own flat spending category. The predefined ones are constants in the engine, not rows."""
+
+    __tablename__ = "expenditure_categories"
+    __table_args__ = (UniqueConstraint("user_id", "name", name="uq_expenditure_category_user_name"),)
+
+    id = Column(String(36), primary_key=True, default=_gen_uuid)
+    user_id = Column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    name = Column(String(60), nullable=False)
+    archived = Column(Boolean, default=False, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
+    updated_at = Column(
+        DateTime(timezone=True), default=_now_utc, onupdate=_now_utc, nullable=False
+    )
+
+    user = relationship("User", back_populates="expenditure_categories")
+
+
+class ExpenditureSettings(Base):
+    """Per-person projection settings: the starting global inflation rate, the horizon and hidden predefined categories."""
+
+    __tablename__ = "expenditure_settings"
+
+    id = Column(String(36), primary_key=True, default=_gen_uuid)
+    user_id = Column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True
+    )
+    base_inflation = Column(Numeric(8, 6), nullable=False, default=0)
+    horizon_years = Column(Integer, nullable=False, default=5)
+    hidden_categories_json = Column(Text, nullable=False, default="[]")
+    updated_at = Column(
+        DateTime(timezone=True), default=_now_utc, onupdate=_now_utc, nullable=False
+    )
+
+    user = relationship("User", back_populates="expenditure_settings")
+
+
+class ExpenditureRateChange(Base):
+    """A global-inflation change that takes effect from a month; earlier months keep the rate they had."""
+
+    __tablename__ = "expenditure_rate_changes"
+    __table_args__ = (
+        UniqueConstraint("user_id", "effective_year", "effective_month", name="uq_expenditure_rate_change"),
+        CheckConstraint("effective_month BETWEEN 1 AND 12", name="ck_rate_change_month"),
+    )
+
+    id = Column(String(36), primary_key=True, default=_gen_uuid)
+    user_id = Column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    effective_year = Column(Integer, nullable=False)
+    effective_month = Column(Integer, nullable=False)
+    rate = Column(Numeric(8, 6), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
+
+    user = relationship("User", back_populates="expenditure_rate_changes")
+
+
+class ExpenditurePlan(Base):
+    """One spending assumption: an amount at a frequency over a period, in a category, with its own inflation if set."""
+
+    __tablename__ = "expenditure_plans"
+    __table_args__ = (
+        CheckConstraint("amount > 0", name="ck_expenditure_plan_amount"),
+        CheckConstraint("frequency IN ('monthly','yearly')", name="ck_expenditure_plan_frequency"),
+        CheckConstraint("status IN ('active','stopped')", name="ck_expenditure_plan_status"),
+        CheckConstraint(
+            "duration_type IN ('today_forever','year_forever','range')", name="ck_expenditure_plan_duration"
+        ),
+        CheckConstraint(
+            "(category_id IS NULL) <> (system_category IS NULL)", name="ck_expenditure_plan_one_category"
+        ),
+    )
+
+    id = Column(String(36), primary_key=True, default=_gen_uuid)
+    user_id = Column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    category_id = Column(
+        String(36), ForeignKey("expenditure_categories.id", ondelete="RESTRICT"), nullable=True, index=True
+    )
+    system_category = Column(String(40), nullable=True)
+    name = Column(String(80), nullable=True)
+    amount = Column(Numeric(20, 2), nullable=False)
+    frequency = Column(String(10), nullable=False)
+    duration_type = Column(String(20), nullable=False)
+    start_year = Column(Integer, nullable=False)
+    start_month = Column(Integer, nullable=True)  # NULL for a yearly plan
+    end_year = Column(Integer, nullable=True)
+    end_month = Column(Integer, nullable=True)
+    inflation_override = Column(Numeric(8, 6), nullable=True)  # NULL: inherit the global rate
+    status = Column(String(10), nullable=False, default="active")
+    resume_end_year = Column(Integer, nullable=True)  # the end a stopped plan had, kept so it can be restored
+    resume_end_month = Column(Integer, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
+    updated_at = Column(
+        DateTime(timezone=True), default=_now_utc, onupdate=_now_utc, nullable=False
+    )
+
+    user = relationship("User", back_populates="expenditure_plans")
+    category = relationship("ExpenditureCategory")
+    changes = relationship(
+        "ExpenditureChange",
+        back_populates="plan",
+        cascade="all, delete-orphan",
+        order_by="ExpenditureChange.effective_year, ExpenditureChange.effective_month",
+    )
+
+
+class ExpenditureChange(Base):
+    """A scheduled change to a plan: a permanent new base amount, or a temporary exact amount for a period."""
+
+    __tablename__ = "expenditure_changes"
+    __table_args__ = (
+        CheckConstraint("amount > 0", name="ck_expenditure_change_amount"),
+        CheckConstraint("kind IN ('permanent','temporary')", name="ck_expenditure_change_kind"),
+    )
+
+    id = Column(String(36), primary_key=True, default=_gen_uuid)
+    plan_id = Column(
+        String(36), ForeignKey("expenditure_plans.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    kind = Column(String(10), nullable=False)
+    effective_year = Column(Integer, nullable=False)
+    effective_month = Column(Integer, nullable=True)  # NULL for a yearly plan
+    end_year = Column(Integer, nullable=True)  # temporary only
+    end_month = Column(Integer, nullable=True)
+    amount = Column(Numeric(20, 2), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=_now_utc, nullable=False)
+
+    plan = relationship("ExpenditurePlan", back_populates="changes")
