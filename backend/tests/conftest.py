@@ -11,7 +11,16 @@ from pathlib import Path
 BACKEND = Path(__file__).resolve().parents[1]
 _workdir = tempfile.mkdtemp(prefix="arthayukti-tests-")
 
-os.environ["DATABASE_URL"] = f"sqlite:///{(Path(_workdir) / 'test.db').as_posix()}"
+# Set TEST_DATABASE_URL to run the whole suite on a scratch PostgreSQL. It must be on this machine:
+# the suite creates and fills tables, so it refuses any other host rather than risk a real database.
+_scratch = os.environ.get("TEST_DATABASE_URL", "").strip()
+if _scratch:
+    from tests.db_guard import require_local_database
+
+    require_local_database(_scratch)
+    os.environ["DATABASE_URL"] = _scratch
+else:
+    os.environ["DATABASE_URL"] = f"sqlite:///{(Path(_workdir) / 'test.db').as_posix()}"
 os.environ["ENVIRONMENT"] = "test"
 os.environ["SECRET_KEY"] = "test-signing-key-" + "k" * 40
 os.environ["RATE_LIMIT_ENABLED"] = "false"

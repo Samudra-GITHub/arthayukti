@@ -10921,6 +10921,7 @@
     },
     "/api/v1/health": {
       "get": {
+        "description": "Liveness: the process is up. It does not touch the database.",
         "operationId": "health_api_v1_health_get",
         "responses": {
           "200": {
@@ -10935,6 +10936,38 @@
           }
         },
         "summary": "Health",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/api/v1/health/ready": {
+      "get": {
+        "description": "Readiness: the database answers and its schema is at the revision this code expects.\n\nA deploy whose migrations did not run, or a database that is unreachable, reports 503 here and a\ngeneric message only (never the connection string or the SQL error).",
+        "operationId": "ready_api_v1_health_ready_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Ready",
         "tags": [
           "health"
         ]
